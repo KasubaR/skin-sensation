@@ -1412,6 +1412,115 @@
   .icon-btn { position: relative; }
   .shop-link-spaced { margin-top: 12px; }
   .shop-link-spaced-sm { margin-top: 10px; }
+
+  /* ── HAMBURGER / MOBILE NAV ── */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--dark);
+  }
+
+  .mobile-menu {
+    display: none;
+    background: var(--white);
+    border-bottom: 1px solid #f0ebe5;
+    padding: 16px 24px;
+  }
+
+  .mobile-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .mobile-menu ul a {
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .mobile-menu.open { display: block; }
+
+  /* ── RESPONSIVE FIXES ── */
+  @media (max-width: 768px) {
+    nav {
+      padding: 14px 20px;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .hamburger {
+      display: block;
+    }
+
+    .hero {
+      grid-template-columns: 1fr;
+      margin: 16px;
+      min-height: auto;
+    }
+
+    .hero-img-area {
+      min-height: 280px;
+      padding: 0;
+    }
+
+    .hero-content {
+      padding: 32px 24px;
+    }
+
+    .hero-content h1 {
+      font-size: 38px;
+    }
+
+    .promo-grid {
+      grid-template-columns: 1fr;
+      margin: 20px 16px 16px;
+    }
+
+    .promo-card.large {
+      min-height: 280px;
+    }
+
+    .products {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 0 16px 32px;
+    }
+
+    .products-row2 {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 0 16px 40px;
+    }
+
+    .section-header {
+      padding: 32px 16px 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .products {
+      grid-template-columns: 1fr;
+    }
+
+    .products-row2 {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-content h1 {
+      font-size: 32px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -1441,8 +1550,18 @@
     <button title="Account" aria-label="Account"><i class="fa-regular fa-user"></i></button>
     <button class="icon-btn" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-heart"></i><span class="badge">0</span></button>
     <button class="icon-btn" title="Cart" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="badge">3</span></button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
   </div>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Bookings</a></li>
+    <li><a href="#">Gallery</a></li>
+    <li><a href="#">Contact Us</a></li>
+  </ul>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -1817,6 +1936,16 @@
   });
 
   // Booking callout now links directly to booking.html
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    const icon = hamburger.querySelector('i');
+    icon.classList.toggle('fa-bars');
+    icon.classList.toggle('fa-xmark');
+  });
 </script>
 </body>
 </html>
