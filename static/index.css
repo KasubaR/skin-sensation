@@ -177,6 +177,16 @@
     border-radius: 8px;
   }
 
+  .hero-woman.hero-brand {
+    max-width: min(440px, 92%);
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center bottom;
+    border-radius: 0;
+  }
+
   /* Fake product floaty */
   .hero-product {
     position: absolute;
@@ -1747,6 +1757,11 @@
     .hero-img-area {
       min-height: 280px;
       padding: 0;
+    }
+
+    .hero-woman.hero-brand {
+      max-height: 260px;
+      max-width: min(320px, 88%);
     }
 
     .hero-content {

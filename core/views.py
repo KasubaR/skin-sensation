@@ -2,7 +2,14 @@ from django.shortcuts import render
 
 
 def home(request):
-    return render(request, 'index.html')
+    return render(
+        request,
+        'index.html',
+        {
+            # Set True when the shop / featured products section is ready.
+            'show_featured_products': False,
+        },
+    )
 
 
 def services(request):
