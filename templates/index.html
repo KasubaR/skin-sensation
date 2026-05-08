@@ -1,1567 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skin Sensation – Discover The Secrets Of Beauty</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --cream: #f5f5f5;
-    --peach: #efefef;
-    --blush: #d9d9d9;
-    --rose: #b8956a;
-    --sage: #e8e8e8;
-    --dark: #0b0b0b;
-    --mid: #6b6b6b;
-    --light: #8c8c8c;
-    --white: #fff;
-  }
-
-  
-  body {
-    font-family: 'Jost', sans-serif;
-    background: var(--white);
-    color: var(--dark);
-    font-weight: 300;
-    line-height: 1.6;
-  }
-
-  /* ── ANNOUNCEMENT BAR ── */
-  .announcement {
-    background: var(--dark);
-    color: var(--white);
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 9px 20px;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-  }
-
-  .announcement-track {
-    display: inline-flex;
-    align-items: center;
-    gap: 42px;
-    min-width: 100%;
-    animation: announcementSlide 18s linear infinite;
-    will-change: transform;
-  }
-
-  .announcement-item {
-    flex: 0 0 auto;
-  }
-
-  @keyframes announcementSlide {
-    0% {
-      transform: translateX(0);
-    }
-
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-
-  /* ── NAV ── */
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 48px;
-    border-bottom: 1px solid #f0ebe5;
-    background: var(--white);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    text-decoration: none;
-    color: var(--dark);
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 400;
-    transition: color .2s;
-  }
-
-  .nav-links a:hover { color: var(--rose); }
-
-  .logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    font-weight: 600;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--dark);
-    text-decoration: none;
-  }
-
-  .logo span { color: inherit; font-style: italic; }
-
-  .nav-icons {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-  }
-
-  .nav-icons button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #000;
-    font-size: 16px;
-    position: relative;
-  }
-
-  .nav-icons .icon-btn i {
-    color: #000;
-  }
-
-  .badge {
-    position: absolute;
-    top: -6px;
-    right: -8px;
-    background: var(--mid);
-    color: #fff;
-    font-size: 9px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Jost', sans-serif;
-    font-weight: 500;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    margin: 24px 48px;
-    border-radius: 16px;
-    background: var(--peach);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    overflow: hidden;
-    min-height: 420px;
-    position: relative;
-  }
-
-  .hero-img-area {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0 0 0 40px;
-    overflow: hidden;
-  }
-
-  .hero-circle {
-    position: absolute;
-    width: 360px;
-    height: 360px;
-    background: rgba(255,255,255,0.35);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-  }
-
-  .hero-woman {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 340px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-
-  /* Fake product floaty */
-  .hero-product {
-    position: absolute;
-    bottom: 60px;
-    left: 30px;
-    z-index: 3;
-    background: white;
-    border-radius: 50%;
-    width: 90px;
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 30px rgba(0,0,0,.12);
-    overflow: hidden;
-    border: 2px solid rgba(184,149,106,.2);
-  }
-
-  .hero-product img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .hero-leaf {
-    position: absolute;
-    top: 40px;
-    left: 60px;
-    font-size: 44px;
-    opacity: .7;
-    z-index: 3;
-  }
-
-  .hero-leaf i {
-    color: var(--rose);
-  }
-
-  .hero-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 60px 60px 60px 20px;
-  }
-
-  .hero-content h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 54px;
-    font-weight: 400;
-    line-height: 1.1;
-    margin-bottom: 16px;
-  }
-
-  .hero-content h1 em {
-    color: var(--dark);
-    font-style: italic;
-    display: block;
-  }
-
-  .hero-content p {
-    font-size: 13px;
-    color: var(--mid);
-    max-width: 280px;
-    margin-bottom: 32px;
-    line-height: 1.7;
-  }
-
-  .btn-dark {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--dark);
-    color: var(--white);
-    border: none;
-    padding: 14px 28px;
-    font-family: 'Jost', sans-serif;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 3px;
-    width: fit-content;
-    transition: background .2s, transform .15s;
-    text-decoration: none;
-  }
-
-  .btn-dark:hover { background: var(--rose); transform: translateY(-1px); }
-
-  /* ── ANNOUNCEMENTS SECTION ── */
-  .announcements-section {
-    margin: 24px 48px 0;
-    background: var(--white);
-    padding-bottom: 28px;
-    border-bottom: 1px solid #ece6df;
-  }
-
-  .announcements-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-  }
-
-  .announcements-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .announcements-sub {
-    font-size: 11px;
-    letter-spacing: 1.7px;
-    text-transform: uppercase;
-    color: var(--mid);
-  }
-
-  .announcements-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .announcement-card {
-    background: var(--peach);
-    border: 1px solid #eee7e0;
-    border-radius: 12px;
-    padding: 18px;
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 14px;
-    align-items: center;
-  }
-
-  .announcement-card img {
-    width: 110px;
-    height: 110px;
-    border-radius: 10px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .announcement-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--dark);
-  }
-
-  .announcement-card p {
-    font-size: 13px;
-    color: var(--mid);
-    line-height: 1.55;
-    margin-bottom: 5px;
-  }
-
-  .announcement-pill {
-    display: inline-block;
-    font-size: 10px;
-    letter-spacing: 1.4px;
-    text-transform: uppercase;
-    color: var(--dark);
-    background: rgba(184, 149, 106, 0.2);
-    border: 1px solid rgba(184, 149, 106, 0.35);
-    border-radius: 30px;
-    padding: 4px 10px;
-    margin-bottom: 8px;
-  }
-
-  /* ── FEATURED SERVICES ── */
-  .featured-services {
-    margin: 30px 48px 0;
-  }
-
-  .featured-services-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-  }
-
-  .featured-services-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .featured-services-sub {
-    font-size: 11px;
-    letter-spacing: 1.7px;
-    text-transform: uppercase;
-    color: var(--mid);
-  }
-
-  .featured-services-copy {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .view-all-services-btn {
-    display: inline-block;
-    background: var(--dark);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: 4px;
-    padding: 11px 16px;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: background .2s, transform .15s;
-    white-space: nowrap;
-  }
-
-  .view-all-services-btn:hover {
-    background: var(--rose);
-    transform: translateY(-1px);
-  }
-
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .service-card {
-    background: var(--peach);
-    border: 1px solid #eee7e0;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-  }
-
-  .service-card img {
-    width: 100%;
-    height: 170px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .service-card-body {
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-  }
-
-  .service-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-weight: 500;
-    color: var(--dark);
-    line-height: 1.1;
-  }
-
-  .service-card p {
-    font-size: 13px;
-    color: var(--mid);
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .service-price {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .btn-service {
-    display: inline-block;
-    width: fit-content;
-    background: var(--dark);
-    color: var(--white);
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 10px;
-    letter-spacing: 1.6px;
-    text-transform: uppercase;
-    padding: 10px 14px;
-    transition: background .2s, transform .15s;
-  }
-
-  .btn-service:hover {
-    background: var(--rose);
-    transform: translateY(-1px);
-  }
-
-  /* ── WHY CHOOSE US ── */
-  .why-choose {
-    margin: 26px 48px 0;
-    background: var(--white);
-    border: none;
-    border-radius: 0;
-    padding: 0;
-  }
-
-  .why-choose-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-  }
-
-  .why-choose-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .why-choose-sub {
-    font-size: 11px;
-    letter-spacing: 1.7px;
-    text-transform: uppercase;
-    color: var(--mid);
-  }
-
-  .why-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .why-card {
-    background: var(--peach);
-    border: 1px solid #ece4dc;
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-  }
-
-  .why-icon {
-    width: 42px;
-    height: 42px;
-    margin: 0 auto 10px;
-    border-radius: 50%;
-    background: var(--peach);
-    border: 1px solid #ded6cf;
-    color: var(--dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-
-  .why-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    line-height: 1.1;
-    color: var(--dark);
-  }
-
-  .why-card p {
-    font-size: 12px;
-    color: var(--mid);
-    line-height: 1.45;
-  }
-
-  /* ── BOOKING SECTION ── */
-  .booking-section {
-    margin: 30px 48px 0;
-    background: var(--white);
-    border: none;
-    border-radius: 0;
-    padding: 0;
-  }
-
-  .booking-section-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-  }
-
-  .booking-section-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 36px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .booking-section-sub {
-    font-size: 11px;
-    letter-spacing: 1.7px;
-    text-transform: uppercase;
-    color: var(--mid);
-  }
-
-  .booking-link-card {
-    display: grid;
-    grid-template-columns: 240px 1fr auto;
-    gap: 22px;
-    align-items: center;
-    text-decoration: none;
-    background: var(--peach);
-    border: 1px solid #ece4dc;
-    border-radius: 12px;
-    padding: 24px;
-    min-height: 220px;
-    transition: border-color .2s, transform .15s;
-  }
-
-  .booking-link-card:hover {
-    border-color: rgba(184,149,106,.45);
-    transform: translateY(-1px);
-  }
-
-  .booking-link-image {
-    width: 240px;
-    height: 170px;
-    object-fit: cover;
-    border-radius: 10px;
-    display: block;
-    border: 1px solid #e2d8cf;
-  }
-
-  .booking-link-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 34px;
-    font-weight: 500;
-    color: var(--dark);
-    margin-bottom: 6px;
-  }
-
-  .booking-link-card p {
-    font-size: 14px;
-    color: var(--mid);
-    line-height: 1.6;
-    max-width: 620px;
-  }
-
-  .booking-link-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: none;
-    border-radius: 8px;
-    background: var(--dark);
-    color: var(--white);
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 10px 12px;
-    white-space: nowrap;
-  }
-
-  .booking-link-card:hover .booking-link-pill {
-    background: var(--rose);
-  }
-
-  /* ── PROMOTIONS / PACKAGES LABEL ── */
-  .promotions-label {
-    margin: 34px 48px 0;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-  }
-
-  .promotions-label h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .promo-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .promo-tag {
-    font-size: 10px;
-    letter-spacing: 1.4px;
-    text-transform: uppercase;
-    color: var(--dark);
-    background: var(--peach);
-    border: 1px solid #ded6cf;
-    border-radius: 30px;
-    padding: 4px 10px;
-  }
-
-  @media (max-width: 1200px) {
-    .services-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 900px) {
-    .featured-services,
-    .why-choose,
-    .booking-section,
-    .promotions-label,
-    .contact-preview,
-    .announcements-section,
-    .promo-grid,
-    .section-header,
-    .products,
-    .products-row2 {
-      margin-left: 20px;
-      margin-right: 20px;
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    .announcements-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .services-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .why-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .booking-link-card {
-      grid-template-columns: 1fr;
-      align-items: flex-start;
-      min-height: 0;
-      padding: 20px;
-    }
-
-    .booking-link-image {
-      width: 100%;
-      height: 240px;
-    }
-
-    .contact-preview-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .featured-services-header,
-    .why-choose-header,
-    .announcements-header,
-    .booking-section-header,
-    .promotions-label,
-    .contact-preview-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-    }
-
-    .featured-services-header h2,
-    .why-choose-header h2,
-    .announcements-header h2,
-    .booking-section-header h2,
-    .promotions-label h2,
-    .contact-preview-header h2 {
-      font-size: 32px;
-    }
-
-    .services-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .why-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .announcement-card {
-      grid-template-columns: 1fr;
-    }
-
-    .announcement-card img {
-      width: 100%;
-      height: 180px;
-    }
-
-    .booking-link-pill {
-      margin-top: 4px;
-    }
-  }
-
-  /* ── PROMO GRID ── */
-  .promo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 34px 48px 16px;
-  }
-
-  .promo-card {
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 28px;
-    background: var(--peach);
-  }
-
-  .promo-card > * {
-    position: relative;
-    z-index: 2;
-  }
-
-  .promo-card.large {
-    grid-row: span 2;
-    min-height: 420px;
-    background: var(--peach);
-  }
-
-  .promo-card.green { background: var(--peach); }
-  .promo-card.photo { background: var(--peach); }
-
-  .promo-photo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: .36;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .promo-photo-clear {
-    opacity: 1;
-  }
-
-  .promo-badge {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--rose);
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-
-  .promo-card h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 400;
-    line-height: 1.1;
-    margin-bottom: 14px;
-    color: var(--dark);
-    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.85);
-  }
-
-  .promo-card h3 {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-
-  .shop-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--dark);
-    text-decoration: none;
-    font-weight: 500;
-    border-bottom: 1px solid var(--dark);
-    padding-bottom: 2px;
-    transition: color .2s, border-color .2s;
-  }
-
-  .shop-link:hover { color: var(--rose); border-color: var(--rose); }
-
-  .promo-card.large .promo-badge,
-  .promo-card.large h2,
-  .promo-card.large .shop-link {
-    background: rgba(255, 255, 255, 0.82);
-    width: fit-content;
-    padding: 4px 8px;
-    border-radius: 6px;
-    backdrop-filter: blur(1px);
-  }
-
-  .promo-card.green h3,
-  .promo-card.green .shop-link,
-  .promo-card.photo .promo-badge,
-  .promo-card.photo h3,
-  .promo-card.photo .shop-link {
-    background: rgba(255, 255, 255, 0.82);
-    width: fit-content;
-    padding: 4px 8px;
-    border-radius: 6px;
-    backdrop-filter: blur(1px);
-  }
-
-  /* Decorative product images in promo cards */
-  .promo-deco {
-    position: absolute;
-    font-size: 56px;
-    opacity: .5;
-    color: var(--rose);
-  }
-
-  .promo-card.large .promo-deco { top: 40px; right: 40px; font-size: 100px; }
-  .promo-card.green .promo-deco { top: 16px; right: 16px; font-size: 64px; }
-  .promo-card.photo .promo-deco { top: 16px; right: 24px; font-size: 60px; }
-
-  /* Products with SVG placeholders */
-  .promo-products {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    opacity: .8;
-  }
-
-  .tube {
-    width: 18px;
-    height: 70px;
-    background: linear-gradient(180deg, #e0cfc4 0%, #c4a898 100%);
-    border-radius: 10px;
-  }
-
-  .tube.tall { height: 90px; }
-
-  .promo-products {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    z-index: 1;
-  }
-
-  .promo-products.green {
-    gap: 8px;
-    align-items: center;
-  }
-
-  .promo-bottle {
-    width: 22px;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #ece2d8, #cdb39f);
-    box-shadow: 0 6px 18px rgba(0,0,0,.12);
-  }
-
-  .promo-bottle.h-80 { height: 80px; }
-  .promo-bottle.h-90 { height: 90px; }
-  .promo-bottle.h-100 { height: 100px; }
-  .promo-bottle.h-140 { height: 140px; }
-  .promo-bottle.w-16 { width: 16px; border-radius: 10px; }
-  .promo-bottle.w-12 { width: 12px; border-radius: 10px; }
-
-  .promo-bottle.green-tone {
-    background: linear-gradient(180deg, #ceddc9, #95b58d);
-  }
-
-  .promo-icon-round {
-    width: 60px;
-    height: 60px;
-    background: rgba(255,255,255,.72);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    box-shadow: 0 4px 14px rgba(0,0,0,.08);
-  }
-
-  .promo-icon-round i {
-    color: var(--dark);
-  }
-
-  .promo-overlay-right {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    z-index: 1;
-  }
-
-  /* ── FEATURED PRODUCTS HEADER ── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 48px 48px 24px;
-  }
-
-  .section-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .section-header p {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.6px;
-    color: var(--mid);
-    margin-top: 4px;
-  }
-
-  .featured-head-copy {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .view-all-btn {
-    display: inline-block;
-    background: var(--dark);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: 4px;
-    padding: 11px 16px;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: background .2s, transform .15s;
-    white-space: nowrap;
-  }
-
-  .view-all-btn:hover {
-    background: var(--rose);
-    transform: translateY(-1px);
-  }
-
-  /* ── PRODUCT GRID ── */
-  .products {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding: 0 48px 48px;
-  }
-
-  .product-card {
-    background: var(--peach);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: box-shadow .25s, transform .2s;
-    cursor: pointer;
-  }
-
-  .product-card:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,.1);
-    transform: translateY(-3px);
-  }
-
-  .product-img {
-    background: #f3eeea;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 72px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .product-img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,.3) 0%, transparent 60%);
-  }
-
-  .product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    position: relative;
-    z-index: 1;
-  }
-
-  .product-info {
-    padding: 16px;
-  }
-
-  .product-info h4 {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--mid);
-    margin-bottom: 6px;
-    line-height: 1.4;
-  }
-
-  .product-price {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--dark);
-  }
-
-  .product-price span {
-    font-family: 'Jost', sans-serif;
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--light);
-    text-decoration: line-through;
-    margin-left: 8px;
-  }
-
-  /* ── SECOND ROW PRODUCTS ── */
-  .products-row2 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding: 0 48px 60px;
-  }
-
-  /* Scroll animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero { animation: fadeUp .7s ease both; }
-  .promo-grid { animation: fadeUp .7s .15s ease both; }
-  .products { animation: fadeUp .7s .3s ease both; }
-
-  /* Stars */
-  .stars {
-    color: #f5b84b;
-    font-size: 11px;
-    margin-bottom: 4px;
-    display: inline-flex;
-    gap: 2px;
-  }
-
-  /* Wishlist */
-  .wishlist-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
-    font-size: 14px;
-    opacity: 0;
-    transition: opacity .2s;
-    z-index: 2;
-  }
-
-  .wishlist-btn i {
-    color: var(--rose);
-  }
-
-  .product-card:hover .wishlist-btn { opacity: 1; }
-
-  /* ── CONTACT & LOCATION PREVIEW ── */
-  .contact-preview {
-    margin: 16px 48px 48px;
-    background: var(--peach);
-    border: 1px solid #eee7e0;
-    border-radius: 12px;
-    padding: 20px;
-  }
-
-  .contact-preview-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-  }
-
-  .contact-preview-header h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .contact-preview-sub {
-    font-size: 11px;
-    letter-spacing: 1.7px;
-    text-transform: uppercase;
-    color: var(--mid);
-  }
-
-  .contact-preview-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 16px;
-    align-items: stretch;
-  }
-
-  .contact-card {
-    background: var(--peach);
-    border: 1px solid #ece4dc;
-    border-radius: 10px;
-    padding: 16px;
-  }
-
-  .contact-item {
-    margin-bottom: 12px;
-  }
-
-  .contact-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .contact-item h4 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.4px;
-    color: var(--mid);
-    margin-bottom: 4px;
-  }
-
-  .contact-item p,
-  .contact-item a {
-    font-size: 14px;
-    color: var(--dark);
-    text-decoration: none;
-    line-height: 1.55;
-  }
-
-  .whatsapp-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    color: var(--dark);
-    padding: 0;
-    border-radius: 0;
-    font-size: 22px;
-    letter-spacing: 0;
-    text-transform: none;
-    text-decoration: none;
-    font-weight: 500;
-    transition: transform .15s, color .2s;
-    margin-top: 4px;
-  }
-
-  .contact-item .whatsapp-btn,
-  .contact-item .whatsapp-btn i {
-    color: var(--dark);
-  }
-
-  .whatsapp-btn:hover {
-    transform: translateY(-1px);
-    color: var(--mid);
-  }
-
-  .whatsapp-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .map-wrap {
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #ece4dc;
-    min-height: 290px;
-    background: #f0ede9;
-  }
-
-  .map-wrap iframe {
-    width: 100%;
-    height: 100%;
-    min-height: 290px;
-    border: 0;
-    display: block;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--dark);
-    color: rgba(255,255,255,.78);
-    padding: 30px 48px 20px;
-    font-size: 12px;
-    letter-spacing: .6px;
-  }
-
-  footer a { color: var(--blush); text-decoration: none; }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr 1fr;
-    gap: 18px;
-    margin-bottom: 18px;
-  }
-
-  .footer-brand h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--white);
-  }
-
-  .footer-brand p {
-    color: rgba(255,255,255,.68);
-    line-height: 1.6;
-  }
-
-  .footer-col h4 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.4px;
-    color: rgba(255,255,255,.82);
-    margin-bottom: 8px;
-  }
-
-  .footer-links,
-  .footer-policies {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 0;
-    margin: 0;
-  }
-
-  .social-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .social-links a {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.25);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--white);
-    transition: transform .15s, background .2s, border-color .2s;
-  }
-
-  .social-links a:hover {
-    transform: translateY(-1px);
-    background: rgba(184,149,106,.25);
-    border-color: rgba(184,149,106,.6);
-  }
-
-  .footer-contact p {
-    margin-bottom: 6px;
-    color: rgba(255,255,255,.72);
-    line-height: 1.5;
-  }
-
-  .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,.18);
-    padding-top: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    color: rgba(255,255,255,.64);
-    font-size: 11px;
-  }
-
-  .footer-bottom-links {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .footer-bottom-links a {
-    color: rgba(255,255,255,.74);
-  }
-
-  @media (max-width: 900px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  @media (max-width: 640px) {
-    footer {
-      padding: 24px 20px 18px;
-    }
-
-    .footer-grid {
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    .footer-bottom {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-
-  /* Right column of promo stacked */
-  .promo-right {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .icon-btn { position: relative; }
-  .shop-link-spaced { margin-top: 12px; }
-  .shop-link-spaced-sm { margin-top: 10px; }
-
-  /* ── HAMBURGER / MOBILE NAV ── */
-  .hamburger {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: var(--dark);
-  }
-
-  .mobile-menu {
-    display: none;
-    background: var(--white);
-    border-bottom: 1px solid #f0ebe5;
-    padding: 16px 24px;
-  }
-
-  .mobile-menu ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .mobile-menu ul a {
-    text-decoration: none;
-    color: var(--dark);
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 400;
-  }
-
-  .mobile-menu.open { display: block; }
-
-  /* ── RESPONSIVE FIXES ── */
-  @media (max-width: 768px) {
-    nav {
-      padding: 14px 20px;
-    }
-
-    .nav-links {
-      display: none;
-    }
-
-    .hamburger {
-      display: block;
-    }
-
-    .hero {
-      grid-template-columns: 1fr;
-      margin: 16px;
-      min-height: auto;
-    }
-
-    .hero-img-area {
-      min-height: 280px;
-      padding: 0;
-    }
-
-    .hero-content {
-      padding: 32px 24px;
-    }
-
-    .hero-content h1 {
-      font-size: 38px;
-    }
-
-    .promo-grid {
-      grid-template-columns: 1fr;
-      margin: 20px 16px 16px;
-    }
-
-    .promo-card.large {
-      min-height: 280px;
-    }
-
-    .products {
-      grid-template-columns: repeat(2, 1fr);
-      padding: 0 16px 32px;
-    }
-
-    .products-row2 {
-      grid-template-columns: repeat(2, 1fr);
-      padding: 0 16px 40px;
-    }
-
-    .section-header {
-      padding: 32px 16px 16px;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .products {
-      grid-template-columns: 1fr;
-    }
-
-    .products-row2 {
-      grid-template-columns: 1fr;
-    }
-
-    .hero-content h1 {
-      font-size: 32px;
-    }
-  }
-</style>
-</head>
-<body>
-
-<!-- ANNOUNCEMENT -->
-<div class="announcement" aria-label="Announcements">
-  <div class="announcement-track">
-    <span class="announcement-item">Free Standard Shipping on All Zambian Orders.</span>
-    <span class="announcement-item">Free Standard Shipping on All Zambian Orders.</span>
-    <span class="announcement-item">Free Standard Shipping on All Zambian Orders.</span>
-    <span class="announcement-item">Free Standard Shipping on All Zambian Orders.</span>
-  </div>
-</div>
-
-<!-- NAV -->
-<nav>
-  <ul class="nav-links">
-    <li><a href="#">Home</a></li>
-    <li><a href="#">Services</a></li>
-    <li><a href="#">Bookings</a></li>
-    <li><a href="#">Gallery</a></li>
-    <li><a href="#">Contact Us</a></li>
-  </ul>
-  <a href="#" class="logo">Skin Sensation</a>
-  <div class="nav-icons">
-    <button title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-    <button title="Account" aria-label="Account"><i class="fa-regular fa-user"></i></button>
-    <button class="icon-btn" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-heart"></i><span class="badge">0</span></button>
-    <button class="icon-btn" title="Cart" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="badge">3</span></button>
-    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
-  </div>
-</nav>
-<div class="mobile-menu" id="mobileMenu">
-  <ul>
-    <li><a href="#">Home</a></li>
-    <li><a href="#">Services</a></li>
-    <li><a href="#">Bookings</a></li>
-    <li><a href="#">Gallery</a></li>
-    <li><a href="#">Contact Us</a></li>
-  </ul>
-</div>
+{% extends 'layouts/base.html' %}
+{% block title %}Skin Sensation{% endblock %}
+{% block content %}
 
 <!-- HERO -->
 <section class="hero">
@@ -1577,7 +16,7 @@
   <div class="hero-content">
     <h1>Discover<em>The Secrets<br>Of Beauty</em></h1>
     <p>Get them together (for less!) for dewy, natural-looking coverage that still looks like skin.</p>
-    <a href="#" class="btn-dark">Book Now</a>
+    <a href="{% url 'booking' %}" class="btn-dark">Book Now</a>
   </div>
 </section>
 
@@ -1616,47 +55,55 @@
       <h2>Featured Services</h2>
       <p class="featured-services-sub">Top treatments clients love</p>
     </div>
-    <a href="#" class="view-all-services-btn">View All Services</a>
+    <a href="{% url 'services' %}" class="view-all-services-btn">View All Services</a>
   </div>
 
   <div class="services-grid">
     <article class="service-card">
-      <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=700&q=80" alt="Facials treatment">
+      <div class="service-card-img">
+        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
+        <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=700&q=80" alt="Facials treatment">
+      </div>
       <div class="service-card-body">
-        <h3>Facials</h3>
-        <p>Deep-cleansing and glow-boosting facial rituals tailored to your skin type.</p>
-        <div class="service-price">From K250</div>
-        <a href="#" class="btn-service">Book Now</a>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <h3>Deep-cleansing and glow-boosting facial rituals tailored to your skin type.</h3>
+        <div class="service-price">Facials <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K250</span></div>
       </div>
     </article>
 
     <article class="service-card">
-      <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=700&q=80" alt="Massage therapy service">
+      <div class="service-card-img">
+        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
+        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=700&q=80" alt="Massage therapy service">
+      </div>
       <div class="service-card-body">
-        <h3>Massage Therapy</h3>
-        <p>Relaxing full-body and targeted massage sessions to ease tension and restore calm.</p>
-        <div class="service-price">From K400</div>
-        <a href="#" class="btn-service">Book Now</a>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <h3>Relaxing full-body and targeted massage sessions to ease tension and restore calm.</h3>
+        <div class="service-price">Massage Therapy <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K400</span></div>
       </div>
     </article>
 
     <article class="service-card">
-      <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=80" alt="Body treatment products">
+      <div class="service-card-img">
+        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
+        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=80" alt="Body treatment products">
+      </div>
       <div class="service-card-body">
-        <h3>Body Treatments</h3>
-        <p>Exfoliating wraps and polishing treatments that leave your skin smooth and renewed.</p>
-        <div class="service-price">From K300</div>
-        <a href="#" class="btn-service">Book Now</a>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+        <h3>Exfoliating wraps and polishing treatments that leave your skin smooth and renewed.</h3>
+        <div class="service-price">Body Treatments <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K300</span></div>
       </div>
     </article>
 
     <article class="service-card">
-      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&q=80" alt="Nail care service">
+      <div class="service-card-img">
+        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
+        <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&q=80" alt="Nail care service">
+      </div>
       <div class="service-card-body">
-        <h3>Nail Care</h3>
-        <p>Professional manicure and pedicure care with long-lasting finishes and detail work.</p>
-        <div class="service-price">From K100</div>
-        <a href="#" class="btn-service">Book Now</a>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+        <h3>Professional manicure and pedicure care with long-lasting finishes and detail work.</h3>
+        <div class="service-price">Nail Care <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K100</span></div>
       </div>
     </article>
 
@@ -1703,20 +150,119 @@
   </div>
 </section>
 
-<!-- BOOKING -->
-<section class="booking-section">
-  <div class="booking-section-header">
-    <h2>Booking</h2>
-    <p class="booking-section-sub">Plan your full appointment</p>
-  </div>
-  <a class="booking-link-card" href="booking.html" aria-label="Go to booking page">
-    <img class="booking-link-image" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=700&q=80" alt="Relaxing spa treatment setup">
-    <div>
-      <h3>Start Booking</h3>
-      <p>Select services, choose your preferred date and time, and complete your booking on the dedicated booking page.</p>
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" aria-labelledby="testimonials-heading">
+  <div class="section-header testimonials-section-header">
+    <div class="featured-head-copy">
+      <h2 id="testimonials-heading">Client Reviews</h2>
+      <p>What our guests say about Skin Sensation</p>
     </div>
-    <span class="booking-link-pill">Go To Booking <i class="fa-solid fa-arrow-right"></i></span>
-  </a>
+  </div>
+
+  <div class="testimonials-carousel" data-testimonials-carousel>
+    <button type="button" class="testimonials-nav testimonials-prev" aria-label="Previous testimonial" data-testimonials-prev>
+      <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+    </button>
+    <div class="testimonials-viewport" data-testimonials-viewport tabindex="0" aria-roledescription="carousel" aria-label="Customer testimonials">
+      <div class="testimonials-track">
+        <article class="testimonial-card">
+          <div class="testimonial-card-inner">
+            <div class="stars testimonial-stars" aria-label="5 out of 5 stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <blockquote class="testimonial-quote">
+              <p>My facial was incredibly relaxing and my skin still feels balanced days later. The therapist explained every step without rushing.</p>
+            </blockquote>
+            <p class="testimonial-author">Chanda M.</p>
+          </div>
+        </article>
+        <article class="testimonial-card">
+          <div class="testimonial-card-inner">
+            <div class="stars testimonial-stars" aria-label="5 out of 5 stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <blockquote class="testimonial-quote">
+              <p>Best massage I have had in Lusaka—firm pressure exactly where I needed it. Booking again before the end of the month.</p>
+            </blockquote>
+            <p class="testimonial-author">Tapiwa K.</p>
+          </div>
+        </article>
+        <article class="testimonial-card">
+          <div class="testimonial-card-inner">
+            <div class="stars testimonial-stars" aria-label="4 out of 5 stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+            </div>
+            <blockquote class="testimonial-quote">
+              <p>Gel manicure lasted two full weeks without chips. Lovely attention to cuticles and the space feels spotless.</p>
+            </blockquote>
+            <p class="testimonial-author">Ruth B.</p>
+          </div>
+        </article>
+        <article class="testimonial-card">
+          <div class="testimonial-card-inner">
+            <div class="stars testimonial-stars" aria-label="5 out of 5 stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <blockquote class="testimonial-quote">
+              <p>Professional waxing with minimal discomfort. Clear aftercare tips and easy scheduling on WhatsApp.</p>
+            </blockquote>
+            <p class="testimonial-author">Michael N.</p>
+          </div>
+        </article>
+        <article class="testimonial-card">
+          <div class="testimonial-card-inner">
+            <div class="stars testimonial-stars" aria-label="5 out of 5 stars">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <blockquote class="testimonial-quote">
+              <p>I trust Skin Sensation for both treatments and product recommendations. Warm staff and a calm atmosphere every visit.</p>
+            </blockquote>
+            <p class="testimonial-author">Linda H.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+    <button type="button" class="testimonials-nav testimonials-next" aria-label="Next testimonial" data-testimonials-next>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+    </button>
+    <div class="testimonials-dots" role="tablist" aria-label="Choose testimonial slide">
+      <button type="button" class="testimonials-dot is-active" role="tab" aria-selected="true" aria-label="Testimonial 1 of 5" data-testimonials-dot></button>
+      <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 2 of 5" data-testimonials-dot></button>
+      <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 3 of 5" data-testimonials-dot></button>
+      <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 4 of 5" data-testimonials-dot></button>
+      <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 5 of 5" data-testimonials-dot></button>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY PREVIEW -->
+<section class="gallery-preview-section" aria-labelledby="gallery-preview-heading">
+  <div class="gallery-preview-header">
+    <div class="featured-head-copy">
+      <h2 id="gallery-preview-heading">Gallery Preview</h2>
+      <p>A glimpse of our space, treatments, and team</p>
+    </div>
+    <a href="{% url 'gallery' %}" class="view-all-btn">View Full Gallery</a>
+  </div>
+
+  <div class="gallery-preview-grid">
+    <figure class="gallery-preview-item">
+      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80" alt="Calm spa reception and seating area" width="800" height="600">
+      <figcaption class="gallery-preview-caption">Spa Interior</figcaption>
+    </figure>
+    <figure class="gallery-preview-item">
+      <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=800&q=80" alt="Treatment room with massage table and soft lighting" width="800" height="600">
+      <figcaption class="gallery-preview-caption">Treatment Rooms</figcaption>
+    </figure>
+    <figure class="gallery-preview-item">
+      <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" alt="Facial treatment and professional skincare service" width="800" height="600">
+      <figcaption class="gallery-preview-caption">Services</figcaption>
+    </figure>
+    <figure class="gallery-preview-item">
+      <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Spa therapist welcoming a guest with a smile" width="800" height="600">
+      <figcaption class="gallery-preview-caption">Staff &amp; Atmosphere</figcaption>
+    </figure>
+  </div>
 </section>
 
 <!-- PROMOTIONS / PACKAGES LABEL -->
@@ -1832,7 +378,7 @@
 </div>
 
 <!-- CONTACT & LOCATION PREVIEW -->
-<section class="contact-preview">
+<section class="contact-preview" id="contact">
   <div class="contact-preview-header">
     <h2>Contact &amp; Location Preview</h2>
     <p class="contact-preview-sub">Visit us in Kabulonga, Lusaka</p>
@@ -1877,75 +423,4 @@
   </div>
 </section>
 
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <h3>Skin Sensation</h3>
-      <p>Your trusted wellness and beauty destination in Lusaka for premium spa treatments.</p>
-    </div>
-
-    <div class="footer-col">
-      <h4>Quick Links</h4>
-      <ul class="footer-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Bookings</a></li>
-        <li><a href="#">Gallery</a></li>
-        <li><a href="#">Contact Us</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h4>Social Media</h4>
-      <div class="social-links">
-        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-      </div>
-    </div>
-
-    <div class="footer-col footer-contact">
-      <h4>Contact Details</h4>
-      <p><a href="tel:+260977123456">+260 977 123 456</a></p>
-      <p><a href="mailto:hello@skinsensationzm.com">hello@skinsensationzm.com</a></p>
-      <p>Kabulonga, Kudu Road, Springbok Close, Lusaka</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>© 2024 Skin Sensation. All rights reserved.</p>
-    <div class="footer-bottom-links">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Refund Policy</a>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Wishlist toggle
-  document.querySelectorAll('.wishlist-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const icon = btn.querySelector('i');
-      if (!icon) return;
-      icon.classList.toggle('fa-regular');
-      icon.classList.toggle('fa-solid');
-    });
-  });
-
-  // Booking callout now links directly to booking.html
-
-  // Hamburger menu
-  const hamburger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobileMenu');
-  hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('open');
-    const icon = hamburger.querySelector('i');
-    icon.classList.toggle('fa-bars');
-    icon.classList.toggle('fa-xmark');
-  });
-</script>
-</body>
-</html>
+{% endblock %}

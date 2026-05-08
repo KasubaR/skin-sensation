@@ -1,18 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skin Sensation - Booking</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="container">
-    <section aria-labelledby="booking-page-title">
-      <h1 id="booking-page-title">Booking</h1>
-      <p>Please use the full booking flow on this page. You can continue improving this page with your complete booking form.</p>
-      <p><a href="index.html">Back to Home</a></p>
-    </section>
-  </main>
-</body>
-</html>
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Booking | Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'booking.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="booking-page-main">
+  <section class="booking-page-inner" aria-labelledby="booking-page-title">
+    <nav class="services-breadcrumb booking-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">Booking</span>
+    </nav>
+    <h1 id="booking-page-title">Booking</h1>
+    <p class="booking-lead">Complete your appointment request using our booking flow. Need help choosing a treatment? Browse <a href="{% url 'services' %}">our services</a> first.</p>
+    <p><a class="btn-dark" href="{% url 'services' %}">View Services</a></p>
+  </section>
+</main>
+{% endblock %}

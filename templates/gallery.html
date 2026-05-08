@@ -1,0 +1,23 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Gallery | Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gallery.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="gallery-page">
+  <section class="gallery-page-intro" aria-labelledby="gallery-page-title">
+    <nav class="gallery-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">Gallery</span>
+    </nav>
+    <h1 id="gallery-page-title">Gallery</h1>
+    <p class="gallery-page-lead">Full gallery coming soon. Until then, enjoy the preview on our home page or visit us in Kabulonga.</p>
+    <p><a class="btn-dark" href="{% url 'home' %}">Back to Home</a></p>
+  </section>
+</main>
+{% endblock %}

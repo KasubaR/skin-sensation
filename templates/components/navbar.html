@@ -1,0 +1,27 @@
+<!-- NAV -->
+<nav>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'services' %}">Services</a></li>
+    <li><a href="{% url 'booking' %}">Bookings</a></li>
+    <li><a href="{% url 'gallery' %}">Gallery</a></li>
+    <li><a href="{% url 'home' %}#contact">Contact Us</a></li>
+  </ul>
+  <a href="{% url 'home' %}" class="logo">Skin Sensation</a>
+  <div class="nav-icons">
+    <button title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button title="Account" aria-label="Account"><i class="fa-regular fa-user"></i></button>
+    <button class="icon-btn" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-heart"></i><span class="badge">0</span></button>
+    <button class="icon-btn" title="Cart" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="badge">3</span></button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'services' %}">Services</a></li>
+    <li><a href="{% url 'booking' %}">Bookings</a></li>
+    <li><a href="{% url 'gallery' %}">Gallery</a></li>
+    <li><a href="{% url 'home' %}#contact">Contact Us</a></li>
+  </ul>
+</div>

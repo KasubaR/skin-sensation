@@ -1,0 +1,44 @@
+.gallery-page {
+  padding: 48px 48px 80px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.gallery-breadcrumb {
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 12px;
+}
+
+.gallery-breadcrumb a {
+  color: var(--mid);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.gallery-breadcrumb a:hover {
+  color: var(--rose);
+}
+
+.gallery-page-intro h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 500;
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+
+.gallery-page-lead {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.65;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 640px) {
+  .gallery-page {
+    padding: 28px 20px 60px;
+  }
+}
