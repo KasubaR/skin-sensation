@@ -1,4 +1,5 @@
 import logging
+from typing import Dict, Optional
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, mail_managers
@@ -17,7 +18,7 @@ TEMPLATE_APPOINTMENT_CANCELLED = 'appointment_cancelled'
 TEMPLATE_APPOINTMENT_RESCHEDULED = 'appointment_rescheduled'
 
 
-def _recipient_email(appointment) -> str | None:
+def _recipient_email(appointment) -> Optional[str]:
     email = (appointment.customer.email or '').strip()
     return email or None
 
@@ -48,7 +49,7 @@ def _send_html_email(
     subject_template: str,
     body_html_template: str,
     body_text_template: str,
-    extra_context: dict | None = None,
+    extra_context: Optional[Dict] = None,
 ) -> bool:
     log, created = _claim_log(appointment, template_key, recipient)
     if not created:

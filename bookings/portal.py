@@ -1,4 +1,5 @@
 from datetime import date, time
+from typing import Optional, Union
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -53,7 +54,7 @@ def reschedule_appointment(
     appointment: Appointment,
     new_date: date,
     new_start_time: time,
-    staff_id: int | str | None = None,
+    staff_id: Union[int, str, None] = None,
 ) -> Appointment:
     if not can_reschedule_appointment(appointment):
         raise PortalError(

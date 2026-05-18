@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import date, datetime, time, timedelta
+from typing import Dict, List, Optional, Tuple, Union
 
 from django.db.models import Count, Q
 from django.utils import timezone
@@ -45,7 +46,7 @@ def _combine(date_value: date, t: time) -> datetime:
     return datetime.combine(date_value, t)
 
 
-def get_treatments_by_ids(service_ids: list[int]) -> list[Treatment]:
+def get_treatments_by_ids(service_ids: List[int]) -> List[Treatment]:
     """service_ids are treatment primary keys (legacy param name)."""
     treatments = list(
         Treatment.objects.filter(pk__in=service_ids, is_active=True).order_by('pk')
@@ -61,9 +62,9 @@ get_services_by_ids = get_treatments_by_ids
 
 
 def get_eligible_staff(
-    service_ids: list[int],
-    staff_id: int | str | None = None,
-) -> list[Staff]:
+    service_ids: List[int],
+    staff_id: Union[int, str, None] = None,
+) -> List[Staff]:
     qs = Staff.objects.filter(is_available=True).annotate(
         treatment_count=Count('treatments'),
     )
@@ -82,7 +83,7 @@ def get_eligible_staff(
     return list(qs)
 
 
-def get_staff_working_window(staff: Staff, appointment_date: date) -> tuple[time, time] | None:
+def get_staff_working_window(staff: Staff, appointment_date: date) -> Optional[Tuple[time, time]]:
     weekday = appointment_date.weekday()
     availability = StaffAvailability.objects.filter(
         staff=staff,
@@ -99,7 +100,7 @@ def get_staff_working_window(staff: Staff, appointment_date: date) -> tuple[time
 def get_staff_appointments(
     staff: Staff,
     appointment_date: date,
-    exclude_appointment_id: int | None = None,
+    exclude_appointment_id: Optional[int] = None,
 ):
     qs = Appointment.objects.filter(
         assigned_staff=staff,
@@ -146,7 +147,7 @@ def _generate_slot_starts(window_start: time, window_end: time) -> list[time]:
 
 def _compute_staff_slots(
     staff: Staff,
-    window: tuple[time, time] | None,
+    window: Optional[Tuple[time, time]],
     appointments: list,
     appointment_date: date,
     appointment_minutes: int,
@@ -191,8 +192,8 @@ def get_available_slots(
     *,
     appointment_date: date,
     service_ids: list[int],
-    staff_id: int | str | None = None,
-    exclude_appointment_id: int | None = None,
+    staff_id: Union[int, str, None] = None,
+    exclude_appointment_id: Optional[int] = None,
 ) -> dict:
     services = get_services_by_ids(service_ids)
     appointment_minutes = calculate_appointment_minutes(services)
@@ -218,7 +219,7 @@ def get_available_slots(
     )
 
     # Pre-fetch all appointments for this date across all staff in one query.
-    appt_map: dict[int, list] = defaultdict(list)
+    appt_map: Dict[int, list] = defaultdict(list)
     appt_qs = Appointment.objects.filter(
         assigned_staff__in=staff_members,
         appointment_date=appointment_date,
@@ -230,7 +231,7 @@ def get_available_slots(
         appt_map[appt.assigned_staff_id].append(appt)
 
     now = timezone.localtime()
-    slot_map: dict[str, dict] = {}
+    slot_map: Dict[str, dict] = {}
     for staff in staff_members:
         avail = avail_map.get(staff.pk)
         if avail:
@@ -268,7 +269,7 @@ def slot_is_available(
     appointment_date: date,
     start_time: time,
     services: list[Treatment],
-    exclude_appointment_id: int | None = None,
+    exclude_appointment_id: Optional[int] = None,
 ) -> bool:
     appointment_minutes = calculate_appointment_minutes(services)
     window = get_staff_working_window(staff, appointment_date)
@@ -295,10 +296,10 @@ def resolve_staff_for_slot(
     service_ids: list[int],
     appointment_date: date,
     start_time: time,
-    staff_id: int | str | None,
-    services: list[Treatment] | None = None,
-    exclude_appointment_id: int | None = None,
-) -> Staff | None:
+    staff_id: Union[int, str, None],
+    services: Optional[List[Treatment]] = None,
+    exclude_appointment_id: Optional[int] = None,
+) -> Optional[Staff]:
     if services is None:
         services = get_services_by_ids(service_ids)
 
