@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+{% load i18n static %}
+{% block title %}{% trans "Sign up" %} · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'account.css' %}">
+{% endblock %}
+{% block content %}
+<div class="auth-split">
+
+  <!-- Left brand panel -->
+  <div class="auth-panel" style="background-image: url('{% static 'images/SSS.png' %}')">
+    <div class="auth-panel__overlay"></div>
+    <div class="auth-panel__content">
+      <span class="auth-panel__eyebrow">Welcome to</span>
+      <h2 class="auth-panel__brand">Skin Sensation</h2>
+      <p class="auth-panel__tagline">Luxury skincare &amp; beauty treatments tailored to you.</p>
+      <div class="auth-panel__divider"></div>
+      <ul class="auth-panel__perks">
+        <li><i class="fa-regular fa-calendar-check"></i> Book appointments instantly</li>
+        <li><i class="fa-regular fa-clock"></i> Manage your schedule</li>
+        <li><i class="fa-regular fa-star"></i> Exclusive member offers</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-card">
+      <div class="auth-form-card__header">
+        <p class="auth-form-card__eyebrow">Create account</p>
+        <h1 class="auth-form-card__title">Join Us</h1>
+        <div class="auth-form-card__rule"></div>
+      </div>
+
+      {% if not SOCIALACCOUNT_ONLY %}
+      <p class="auth-form-card__subtext">
+        {% blocktranslate %}Already have an account? <a href="{{ login_url }}">Sign in</a>.{% endblocktranslate %}
+      </p>
+
+      <form class="account-form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ redirect_field }}
+        {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="helptext">{{ field.help_text }}</div>{% endif %}
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="account-btn account-btn--full">{% trans "Create Account" %}</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

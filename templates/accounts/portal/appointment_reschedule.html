@@ -1,0 +1,56 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %}Reschedule {{ booking_reference }} · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portal.css' %}">
+{% endblock %}
+{% block content %}
+<section class="portal-page portal-page--reschedule"
+  data-portal-reschedule
+  data-availability-url="{{ availability_url }}"
+  data-service-ids="{{ service_ids|join:',' }}"
+  data-staff-id="{{ staff_id }}"
+  data-exclude-id="{{ exclude_appointment_id }}">
+  <nav class="portal-breadcrumb">
+    <a href="{% url 'appointment_list' %}">My appointments</a>
+    <span aria-hidden="true">/</span>
+    <a href="{% url 'appointment_detail' booking_reference %}">{{ booking_reference }}</a>
+    <span aria-hidden="true">/</span>
+    <span>Reschedule</span>
+  </nav>
+
+  <header class="portal-header">
+    <p class="portal-eyebrow">Change appointment</p>
+    <h1 class="portal-title">Reschedule</h1>
+    <p class="portal-subtitle">Pick a new date and time. Your services stay the same.</p>
+  </header>
+
+  <form class="portal-reschedule-form" method="post" action="">
+    {% csrf_token %}
+    <div class="portal-form-group">
+      <label for="reschedule-date">New date</label>
+      <input type="date" id="reschedule-date" name="appointment_date" required
+        min="{% now 'Y-m-d' %}">
+    </div>
+
+    <div class="portal-form-group">
+      <p class="portal-form-label">Available times</p>
+      <div class="portal-slots" data-portal-slots role="group" aria-label="Available time slots">
+        <p class="portal-slots__hint">Select a date to see available times.</p>
+      </div>
+      <input type="hidden" name="start_time" id="reschedule-time" required>
+      <input type="hidden" name="staff_id" id="reschedule-staff" value="{{ staff_id }}">
+    </div>
+
+    <div class="portal-actions">
+      <button type="submit" class="portal-btn portal-btn--primary" data-portal-submit disabled>
+        Confirm reschedule
+      </button>
+      <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_detail' booking_reference %}">Back</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'portal.js' %}" defer></script>
+{% endblock %}

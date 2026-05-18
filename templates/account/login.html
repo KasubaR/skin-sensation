@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+{% load i18n static %}
+{% block title %}{% trans "Sign in" %} · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'account.css' %}">
+{% endblock %}
+{% block content %}
+<div class="auth-split">
+
+  <!-- Left brand panel -->
+  <div class="auth-panel" style="background-image: url('{% static 'images/SSS.png' %}')">
+    <div class="auth-panel__overlay"></div>
+    <div class="auth-panel__content">
+      <span class="auth-panel__eyebrow">Welcome back to</span>
+      <h2 class="auth-panel__brand">Skin Sensation</h2>
+      <p class="auth-panel__tagline">Luxury skincare &amp; beauty treatments tailored to you.</p>
+      <div class="auth-panel__divider"></div>
+      <ul class="auth-panel__perks">
+        <li><i class="fa-regular fa-calendar-check"></i> Book appointments instantly</li>
+        <li><i class="fa-regular fa-clock"></i> Manage your schedule</li>
+        <li><i class="fa-regular fa-star"></i> Exclusive member offers</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-card">
+      <div class="auth-form-card__header">
+        <p class="auth-form-card__eyebrow">Member access</p>
+        <h1 class="auth-form-card__title">Sign In</h1>
+        <div class="auth-form-card__rule"></div>
+      </div>
+
+      {% if not SOCIALACCOUNT_ONLY %}
+      <p class="auth-form-card__subtext">
+        {% blocktranslate %}New here? <a href="{{ signup_url }}">Create an account</a> first.{% endblocktranslate %}
+      </p>
+
+      <form class="account-form" method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ redirect_field }}
+        {% if form.non_field_errors %}
+        <ul class="errorlist form-group">{% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% for field in form %}
+        <div class="form-group account-field account-field--{{ field.name }}">
+          {% if field.name == 'remember' %}
+          <label class="account-checkbox">
+            {{ field }}
+            <span>{{ field.label }}</span>
+          </label>
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+          {% else %}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+          {% endif %}
+        </div>
+        {% endfor %}
+        <div class="account-actions">
+          <button type="submit" class="account-btn account-btn--full">{% trans "Sign In" %}</button>
+        </div>
+        <div class="auth-form-card__footer-link">
+          <a href="{% url 'account_reset_password' %}">{% trans "Forgot your password?" %}</a>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

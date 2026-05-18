@@ -8,16 +8,222 @@
 {% endblock %}
 
 {% block content %}
-<main class="gallery-page">
-  <section class="gallery-page-intro" aria-labelledby="gallery-page-title">
+<div class="gallery-page">
+
+  <!-- INTRO -->
+  <section class="gallery-intro" aria-labelledby="gallery-title">
     <nav class="gallery-breadcrumb" aria-label="Breadcrumb">
       <a href="{% url 'home' %}">Home</a>
       <span aria-hidden="true"> / </span>
       <span aria-current="page">Gallery</span>
     </nav>
-    <h1 id="gallery-page-title">Gallery</h1>
-    <p class="gallery-page-lead">Full gallery coming soon. Until then, enjoy the preview on our home page or visit us in Kabulonga.</p>
-    <p><a class="btn-dark" href="{% url 'home' %}">Back to Home</a></p>
+    <h1 id="gallery-title">Gallery</h1>
+    <p class="gallery-intro-lead">
+      A glimpse inside Skin Sensation — our treatment spaces, signature services, and the moments that make each visit memorable.
+    </p>
   </section>
-</main>
+
+  <!-- FILTER BAR -->
+  <div class="gallery-filters" role="tablist" aria-label="Filter gallery by category">
+    <button class="gallery-filter-btn is-active" role="tab" aria-selected="true"  data-filter="all">All</button>
+    <button class="gallery-filter-btn" role="tab" aria-selected="false" data-filter="interior">Spa Interior</button>
+    <button class="gallery-filter-btn" role="tab" aria-selected="false" data-filter="facials">Facials</button>
+    <button class="gallery-filter-btn" role="tab" aria-selected="false" data-filter="massage">Massage</button>
+    <button class="gallery-filter-btn" role="tab" aria-selected="false" data-filter="body-nails">Body &amp; Nails</button>
+    <button class="gallery-filter-btn" role="tab" aria-selected="false" data-filter="team">Team &amp; Atmosphere</button>
+  </div>
+
+  <!-- GRID -->
+  <div class="gallery-grid" id="galleryGrid" aria-label="Gallery images">
+
+    <!-- Spa Interior -->
+    <figure class="gallery-item gallery-item--wide" data-category="interior"
+            data-src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1400&q=85"
+            data-caption="Reception & lounge area" tabindex="0" role="button" aria-label="View: Reception &amp; lounge area">
+      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=900&q=80"
+           alt="Calm spa reception and lounge area" loading="lazy">
+      <figcaption><span>Spa Interior</span> Reception &amp; lounge area</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="interior"
+            data-src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Treatment suite with soft lighting" tabindex="0" role="button" aria-label="View: Treatment suite with soft lighting">
+      <img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=700&q=80"
+           alt="Treatment suite with soft lighting" loading="lazy">
+      <figcaption><span>Spa Interior</span> Treatment suite</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="interior"
+            data-src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Massage room setup" tabindex="0" role="button" aria-label="View: Massage room setup">
+      <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=700&q=80"
+           alt="Massage room with fresh linens" loading="lazy">
+      <figcaption><span>Spa Interior</span> Massage room</figcaption>
+    </figure>
+
+    <!-- Facials -->
+    <figure class="gallery-item" data-category="facials"
+            data-src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Deep cleansing facial treatment" tabindex="0" role="button" aria-label="View: Deep cleansing facial treatment">
+      <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=700&q=80"
+           alt="Deep cleansing facial treatment" loading="lazy">
+      <figcaption><span>Facials</span> Deep Cleansing Facial</figcaption>
+    </figure>
+
+    <figure class="gallery-item gallery-item--tall" data-category="facials"
+            data-src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Express facial — quick radiance boost" tabindex="0" role="button" aria-label="View: Express facial">
+      <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=700&q=80"
+           alt="Express facial treatment" loading="lazy">
+      <figcaption><span>Facials</span> Express Facial</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="facials"
+            data-src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Brightening facial — even tone &amp; radiance" tabindex="0" role="button" aria-label="View: Brightening facial">
+      <img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=700&q=80"
+           alt="Brightening facial for even tone" loading="lazy">
+      <figcaption><span>Facials</span> Brightening Facial</figcaption>
+    </figure>
+
+    <!-- Massage -->
+    <figure class="gallery-item gallery-item--wide" data-category="massage"
+            data-src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1400&q=85"
+            data-caption="Swedish relaxation massage" tabindex="0" role="button" aria-label="View: Swedish relaxation massage">
+      <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80"
+           alt="Swedish relaxation massage session" loading="lazy">
+      <figcaption><span>Massage</span> Swedish Relaxation Massage</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="massage"
+            data-src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Hot stone massage — heat-assisted muscle release" tabindex="0" role="button" aria-label="View: Hot stone massage">
+      <img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=700&q=80"
+           alt="Hot stone massage treatment" loading="lazy">
+      <figcaption><span>Massage</span> Hot Stone Massage</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="massage"
+            data-src="https://images.unsplash.com/photo-1630963897086-3ed51ef82a1f?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Deep tissue focus — targeted relief" tabindex="0" role="button" aria-label="View: Deep tissue massage">
+      <img src="https://images.unsplash.com/photo-1630963897086-3ed51ef82a1f?auto=format&fit=crop&w=700&q=80"
+           alt="Deep tissue massage" loading="lazy">
+      <figcaption><span>Massage</span> Deep Tissue Focus</figcaption>
+    </figure>
+
+    <!-- Body & Nails -->
+    <figure class="gallery-item gallery-item--tall" data-category="body-nails"
+            data-src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Full-body polish for silky skin" tabindex="0" role="button" aria-label="View: Body polish">
+      <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=700&q=80"
+           alt="Body polish treatment" loading="lazy">
+      <figcaption><span>Body</span> Body Polish</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="body-nails"
+            data-src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Gel manicure — chip-resistant shine" tabindex="0" role="button" aria-label="View: Gel manicure">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&q=80"
+           alt="Gel manicure treatment" loading="lazy">
+      <figcaption><span>Nails</span> Gel Manicure</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="body-nails"
+            data-src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Spa pedicure — soak, exfoliate, polish" tabindex="0" role="button" aria-label="View: Spa pedicure">
+      <img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=700&q=80"
+           alt="Spa pedicure treatment" loading="lazy">
+      <figcaption><span>Nails</span> Spa Pedicure</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="body-nails"
+            data-src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Acrylic nail set with colour finish" tabindex="0" role="button" aria-label="View: Acrylic nail set">
+      <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80"
+           alt="Acrylic full set nail treatment" loading="lazy">
+      <figcaption><span>Nails</span> Acrylic Full Set</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="body-nails"
+            data-src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Back treatment — clarify and restore" tabindex="0" role="button" aria-label="View: Back treatment">
+      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=700&q=80"
+           alt="Back treatment facial protocol" loading="lazy">
+      <figcaption><span>Body</span> Back Treatment</figcaption>
+    </figure>
+
+    <!-- Team & Atmosphere -->
+    <figure class="gallery-item gallery-item--wide" data-category="team"
+            data-src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=85"
+            data-caption="Our therapists — skilled, caring, certified" tabindex="0" role="button" aria-label="View: Our therapists">
+      <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80"
+           alt="Spa therapist welcoming a guest" loading="lazy">
+      <figcaption><span>Team</span> Our Therapists</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="team"
+            data-src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85"
+            data-caption="Premium skincare products we use and recommend" tabindex="0" role="button" aria-label="View: Products we use">
+      <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=80"
+           alt="Premium skincare products on shelf" loading="lazy">
+      <figcaption><span>Atmosphere</span> Products We Use</figcaption>
+    </figure>
+
+    <figure class="gallery-item" data-category="team"
+            data-src="https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=1200&q=85"
+            data-caption="The calm ambiance that sets us apart" tabindex="0" role="button" aria-label="View: Spa ambiance">
+      <img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=700&q=80"
+           alt="Spa ambiance and product display" loading="lazy">
+      <figcaption><span>Atmosphere</span> Spa Ambiance</figcaption>
+    </figure>
+
+  </div><!-- /gallery-grid -->
+
+  <!-- EMPTY STATE (shown when filter has no results) -->
+  <div class="gallery-empty" id="galleryEmpty" hidden aria-live="polite">
+    <i class="fa-regular fa-image" aria-hidden="true"></i>
+    <p>No images in this category yet — check back soon.</p>
+  </div>
+
+  <!-- CTA STRIP -->
+  <section class="gallery-cta" aria-label="Book an appointment">
+    <div class="gallery-cta-inner">
+      <div>
+        <h2>Ready to experience it for yourself?</h2>
+        <p>Reserve your treatment online or send us a message — we'll handle the rest.</p>
+      </div>
+      <div class="gallery-cta-actions">
+        <a class="btn-dark" href="{% url 'booking' %}">
+          <i class="fa-regular fa-calendar-check" aria-hidden="true"></i> Book Now
+        </a>
+        <a class="gallery-cta-wa" href="https://wa.me/260977123456" target="_blank" rel="noopener noreferrer">
+          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /gallery-page -->
+
+<!-- LIGHTBOX -->
+<div class="gallery-lightbox" id="galleryLightbox" hidden aria-modal="true" role="dialog" aria-label="Image lightbox">
+  <button class="gallery-lb-close" id="galleryLbClose" aria-label="Close lightbox">
+    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+  </button>
+  <button class="gallery-lb-prev" id="galleryLbPrev" aria-label="Previous image">
+    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+  </button>
+  <div class="gallery-lb-content">
+    <img class="gallery-lb-img" id="galleryLbImg" src="" alt="">
+    <p class="gallery-lb-caption" id="galleryLbCaption"></p>
+  </div>
+  <button class="gallery-lb-next" id="galleryLbNext" aria-label="Next image">
+    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+  </button>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'gallery.js' %}" defer></script>
 {% endblock %}

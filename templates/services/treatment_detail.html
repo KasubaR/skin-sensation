@@ -1,0 +1,63 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ treatment.name }} | {{ service.name }} | Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="services-page">
+
+  <section class="services-intro" aria-labelledby="treatment-title">
+    <nav class="services-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <a href="{% url 'services' %}">Services</a>
+      <span aria-hidden="true"> / </span>
+      <a href="{% url 'service_treatments' service.slug %}">{{ service.name }}</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">{{ treatment.name }}</span>
+    </nav>
+    <h1 id="treatment-title">{{ treatment.name }}</h1>
+    <p class="services-intro-lead">{{ service.name }}</p>
+  </section>
+
+  <article class="service-detail-card treatment-detail-card">
+    {% if treatment.image %}
+    <div class="service-detail-media">
+      <span class="service-detail-category">{{ service.name }}</span>
+      <img src="{{ treatment.image.url }}" alt="{{ treatment.name }}">
+    </div>
+    {% endif %}
+    <div class="service-detail-body">
+      {% if treatment.description %}
+      <p class="service-detail-desc">{{ treatment.description }}</p>
+      {% endif %}
+      {% if treatment.benefits_list %}
+      <ul class="service-detail-benefits">
+        {% for benefit in treatment.benefits_list %}
+        <li>{{ benefit }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <div class="service-detail-meta">
+        <span class="service-meta-item">
+          <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          <strong>{{ treatment.duration_minutes }} min</strong>
+        </span>
+      </div>
+      <div class="service-detail-price">
+        {% if treatment.price_from %}<span class="from-label">From</span>{% endif %}
+        {% if treatment.price_label %}{{ treatment.price_label }}{% else %}K{{ treatment.price|floatformat:0 }}{% endif %}
+      </div>
+      <div class="service-detail-actions">
+        <a class="btn-dark" href="{% url 'booking' %}?treatment={{ treatment.pk }}">Book this treatment</a>
+        <a class="btn-outline" href="{% url 'service_treatments' service.slug %}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to {{ service.name }}</a>
+      </div>
+    </div>
+  </article>
+
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Appointment reminder</title>
+</head>
+<body style="font-family: Georgia, 'Times New Roman', serif; color: #2c2c2c; line-height: 1.6; max-width: 560px; margin: 0 auto; padding: 24px;">
+  <p>Hi {{ customer_name }},</p>
+  <p>This is a friendly reminder about your appointment at <strong>Skin Sensation</strong> <strong>tomorrow</strong>.</p>
+  <p style="font-size: 1.1em;"><strong>Booking reference:</strong> <code style="background: #f5f0eb; padding: 4px 8px;">{{ booking_reference }}</code></p>
+  <p><strong>When:</strong> {{ appointment_date|date:"l, j F Y" }} · {{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}<br>
+  <strong>Therapist:</strong> {{ staff_name|default:"To be assigned" }}</p>
+  <p><strong>Services</strong></p>
+  <ul style="padding-left: 20px;">
+    {% for item in services %}
+    <li>{{ item.name }}</li>
+    {% endfor %}
+  </ul>
+  <p>If you need to reschedule, please contact us as soon as possible.<br>
+  Call <a href="tel:{{ spa_phone }}">{{ spa_phone }}</a> or <a href="{{ spa_whatsapp_url }}">WhatsApp</a>.</p>
+  <p style="margin-top: 24px; color: #666;">Skin Sensation Spa</p>
+</body>
+</html>

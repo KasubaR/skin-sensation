@@ -1,0 +1,1 @@
+Reminder: your appointment tomorrow — ref {{ booking_reference }}

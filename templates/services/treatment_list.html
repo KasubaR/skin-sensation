@@ -1,0 +1,151 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ service.name }} | Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="services-page">
+
+  <section class="tl-hero" aria-labelledby="service-title">
+    <img class="tl-hero-img" src="{{ hero_image_url }}" alt="{{ service.name }}">
+    <div class="tl-hero-overlay"></div>
+    <div class="tl-hero-content">
+      <nav class="tl-hero-breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'home' %}">Home</a>
+        <span aria-hidden="true"> / </span>
+        <a href="{% url 'services' %}">Services</a>
+        <span aria-hidden="true"> / </span>
+        <span aria-current="page">{{ service.name }}</span>
+      </nav>
+      <h1 id="service-title">{{ service.name }}</h1>
+      {% if service.description %}
+      <p class="tl-hero-lead">{{ service.description }}</p>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if treatments %}
+  {% regroup treatments by subsection as treatment_groups %}
+
+  {% for group in treatment_groups %}
+  <section class="tl-section">
+    <div class="tl-section-head">
+      {% if group.grouper %}
+        <h2 class="tl-section-title tl-section-title--sub">{{ group.grouper }}</h2>
+      {% elif forloop.first %}
+        <h2 class="tl-section-title">Treatments</h2>
+        {% if service.tagline %}<p class="tl-section-sub">{{ service.tagline }}</p>{% endif %}
+      {% endif %}
+    </div>
+    <div class="treatment-list-grid">
+      {% for treatment in group.list %}
+        {% include 'services/components/treatment_card.html' %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+  {% endif %}
+
+  <section class="services-back-row">
+    <a class="btn-outline" href="{% url 'services' %}"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All services</a>
+  </section>
+
+</div>
+
+<!-- Floating booking bar -->
+<div class="tl-booking-bar" id="tlBookingBar" hidden>
+  <div class="tl-booking-bar-inner">
+    <div class="tl-bar-info">
+      <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+      <span id="tlCount"></span>
+      <span class="tl-bar-sep">·</span>
+      <span id="tlTotal"></span>
+    </div>
+    <button class="tl-bar-book-btn" id="tlBookNow" type="button">
+      Book Now <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  document.body.classList.add('has-hero-nav');
+  var hero = document.querySelector('.tl-hero');
+  function onScroll() {
+    var threshold = hero ? hero.offsetHeight - 80 : 60;
+    document.body.classList.toggle('nav-scrolled', window.scrollY > threshold);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<script>
+(function () {
+  const CART_KEY = 'ss_cart_v1';
+  const selected = new Map();
+
+  function updateBar() {
+    const bar = document.getElementById('tlBookingBar');
+    if (!bar) return;
+    const count = selected.size;
+    if (count === 0) { bar.hidden = true; return; }
+    bar.hidden = false;
+    document.getElementById('tlCount').textContent =
+      count + ' treatment' + (count !== 1 ? 's' : '') + ' selected';
+    const total = Array.from(selected.values()).reduce(function (s, t) { return s + t.price; }, 0);
+    document.getElementById('tlTotal').textContent = 'K' + Math.round(total).toLocaleString();
+    try {
+      sessionStorage.setItem(CART_KEY, JSON.stringify({ services: Array.from(selected.keys()) }));
+    } catch (e) {}
+  }
+
+  // Restore selections from sessionStorage on page load
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(CART_KEY));
+    if (saved && saved.services && saved.services.length) {
+      saved.services.forEach(function (id) {
+        const card = document.querySelector('[data-treatment-id="' + id + '"]');
+        if (!card) return;
+        const btn = card.querySelector('[data-treatment-select]');
+        selected.set(id, { price: parseFloat(card.dataset.treatmentPrice) });
+        card.classList.add('is-selected');
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Selected';
+          btn.setAttribute('aria-pressed', 'true');
+        }
+      });
+      updateBar();
+    }
+  } catch (e) {}
+
+  document.getElementById('tlBookNow').addEventListener('click', function () {
+    window.location.href = '{% url "booking" %}';
+  });
+
+  document.querySelectorAll('[data-treatment-select]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const card = this.closest('[data-treatment-id]');
+      const id = parseInt(card.dataset.treatmentId, 10);
+      if (selected.has(id)) {
+        selected.delete(id);
+        card.classList.remove('is-selected');
+        this.textContent = 'Select';
+        this.setAttribute('aria-pressed', 'false');
+      } else {
+        selected.set(id, { price: parseFloat(card.dataset.treatmentPrice) });
+        card.classList.add('is-selected');
+        this.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Selected';
+        this.setAttribute('aria-pressed', 'true');
+      }
+      updateBar();
+    });
+  });
+})();
+</script>
+{% endblock %}

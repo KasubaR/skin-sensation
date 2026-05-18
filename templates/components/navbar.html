@@ -1,19 +1,32 @@
+{% load static %}
 <!-- NAV -->
-<nav>
+<nav class="site-nav">
   <ul class="nav-links">
     <li><a href="{% url 'home' %}">Home</a></li>
     <li><a href="{% url 'services' %}">Services</a></li>
     <li><a href="{% url 'booking' %}">Bookings</a></li>
     <li><a href="{% url 'gallery' %}">Gallery</a></li>
-    <li><a href="{% url 'home' %}#contact">Contact Us</a></li>
+    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'appointment_list' %}">My appointments</a></li>
+    <li class="nav-auth"><span class="nav-user-email" title="{{ user.email }}">{{ user.email }}</span></li>
+    <li class="nav-auth">
+      <form class="nav-logout-form" method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="nav-link-btn">Log out</button>
+      </form>
+    </li>
+    {% endif %}
   </ul>
-  <a href="{% url 'home' %}" class="logo">Skin Sensation</a>
+  <a href="{% url 'home' %}" class="logo"><img src="{% static 'images/nav-bar-logo.svg' %}" alt="Skin Sensation" class="logo-img"></a>
   <div class="nav-icons">
-    <button title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-    <button title="Account" aria-label="Account"><i class="fa-regular fa-user"></i></button>
-    <button class="icon-btn" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-heart"></i><span class="badge">0</span></button>
-    <button class="icon-btn" title="Cart" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="badge">3</span></button>
-    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+    <button type="button" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+    {% if user.is_authenticated %}
+    <a href="{% url 'appointment_list' %}" class="nav-icon-link" title="My appointments" aria-label="My appointments"><i class="fa-regular fa-user"></i></a>
+    {% else %}
+    <a href="{% url 'account_login' %}" class="nav-icon-link" title="Log in" aria-label="Log in"><i class="fa-regular fa-user"></i></a>
+    {% endif %}
+<button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
   </div>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
@@ -22,6 +35,16 @@
     <li><a href="{% url 'services' %}">Services</a></li>
     <li><a href="{% url 'booking' %}">Bookings</a></li>
     <li><a href="{% url 'gallery' %}">Gallery</a></li>
-    <li><a href="{% url 'home' %}#contact">Contact Us</a></li>
+    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'appointment_list' %}">My appointments</a></li>
+    <li class="nav-auth-mobile"><span class="nav-user-email">{{ user.email }}</span></li>
+    <li class="nav-auth-mobile">
+      <form class="nav-logout-form" method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="nav-link-btn">Log out</button>
+      </form>
+    </li>
+    {% endif %}
   </ul>
 </div>

@@ -1,0 +1,329 @@
+/* ── Auth pages — extends site tokens from index.css (:root) ── */
+
+/* ── Split layout ── */
+.auth-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 120px);
+}
+
+/* ── Left brand panel ── */
+.auth-panel {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--dark);
+}
+
+.auth-panel__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(11,11,11,0.72) 0%, rgba(80,45,20,0.78) 100%);
+}
+
+.auth-panel__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 3rem 3.5rem;
+  color: var(--white);
+}
+
+.auth-panel__eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 0.6rem;
+}
+
+.auth-panel__brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  color: var(--white);
+  margin-bottom: 0.9rem;
+}
+
+.auth-panel__tagline {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  max-width: 28ch;
+}
+
+.auth-panel__divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(255,255,255,0.3);
+  margin: 1.75rem 0;
+}
+
+.auth-panel__perks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.auth-panel__perks li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.75);
+}
+
+.auth-panel__perks li i {
+  color: var(--rose);
+  font-size: 0.95rem;
+  width: 16px;
+  text-align: center;
+}
+
+/* ── Right form panel ── */
+.auth-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #faf9f7;
+  padding: 3rem 2rem;
+}
+
+.auth-form-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* ── Form card header ── */
+.auth-form-card__header {
+  margin-bottom: 1.5rem;
+}
+
+.auth-form-card__eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 0.4rem;
+}
+
+.auth-form-card__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--dark);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.auth-form-card__rule {
+  width: 36px;
+  height: 2px;
+  background: var(--rose);
+  border-radius: 1px;
+}
+
+.auth-form-card__subtext {
+  font-size: 0.9rem;
+  color: var(--mid);
+  margin-bottom: 1.75rem;
+}
+
+.auth-form-card__subtext a {
+  color: var(--rose);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-form-card__subtext a:hover {
+  text-decoration: underline;
+}
+
+/* ── Form fields ── */
+.form-group {
+  margin-bottom: 1.1rem;
+}
+
+.account-form label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+.account-form input[type="email"],
+.account-form input[type="text"],
+.account-form input[type="password"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e4ddd4;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: var(--white);
+  color: var(--dark);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.account-form input:focus {
+  outline: none;
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(125, 85, 48, 0.12);
+}
+
+.account-form .errorlist {
+  list-style: none;
+  color: #8b2942;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.account-form .helptext {
+  font-size: 0.76rem;
+  color: var(--light);
+  margin-top: 0.35rem;
+  line-height: 1.45;
+}
+
+.account-form .helptext ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.account-form .helptext li::before {
+  content: '· ';
+  color: var(--rose);
+  opacity: 0.6;
+}
+
+/* ── Submit button ── */
+.account-btn {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  background: var(--dark);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.2s ease, transform 0.15s ease;
+  font-weight: 500;
+}
+
+.account-btn:hover {
+  background: var(--rose);
+  transform: translateY(-1px);
+}
+
+.account-btn--full {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.account-btn--secondary {
+  background: transparent;
+  color: var(--dark);
+  border: 1.5px solid #e0d9d0;
+}
+
+.account-btn--secondary:hover {
+  background: transparent;
+  border-color: var(--rose);
+  color: var(--rose);
+  transform: none;
+}
+
+/* ── Footer link (forgot password etc.) ── */
+.auth-form-card__footer-link {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.auth-form-card__footer-link a {
+  color: var(--mid);
+  text-decoration: none;
+}
+
+.auth-form-card__footer-link a:hover {
+  color: var(--rose);
+  text-decoration: underline;
+}
+
+/* ── Misc ── */
+.account-secondary-links {
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+  color: var(--mid);
+}
+
+.account-form ul:not(.errorlist) {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.account-form .account-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--dark);
+  margin-bottom: 1rem;
+}
+
+.account-form .account-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+/* ── Responsive: stack on mobile ── */
+@media (max-width: 768px) {
+  .auth-split {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .auth-panel {
+    min-height: 220px;
+  }
+
+  .auth-panel__content {
+    padding: 2.5rem 1.75rem;
+    justify-content: flex-end;
+  }
+
+  .auth-panel__perks {
+    display: none;
+  }
+
+  .auth-panel__divider {
+    display: none;
+  }
+
+  .auth-form-panel {
+    padding: 2.5rem 1.25rem 3rem;
+  }
+}

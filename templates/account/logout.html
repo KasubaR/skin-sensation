@@ -1,0 +1,20 @@
+{% extends 'layouts/base.html' %}
+{% load i18n static %}
+{% block title %}{% trans "Sign out" %} · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'account.css' %}">
+{% endblock %}
+{% block content %}
+<section class="account-shell">
+  <h1>{% trans "Sign out" %}</h1>
+  <p>{% trans "Are you sure you want to sign out?" %}</p>
+  <form class="account-form" method="post" action="{% url 'account_logout' %}">
+    {% csrf_token %}
+    {{ redirect_field }}
+    <div class="account-actions">
+      <button type="submit" class="account-btn">{% trans "Sign out" %}</button>
+      <a class="account-btn account-btn--secondary" href="{% url 'home' %}">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

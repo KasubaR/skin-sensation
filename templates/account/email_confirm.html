@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+{% load account i18n static %}
+{% block title %}{% trans "Confirm email" %} · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'account.css' %}">
+{% endblock %}
+{% block content %}
+<section class="account-shell">
+  <h1>{% trans "Confirm email address" %}</h1>
+  {% if confirmation %}
+    {% user_display confirmation.email_address.user as user_display %}
+    {% if can_confirm %}
+    <p>{% blocktrans with email=confirmation.email_address.email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> belongs to {{ user_display }}.{% endblocktrans %}</p>
+    <form class="account-form" method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+      {% csrf_token %}
+      {{ redirect_field }}
+      <div class="account-actions">
+        <button type="submit" class="account-btn">{% trans "Confirm" %}</button>
+      </div>
+    </form>
+    {% else %}
+    {% if confirmation %}
+    <p>{% blocktrans with email=confirmation.email_address.email %}Unable to confirm {{ email }} because it is already verified on a different account.{% endblocktrans %}</p>
+    {% endif %}
+    {% endif %}
+  {% else %}
+  {% url 'account_email' as email_url %}
+  <p>{% blocktranslate %}This confirmation link is invalid or has expired. You can <a href="{{ email_url }}">request a new confirmation email</a> from your account.{% endblocktranslate %}</p>
+  {% endif %}
+  <p class="account-secondary-links"><a href="{% url 'home' %}">{% trans "Back to home" %}</a></p>
+</section>
+{% endblock %}

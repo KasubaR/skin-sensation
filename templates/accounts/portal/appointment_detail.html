@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %}Appointment {{ booking_reference }} · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portal.css' %}">
+{% endblock %}
+{% block content %}
+<section class="portal-page portal-page--detail">
+  <nav class="portal-breadcrumb">
+    <a href="{% url 'appointment_list' %}">My appointments</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ booking_reference }}</span>
+  </nav>
+
+  <header class="portal-detail-header">
+    <p class="portal-eyebrow">Booking reference</p>
+    <h1 class="portal-title"><code class="portal-ref">{{ booking_reference }}</code></h1>
+    <div class="portal-detail-badges">
+      <span class="portal-badge portal-badge--{{ appointment.status|lower }}">{{ status_display }}</span>
+      <span class="portal-badge portal-badge--payment">{{ payment_status_display }}</span>
+    </div>
+  </header>
+
+  <div class="portal-detail-grid">
+    <section class="portal-panel">
+      <h2 class="portal-panel__title">Appointment</h2>
+      <dl class="portal-dl">
+        <div><dt>Date</dt><dd>{{ appointment_date|date:"l, j F Y" }}</dd></div>
+        <div><dt>Time</dt><dd>{{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}</dd></div>
+        <div><dt>Therapist</dt><dd>{{ staff_name|default:"To be assigned" }}</dd></div>
+        <div><dt>Deposit</dt><dd>K{{ deposit_amount }}</dd></div>
+        <div><dt>Total</dt><dd>K{{ total_price }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="portal-panel">
+      <h2 class="portal-panel__title">Services</h2>
+      <ul class="portal-services">
+        {% for line in line_items %}
+        <li>{{ line.treatment.name }} — K{{ line.price_snapshot }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+
+  <section class="portal-actions">
+    <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_receipt' booking_reference %}?print=1">Download receipt</a>
+    {% if can_reschedule %}
+    <a class="portal-btn portal-btn--primary" href="{% url 'appointment_reschedule' booking_reference %}">Reschedule</a>
+    {% else %}
+    <span class="portal-btn portal-btn--disabled" title="Rescheduling requires at least 24 hours notice">Reschedule</span>
+    {% endif %}
+    {% if can_cancel %}
+    <form class="portal-cancel-form" method="post" action="{% url 'appointment_cancel' booking_reference %}" data-portal-cancel>
+      {% csrf_token %}
+      <button type="submit" class="portal-btn portal-btn--danger">Cancel appointment</button>
+    </form>
+    {% else %}
+    <span class="portal-btn portal-btn--disabled" title="Cancellation requires at least 24 hours notice">Cancel appointment</span>
+    {% endif %}
+  </section>
+
+  <p class="portal-policy-note">
+    Changes and cancellations require at least 24 hours notice. Late cancellations may forfeit deposits.
+  </p>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'portal.js' %}" defer></script>
+{% endblock %}

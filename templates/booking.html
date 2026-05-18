@@ -1,23 +1,330 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}Booking | Skin Sensation{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'booking.css' %}">
-{% endblock %}
+{% block title %}Book an Appointment | Skin Sensation{% endblock %}
 
 {% block content %}
-<main class="booking-page-main">
-  <section class="booking-page-inner" aria-labelledby="booking-page-title">
-    <nav class="services-breadcrumb booking-breadcrumb" aria-label="Breadcrumb">
+<div class="booking-page" data-booking-root
+  data-catalog-url="{% url 'services:service_list' %}"
+  data-staff-url="{% url 'bookings:staff_list' %}"
+  data-availability-url="{% url 'bookings:availability' %}"
+  data-calculate-url="{% url 'bookings:calculate_totals' %}"
+  data-appointments-url="{% url 'bookings:create_appointment' %}"
+  data-csrf-token="{{ csrf_token }}">
+
+  <!-- Hero — matches services page intro -->
+  <section class="booking-intro" aria-labelledby="booking-title">
+    <nav class="booking-breadcrumb" aria-label="Breadcrumb">
       <a href="{% url 'home' %}">Home</a>
       <span aria-hidden="true"> / </span>
-      <span aria-current="page">Booking</span>
+      <span aria-current="page">Book</span>
     </nav>
-    <h1 id="booking-page-title">Booking</h1>
-    <p class="booking-lead">Complete your appointment request using our booking flow. Need help choosing a treatment? Browse <a href="{% url 'services' %}">our services</a> first.</p>
-    <p><a class="btn-dark" href="{% url 'services' %}">View Services</a></p>
+    <h1 id="booking-title">Book an appointment</h1>
+    <p class="booking-lead">Choose your services, pick a time, and tell us how to reach you. Need inspiration first? Browse <a href="{% url 'services' %}">our services</a>.</p>
   </section>
-</main>
+
+  <!-- Step progress tracker -->
+  <div class="booking-progress-wrap">
+    <ol class="booking-progress" aria-label="Booking steps">
+      <li data-progress-step="1" class="is-active">
+        <span class="bp-circle">1</span>
+        <span class="bp-label">Services</span>
+      </li>
+      <li data-progress-step="2">
+        <span class="bp-circle">2</span>
+        <span class="bp-label">Therapist</span>
+      </li>
+      <li data-progress-step="3">
+        <span class="bp-circle">3</span>
+        <span class="bp-label">Schedule</span>
+      </li>
+      <li data-progress-step="4">
+        <span class="bp-circle">4</span>
+        <span class="bp-label">Details</span>
+      </li>
+      <li data-progress-step="5">
+        <span class="bp-circle">5</span>
+        <span class="bp-label">Payment</span>
+      </li>
+      <li data-progress-step="6">
+        <span class="bp-circle"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+        <span class="bp-label">Done</span>
+      </li>
+    </ol>
+  </div>
+
+  <p id="bookingStepError" class="booking-step-error" role="alert" aria-live="polite"></p>
+
+  <!-- Main two-column layout -->
+  <div class="booking-layout">
+
+    <!-- Form col -->
+    <div class="booking-main-col">
+      <form id="bookingFlowForm" class="booking-flow-form" novalidate>
+        <input type="text" name="website" id="bookingHoneypot" class="booking-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <!-- Step 1 — Services -->
+        <div class="booking-step" data-booking-step="1">
+          <div class="booking-step-header">
+            <h2>Select services</h2>
+            <p class="booking-step-intro">Select one or more treatments. Totals update in the summary as you go.</p>
+          </div>
+          {% if categories %}
+          <div class="booking-category-pills" role="group" aria-label="Filter by category">
+            {% for cat in categories %}
+            <button type="button" class="booking-category-pill" data-category="{{ cat.id }}">{{ cat.name }}</button>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <div class="booking-service-grid" id="bookingServiceGrid">
+            {% for treatment in treatments %}
+            <label class="booking-service-card" data-category="{{ treatment.service_id }}">
+              <input type="checkbox" name="booking_service" value="{{ treatment.id }}">
+              <span class="booking-service-card-inner">
+                <span class="booking-service-icon"><i class="fa-solid fa-spa" aria-hidden="true"></i></span>
+                <span class="booking-service-info">
+                  <span class="booking-service-name">{{ treatment.name }}</span>
+                  <span class="booking-service-meta"><span>{{ treatment.duration_minutes }} min</span><span>K{{ treatment.price|floatformat:0 }}</span></span>
+                </span>
+              </span>
+            </label>
+            {% empty %}
+            <p class="booking-summary-empty">No treatments available. Run <code>python manage.py seed_catalog</code> after migrating.</p>
+            {% endfor %}
+          </div>
+          <div class="booking-nav-row">
+            <span></span>
+            <button type="button" class="btn-dark" data-booking-next>Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 2 — Therapist -->
+        <div class="booking-step" data-booking-step="2" hidden>
+          <div class="booking-step-header">
+            <h2>Choose your therapist</h2>
+            <p class="booking-step-intro">Pick someone specific or stay flexible with the next available professional.</p>
+          </div>
+          <div class="booking-staff-grid" id="bookingStaffGrid">
+            <p class="booking-summary-empty">Loading therapists…</p>
+          </div>
+          <div class="booking-nav-row">
+            <button type="button" class="btn-booking-secondary" data-booking-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
+            <button type="button" class="btn-dark" data-booking-next>Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 3 — Schedule -->
+        <div class="booking-step" data-booking-step="3" hidden>
+          <div class="booking-step-header">
+            <h2>Date &amp; time</h2>
+            <p class="booking-step-intro">Pick a date then choose from available slots. We're open 09:00–18:00 daily.</p>
+          </div>
+          <div class="schedule-date-picker">
+            <div class="schedule-date-picker-heading" id="bookingCalendarLabel">
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
+              <span>Select a date</span>
+            </div>
+            <div
+              id="bookingCalendar"
+              class="booking-calendar"
+              role="region"
+              aria-labelledby="bookingCalendarLabel"
+              aria-describedby="bookingDateReadout"
+            >
+              <div class="booking-calendar-header">
+                <button type="button" class="booking-cal-nav" data-cal-prev aria-label="Previous month">
+                  <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <h3 class="booking-cal-title" id="bookingCalMonthYear">—</h3>
+                <button type="button" class="booking-cal-nav" data-cal-next aria-label="Next month">
+                  <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="booking-cal-weekdays" aria-hidden="true">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+              <div class="booking-cal-grid" role="group" aria-label="Calendar days"></div>
+            </div>
+            <input type="hidden" id="bookingDate" name="booking_date" value="" required>
+            <input type="hidden" id="bookingTime" name="booking_time" value="">
+            <input type="hidden" id="bookingStaffResolved" name="booking_staff_resolved" value="">
+            <p id="bookingDateReadout" class="booking-cal-readout" aria-live="polite"></p>
+          </div>
+          <div class="schedule-slots-section">
+            <div id="bookingTimeSlots" class="booking-time-slots" role="group" aria-label="Available time slots">
+              <div class="booking-slots-empty">
+                <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                <p>Choose a date on the calendar to see available times.</p>
+              </div>
+            </div>
+          </div>
+          <div class="booking-nav-row">
+            <button type="button" class="btn-booking-secondary" data-booking-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
+            <button type="button" class="btn-dark" data-booking-next>Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 4 — Details -->
+        <div class="booking-step" data-booking-step="4" hidden>
+          <div class="booking-step-header">
+            <h2>Your details</h2>
+            <p class="booking-step-intro">We use this to confirm your booking. Email is optional but recommended for your receipt.</p>
+          </div>
+          <div class="booking-step-body">
+            <div class="booking-fields-grid">
+              <div class="booking-field-row">
+                <label for="bookingFullName">Full name</label>
+                <input type="text" id="bookingFullName" name="full_name" autocomplete="name" required>
+              </div>
+              <div class="booking-field-row">
+                <label for="bookingPhone">Phone</label>
+                <input type="tel" id="bookingPhone" name="phone" autocomplete="tel" required>
+              </div>
+            </div>
+            <div class="booking-field-row">
+              <label for="bookingEmail">Email <span class="optional">(optional)</span></label>
+              <input type="email" id="bookingEmail" name="email" autocomplete="email">
+            </div>
+            <div class="booking-field-row">
+              <label for="bookingAllergies">Allergies or preferences <span class="optional">(optional)</span></label>
+              <textarea id="bookingAllergies" name="allergies" rows="2"></textarea>
+            </div>
+            <div class="booking-field-row">
+              <label for="bookingNotes">Notes or requests <span class="optional">(optional)</span></label>
+              <textarea id="bookingNotes" name="notes" rows="3"></textarea>
+            </div>
+            <div class="booking-checkbox-row">
+              <input type="checkbox" id="bookingFirstVisit" name="first_visit" value="1">
+              <label for="bookingFirstVisit">First visit to Skin Sensation</label>
+            </div>
+          </div>
+          <div class="booking-nav-row">
+            <button type="button" class="btn-booking-secondary" data-booking-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
+            <button type="button" class="btn-dark" data-booking-next>Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 5 — Payment -->
+        <div class="booking-step" data-booking-step="5" hidden>
+          <div class="booking-step-header">
+            <h2>Payment &amp; deposit</h2>
+            <p class="booking-step-intro">Deposits secure your slot. Pay at spa is fine for some appointments—our team may follow up to confirm.</p>
+          </div>
+          <div class="booking-deposit-note">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            Deposit is <strong>20% of services</strong> with a <strong>minimum of K50</strong> when applicable. You'll receive a booking reference on the next screen—use it as your payment reference.
+          </div>
+          <div class="booking-payment-options">
+            <label class="booking-payment-option">
+              <input type="radio" name="booking_payment" value="mobile_money" checked>
+              <span class="booking-payment-icon"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></span>
+              <span class="booking-payment-label"><strong>Mobile Money</strong><span>MTN or Airtel — instructions after confirmation</span></span>
+            </label>
+            <label class="booking-payment-option">
+              <input type="radio" name="booking_payment" value="bank_transfer">
+              <span class="booking-payment-icon"><i class="fa-solid fa-building-columns" aria-hidden="true"></i></span>
+              <span class="booking-payment-label"><strong>Bank transfer</strong><span>Account details sent after you confirm</span></span>
+            </label>
+            <label class="booking-payment-option">
+              <input type="radio" name="booking_payment" value="pay_later">
+              <span class="booking-payment-icon"><i class="fa-solid fa-store" aria-hidden="true"></i></span>
+              <span class="booking-payment-label"><strong>Pay at spa</strong><span>No upfront transfer; subject to availability rules</span></span>
+            </label>
+          </div>
+          <div id="bookingPaymentProofWrap" class="booking-field-row booking-payment-proof-wrap">
+            <label for="bookingPaymentProof">Payment proof <span class="optional">(optional — PNG or JPG)</span></label>
+            <input type="file" id="bookingPaymentProof" name="payment_proof" accept="image/png,image/jpeg">
+          </div>
+          <div class="booking-nav-row">
+            <button type="button" class="btn-booking-secondary" data-booking-back><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
+            <button type="button" class="btn-dark" data-booking-confirm><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Confirm booking</button>
+          </div>
+        </div>
+
+        <!-- Step 6 — Done -->
+        <div class="booking-step" data-booking-step="6" hidden>
+          <div class="booking-step-header">
+            <h2>Booking received</h2>
+            <p class="booking-step-intro">Thank you. Your slot is held pending our team's confirmation. If you provided an email address, we've sent your booking details and reference there.</p>
+          </div>
+          <div class="booking-confirm-box">
+            <div class="booking-confirm-badge"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+            <p class="booking-confirm-ref">Reference: <strong id="confirmReference">—</strong></p>
+            <div class="booking-confirm-section">
+              <p class="booking-confirm-section-label">Services</p>
+              <ul id="confirmServicesList" class="booking-confirm-list"></ul>
+            </div>
+            <dl class="booking-confirm-grid">
+              <div>
+                <dt>When</dt>
+                <dd id="confirmSchedule">—</dd>
+              </div>
+              <div>
+                <dt>Therapist</dt>
+                <dd id="confirmStaff">—</dd>
+              </div>
+              <div>
+                <dt>Deposit</dt>
+                <dd id="confirmDeposit">—</dd>
+              </div>
+              <div>
+                <dt>Total</dt>
+                <dd id="confirmTotal">—</dd>
+              </div>
+              <div>
+                <dt>Payment method</dt>
+                <dd id="confirmPaymentMethod">—</dd>
+              </div>
+              <div>
+                <dt>Payment status</dt>
+                <dd id="confirmPaymentStatus">Pending</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="booking-nav-row">
+            <button type="button" class="btn-booking-secondary" data-booking-restart>Book another</button>
+            <a class="btn-dark" href="{% url 'home' %}">Back to home</a>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- Summary sidebar -->
+    <aside class="booking-summary" aria-label="Booking summary">
+      <h3>Your booking</h3>
+      <div class="booking-summary-block">
+        <h4>Services</h4>
+        <div id="summaryServices"><p class="booking-summary-empty">No services selected yet.</p></div>
+      </div>
+      <div class="booking-summary-block">
+        <h4>Treatment time</h4>
+        <p class="booking-summary-line"><span>Services</span><strong id="summaryDuration">—</strong></p>
+        <p class="booking-summary-line"><span>Buffer</span><strong id="summaryBuffer">—</strong></p>
+      </div>
+      <div class="booking-summary-block">
+        <h4>Schedule</h4>
+        <p id="summarySchedule" class="booking-summary-value">—</p>
+      </div>
+      <div class="booking-summary-block">
+        <h4>Therapist</h4>
+        <p id="summaryStaff" class="booking-summary-value">Any available</p>
+      </div>
+      <div class="booking-summary-block">
+        <h4>Pricing</h4>
+        <p class="booking-summary-line"><span>Subtotal</span><strong id="summarySubtotal">—</strong></p>
+        <p class="booking-summary-deposit">Deposit due now: <strong id="summaryDeposit">—</strong><br><span>Mobile Money / bank — upload proof after submitting.</span></p>
+        <div class="booking-summary-total"><span>Total</span><span id="summaryTotal">—</span></div>
+      </div>
+      <p class="booking-summary-note">Taxes included where applicable. Final confirmation may require staff approval for certain combinations.</p>
+    </aside>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ catalog_data|json_script:"bookingCatalogData" }}
+<script src="{% static 'booking.js' %}" defer></script>
 {% endblock %}

@@ -1,0 +1,33 @@
+<article class="service-detail-card">
+  <div class="service-detail-media">
+    <a href="{% url 'service_treatments' service.slug %}" tabindex="-1" aria-hidden="true">
+      <img
+        src="{{ service.card_image_url }}"
+        alt="{{ service.name }}"
+        width="700"
+        height="468"
+        loading="lazy"
+        decoding="async"
+      >
+    </a>
+  </div>
+  <div class="service-detail-body">
+    <h3><a href="{% url 'service_treatments' service.slug %}">{{ service.name }}</a></h3>
+    {% if service.tagline %}
+    <p class="service-detail-tagline">{{ service.tagline }}</p>
+    {% endif %}
+    {% if service.description %}
+    <p class="service-detail-desc">{{ service.description }}</p>
+    {% endif %}
+    <div class="service-detail-footer">
+      {% if service.min_price %}
+      <div class="service-detail-price">
+        <span class="from-label">From</span>K{{ service.min_price|floatformat:0 }}
+      </div>
+      {% endif %}
+      <div class="service-detail-actions">
+        <a class="btn-dark" href="{% url 'service_treatments' service.slug %}">View treatments</a>
+      </div>
+    </div>
+  </div>
+</article>

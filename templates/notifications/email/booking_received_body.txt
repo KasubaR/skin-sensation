@@ -1,0 +1,26 @@
+Hi {{ customer_name }},
+
+Thank you for booking with Skin Sensation. Your appointment is held pending our team's confirmation.
+
+Booking reference: {{ booking_reference }}
+
+When: {{ appointment_date|date:"l, j F Y" }} at {{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}
+Therapist: {{ staff_name|default:"To be assigned" }}
+
+Services:
+{% for item in services %}- {{ item.name }} — K{{ item.price }}
+{% endfor %}
+
+Total: K{{ total_price }}
+Deposit due: K{{ deposit_amount }}
+
+Please pay your deposit via mobile money (MTN or Airtel) or bank transfer. Our team will send payment details if needed. Mention your booking reference when paying.
+
+View or manage your booking: {{ appointment_url }}
+
+Questions? Call us at {{ spa_phone }} or message us on WhatsApp: {{ spa_whatsapp_url }}
+
+We look forward to seeing you.
+
+Skin Sensation Spa
+{{ from_email }}

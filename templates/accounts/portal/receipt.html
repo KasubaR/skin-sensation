@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipt {{ booking_reference }} · Skin Sensation</title>
+  <link rel="stylesheet" href="{% static 'portal.css' %}">
+  <link rel="stylesheet" href="{% static 'receipt.css' %}">
+</head>
+<body class="receipt-body"{% if print_on_load %} data-print-on-load{% endif %}>
+  <article class="receipt">
+    <header class="receipt__header">
+      <h1 class="receipt__brand">Skin Sensation</h1>
+      <p class="receipt__type">Booking receipt</p>
+    </header>
+
+    <p class="receipt__ref"><strong>Reference:</strong> {{ booking_reference }}</p>
+    <p><strong>Guest:</strong> {{ customer_name }}</p>
+    {% if customer_phone %}<p><strong>Phone:</strong> {{ customer_phone }}</p>{% endif %}
+    {% if customer_email %}<p><strong>Email:</strong> {{ customer_email }}</p>{% endif %}
+
+    <table class="receipt__meta">
+      <tr><th>Date</th><td>{{ appointment_date|date:"l, j F Y" }}</td></tr>
+      <tr><th>Time</th><td>{{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}</td></tr>
+      <tr><th>Therapist</th><td>{{ staff_name|default:"—" }}</td></tr>
+      <tr><th>Status</th><td>{{ status }}</td></tr>
+    </table>
+
+    <h2 class="receipt__section-title">Services</h2>
+    <table class="receipt__lines">
+      <thead>
+        <tr><th>Service</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        {% for item in services %}
+        <tr><td>{{ item.name }}</td><td>K{{ item.price }}</td></tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><th>Total</th><td>K{{ total_price }}</td></tr>
+        <tr><th>Deposit due</th><td>K{{ deposit_amount }}</td></tr>
+      </tfoot>
+    </table>
+
+    {% if verified_payments %}
+    <h2 class="receipt__section-title">Payments received</h2>
+    <table class="receipt__lines">
+      <thead>
+        <tr><th>Date</th><th>Method</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        {% for payment in verified_payments %}
+        <tr>
+          <td>{{ payment.created_at|date:"j M Y" }}</td>
+          <td>{{ payment.get_payment_method_display }}</td>
+          <td>K{{ payment.amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <footer class="receipt__footer">
+      <p>{{ spa_phone }}</p>
+      <p class="receipt__thanks">Thank you for choosing Skin Sensation.</p>
+    </footer>
+  </article>
+
+  <div class="receipt-toolbar no-print">
+    <button type="button" class="portal-btn portal-btn--primary" data-action="print-receipt">Print / Save PDF</button>
+    <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_detail' booking_reference %}">Back to appointment</a>
+  </div>
+
+  <script src="{% static 'portal.js' %}" defer></script>
+</body>
+</html>

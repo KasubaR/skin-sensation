@@ -1,0 +1,43 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Our Services | Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'services.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="services-page">
+
+  <section class="services-intro" aria-labelledby="services-title">
+    <nav class="services-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">Services</span>
+    </nav>
+    <h1 id="services-title">Our Services</h1>
+    <p class="services-intro-lead">
+      Explore nail care, massage, facials, waxing, and laser treatments—each with clear pricing in Kwacha.
+      Choose a service to browse treatments, then book when you are ready.
+    </p>
+  </section>
+
+  <section class="services-category-section" aria-labelledby="services-menu-heading">
+    <div class="services-category-head">
+      <h2 id="services-menu-heading">Skin Sensation Beauty Spa</h2>
+      <p>Select a service</p>
+    </div>
+    <div class="services-detail-grid">
+      {% for service in services %}
+        {% include 'services/components/service_card.html' %}
+      {% empty %}
+      <p class="services-empty">Our service menu is being updated. Please check back soon or <a href="{% url 'contact' %}">contact us</a>.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% include 'services/components/footer_sections.html' %}
+
+</div>
+{% endblock %}

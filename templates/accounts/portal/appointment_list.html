@@ -1,0 +1,76 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %}My appointments · Skin Sensation{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'portal.css' %}">
+{% endblock %}
+{% block content %}
+<section class="portal-page">
+  <header class="portal-header">
+    <p class="portal-eyebrow">Member portal</p>
+    <h1 class="portal-title">My appointments</h1>
+    <p class="portal-subtitle">View upcoming visits, booking history, and manage your schedule.</p>
+    <a class="portal-btn portal-btn--primary" href="{% url 'booking' %}">Book a new appointment</a>
+  </header>
+
+  <section class="portal-section" aria-labelledby="upcoming-heading">
+    <h2 id="upcoming-heading" class="portal-section__title">Upcoming</h2>
+    {% if upcoming %}
+    <ul class="portal-card-list">
+      {% for appt in upcoming %}
+      <li class="portal-card">
+        <div class="portal-card__main">
+          <p class="portal-card__ref">{{ appt.booking_reference }}</p>
+          <p class="portal-card__when">{{ appt.appointment_date|date:"l, j F Y" }} · {{ appt.start_time|time:"g:i A" }}</p>
+          <p class="portal-card__meta">
+            {% if appt.assigned_staff %}{{ appt.assigned_staff.display_name }}{% else %}Therapist TBC{% endif %}
+            · K{{ appt.total_price }}
+          </p>
+        </div>
+        <div class="portal-card__aside">
+          <span class="portal-badge portal-badge--{{ appt.status|lower }}">{{ appt.get_status_display }}</span>
+          <a class="portal-link" href="{% url 'appointment_detail' appt.booking_reference %}">View details</a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="portal-empty">No upcoming appointments. <a href="{% url 'booking' %}">Book your next visit</a>.</p>
+    {% endif %}
+  </section>
+
+  <section class="portal-section" aria-labelledby="history-heading">
+    <h2 id="history-heading" class="portal-section__title">Booking history</h2>
+    {% if history %}
+    <div class="portal-table-wrap">
+      <table class="portal-table">
+        <thead>
+          <tr>
+            <th scope="col">Reference</th>
+            <th scope="col">Date</th>
+            <th scope="col">Time</th>
+            <th scope="col">Status</th>
+            <th scope="col">Total</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in history %}
+          <tr>
+            <td><code class="portal-ref">{{ appt.booking_reference }}</code></td>
+            <td>{{ appt.appointment_date|date:"j M Y" }}</td>
+            <td>{{ appt.start_time|time:"g:i A" }}</td>
+            <td><span class="portal-badge portal-badge--{{ appt.status|lower }}">{{ appt.get_status_display }}</span></td>
+            <td>K{{ appt.total_price }}</td>
+            <td><a class="portal-link" href="{% url 'appointment_detail' appt.booking_reference %}">Details</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="portal-empty">No past appointments yet.</p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}

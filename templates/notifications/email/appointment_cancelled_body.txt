@@ -1,0 +1,9 @@
+Hi {{ customer_name }},
+
+Your appointment (reference {{ booking_reference }}) on {{ appointment_date|date:"l, j F Y" }} at {{ start_time|time:"g:i A" }} has been cancelled.
+
+View your appointments: {{ appointment_url }}
+
+Questions? Call {{ spa_phone }} or WhatsApp: {{ spa_whatsapp_url }}
+
+Skin Sensation Spa

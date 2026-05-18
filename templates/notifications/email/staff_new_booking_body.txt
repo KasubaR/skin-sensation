@@ -1,0 +1,19 @@
+New online booking
+
+Reference: {{ booking_reference }}
+Customer: {{ customer_name }}
+Phone: {{ customer_phone }}
+Email: {{ customer_email|default:"(not provided)" }}
+
+When: {{ appointment_date|date:"l, j F Y" }} at {{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}
+Therapist: {{ staff_name|default:"Unassigned" }}
+Status: {{ status }}
+
+Services:
+{% for item in services %}- {{ item.name }} — K{{ item.price }}
+{% endfor %}
+
+Total: K{{ total_price }}
+Deposit: K{{ deposit_amount }}
+
+Review in Django admin or dashboard when available.

@@ -1,0 +1,10 @@
+Hi {{ customer_name }},
+
+Your appointment {{ booking_reference }} has been rescheduled.
+
+New time: {{ appointment_date|date:"l, j F Y" }} at {{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}
+Therapist: {{ staff_name|default:"To be assigned" }}
+
+View details: {{ appointment_url }}
+
+Skin Sensation Spa

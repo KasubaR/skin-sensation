@@ -1,0 +1,1 @@
+New booking {{ booking_reference }} — {{ customer_name }}

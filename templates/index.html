@@ -56,54 +56,20 @@
   </div>
 
   <div class="services-grid">
+    {% for svc in featured_services %}
     <article class="service-card">
+      <a href="{% url 'service_treatments' svc.slug %}" class="service-card-link" aria-label="{{ svc.name }}"></a>
       <div class="service-card-img">
-        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
-        <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=700&q=80" alt="Facials treatment">
+        <a href="{% url 'service_treatments' svc.slug %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
+        <img src="{{ svc.card_image_url }}" alt="{{ svc.name }}">
       </div>
       <div class="service-card-body">
         <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-        <h3>Deep-cleansing and glow-boosting facial rituals tailored to your skin type.</h3>
-        <div class="service-price">Facials <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K250</span></div>
+        <h3>{{ svc.tagline|default:svc.description|default:svc.name }}</h3>
+        <div class="service-price">{{ svc.name }}{% if svc.min_price %} <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K{{ svc.min_price|floatformat:0 }}</span>{% endif %}</div>
       </div>
     </article>
-
-    <article class="service-card">
-      <div class="service-card-img">
-        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
-        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=700&q=80" alt="Massage therapy service">
-      </div>
-      <div class="service-card-body">
-        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-        <h3>Relaxing full-body and targeted massage sessions to ease tension and restore calm.</h3>
-        <div class="service-price">Massage Therapy <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K400</span></div>
-      </div>
-    </article>
-
-    <article class="service-card">
-      <div class="service-card-img">
-        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
-        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=80" alt="Body treatment products">
-      </div>
-      <div class="service-card-body">
-        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
-        <h3>Exfoliating wraps and polishing treatments that leave your skin smooth and renewed.</h3>
-        <div class="service-price">Body Treatments <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K300</span></div>
-      </div>
-    </article>
-
-    <article class="service-card">
-      <div class="service-card-img">
-        <a href="{% url 'booking' %}" class="service-book-btn"><i class="fa-regular fa-calendar"></i> Book</a>
-        <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&q=80" alt="Nail care service">
-      </div>
-      <div class="service-card-body">
-        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
-        <h3>Professional manicure and pedicure care with long-lasting finishes and detail work.</h3>
-        <div class="service-price">Nail Care <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K100</span></div>
-      </div>
-    </article>
-
+    {% endfor %}
   </div>
 </section>
 
@@ -387,14 +353,14 @@
     <div class="contact-card">
       <div class="contact-item">
         <h4>Phone Number</h4>
-        <a href="tel:+260977123456">+260 977 123 456</a>
+        <a href="tel:+260973407110">+260 973 407 110</a>
       </div>
 
       <div class="contact-item">
         <h4>WhatsApp</h4>
         <p class="whatsapp-inline">
           WhatsApp
-          <a class="whatsapp-btn" href="https://wa.me/260977123456" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+          <a class="whatsapp-btn" href="https://wa.me/260973407110" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
             <i class="fa-brands fa-whatsapp"></i>
           </a>
         </p>
