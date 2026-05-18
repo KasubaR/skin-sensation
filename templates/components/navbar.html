@@ -10,7 +10,7 @@
     <li><a href="{% url 'contact' %}">Contact Us</a></li>
   </ul>
   <div class="nav-icons">
-    <button type="button" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <button class="nav-search-btn" type="button" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     {% if user.is_authenticated %}
     <div class="nav-account" id="navAccount">
       <button class="nav-icon-link nav-account-btn" id="navAccountBtn" aria-label="Account menu" aria-expanded="false">
@@ -46,6 +46,10 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <ul>
+    <li class="mobile-search-item">
+      <button type="button" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <span>Search</span>
+    </li>
     <li><a href="{% url 'home' %}">Home</a></li>
     <li><a href="{% url 'services' %}">Services</a></li>
     <li><a href="{% url 'booking' %}">Bookings</a></li>
