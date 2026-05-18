@@ -21,7 +21,7 @@ class StaffAvailability(models.Model):
         on_delete=models.CASCADE,
         related_name='availabilities',
     )
-    day_of_week = models.IntegerField(choices=DayOfWeek)
+    day_of_week = models.IntegerField(choices=DayOfWeek.choices)
     start_time = models.TimeField()
     end_time = models.TimeField()
     is_off_day = models.BooleanField(default=False)
