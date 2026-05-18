@@ -1,6 +1,7 @@
 {% load static %}
 <!-- NAV -->
 <nav class="site-nav">
+  <a href="{% url 'home' %}" class="logo"><img src="{% static 'images/nav-bar-logo.svg' %}" alt="Skin Sensation" class="logo-img"></a>
   <ul class="nav-links">
     <li><a href="{% url 'home' %}">Home</a></li>
     <li><a href="{% url 'services' %}">Services</a></li>
@@ -8,7 +9,6 @@
     <li><a href="{% url 'gallery' %}">Gallery</a></li>
     <li><a href="{% url 'contact' %}">Contact Us</a></li>
   </ul>
-  <a href="{% url 'home' %}" class="logo"><img src="{% static 'images/nav-bar-logo.svg' %}" alt="Skin Sensation" class="logo-img"></a>
   <div class="nav-icons">
     <button type="button" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     {% if user.is_authenticated %}

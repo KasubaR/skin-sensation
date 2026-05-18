@@ -715,12 +715,14 @@
   }
 
   .why-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
   }
 
   .why-card {
+    flex: 0 1 calc(20% - 12px);
     background: var(--peach);
     border: 1px solid #ece4dc;
     border-radius: 10px;
@@ -1001,6 +1003,16 @@
 
     .booking-link-pill {
       margin-top: 4px;
+    }
+
+    .map-wrap {
+      height: 260px;
+      min-height: 0;
+    }
+
+    .map-wrap iframe {
+      height: 260px;
+      min-height: 0;
     }
   }
 

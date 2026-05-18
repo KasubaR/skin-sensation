@@ -64,7 +64,6 @@
         <img src="{{ svc.card_image_url }}" alt="{{ svc.name }}">
       </div>
       <div class="service-card-body">
-        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <h3>{{ svc.tagline|default:svc.description|default:svc.name }}</h3>
         <div class="service-price">{{ svc.name }}{% if svc.min_price %} <span style="font-family:Jost,sans-serif;font-size:13px;font-weight:400;color:var(--mid);margin-left:6px;">From K{{ svc.min_price|floatformat:0 }}</span>{% endif %}</div>
       </div>
@@ -99,13 +98,7 @@
       <p>Calm interiors and soothing ambiance designed to help you fully unwind.</p>
     </article>
 
-    <article class="why-card">
-      <div class="why-icon"><i class="fa-solid fa-gem"></i></div>
-      <h3>Premium Products</h3>
-      <p>High-quality skincare and wellness products chosen for visible results.</p>
-    </article>
-
-    <article class="why-card">
+<article class="why-card">
       <div class="why-icon"><i class="fa-solid fa-sliders"></i></div>
       <h3>Personalized Treatments</h3>
       <p>Every treatment is tailored to your skin type, goals, and preferences.</p>
@@ -198,90 +191,7 @@
   </div>
 </section>
 
-<!-- GALLERY PREVIEW -->
-<section class="gallery-preview-section" aria-labelledby="gallery-preview-heading">
-  <div class="gallery-preview-header">
-    <div class="featured-head-copy">
-      <h2 id="gallery-preview-heading">Gallery Preview</h2>
-      <p>A glimpse of our space, treatments, and team</p>
-    </div>
-    <a href="{% url 'gallery' %}" class="view-all-btn">View Full Gallery</a>
-  </div>
-
-  <div class="gallery-preview-grid">
-    <figure class="gallery-preview-item">
-      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80" alt="Calm spa reception and seating area" width="800" height="600">
-      <figcaption class="gallery-preview-caption">Spa Interior</figcaption>
-    </figure>
-    <figure class="gallery-preview-item">
-      <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=800&q=80" alt="Treatment room with massage table and soft lighting" width="800" height="600">
-      <figcaption class="gallery-preview-caption">Treatment Rooms</figcaption>
-    </figure>
-    <figure class="gallery-preview-item">
-      <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" alt="Facial treatment and professional skincare service" width="800" height="600">
-      <figcaption class="gallery-preview-caption">Services</figcaption>
-    </figure>
-    <figure class="gallery-preview-item">
-      <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Spa therapist welcoming a guest with a smile" width="800" height="600">
-      <figcaption class="gallery-preview-caption">Staff &amp; Atmosphere</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- PROMOTIONS / PACKAGES LABEL -->
-<section class="promotions-label">
-  <h2>Promotions / Packages</h2>
-  <div class="promo-tags">
-    <span class="promo-tag">Monthly Offers</span>
-    <span class="promo-tag">Spa Packages</span>
-    <span class="promo-tag">Seasonal Promotions</span>
-  </div>
-</section>
-
-<!-- PROMO GRID -->
-<div class="promo-grid">
-
-  <!-- Large left card -->
-  <div class="promo-card large">
-    <div class="promo-deco"><i class="fa-solid fa-spa"></i></div>
-    <img class="promo-photo promo-photo-clear" src="https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=1200&q=80" alt="Skincare products">
-    <div class="promo-products">
-      <div class="promo-bottle h-100"></div>
-      <div class="promo-bottle h-140"></div>
-      <div class="promo-bottle h-80"></div>
-    </div>
-    <div class="promo-badge">Skin 2.0</div>
-    <h2>Health<br>&amp; Beauty</h2>
-    <a href="#" class="shop-link">Shop Now &rsaquo;</a>
-  </div>
-
-  <!-- Right stacked -->
-  <div class="promo-right">
-    <!-- Green card -->
-    <div class="promo-card green">
-      <img class="promo-photo promo-photo-clear" src="https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&w=900&q=80" alt="Body butter jars">
-      <div class="promo-products green">
-        <div class="promo-bottle green-tone h-80 w-16"></div>
-        <div class="promo-bottle green-tone h-90 w-12"></div>
-        <div class="promo-bottle green-tone h-100"></div>
-      </div>
-      <h3>10% OFF<br>Body Butter</h3>
-      <a href="#" class="shop-link shop-link-spaced">Shop Now &rsaquo;</a>
-    </div>
-
-    <!-- Photo card -->
-    <div class="promo-card photo">
-      <img class="promo-photo promo-photo-clear" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80" alt="Spa facial treatment">
-      <div class="promo-overlay-right">
-        <div class="promo-icon-round"><i class="fa-solid fa-face-smile-beam"></i></div>
-      </div>
-      <div class="promo-badge">Up to 30% Off</div>
-      <h3>Natural Beauty<br>Collection</h3>
-      <a href="#" class="shop-link shop-link-spaced-sm">Shop Now &rsaquo;</a>
-    </div>
-  </div>
-
-</div>
+{% comment %}PROMOTIONS / PACKAGES — hidden, pending full implementation{% endcomment %}
 
 {% if show_featured_products %}
 <!-- FEATURED PRODUCTS -->
@@ -345,7 +255,7 @@
 <!-- CONTACT & LOCATION PREVIEW -->
 <section class="contact-preview" id="contact">
   <div class="contact-preview-header">
-    <h2>Contact &amp; Location Preview</h2>
+    <h2>Contact &amp; Location</h2>
     <p class="contact-preview-sub">Visit us in Kabulonga, Lusaka</p>
   </div>
 
