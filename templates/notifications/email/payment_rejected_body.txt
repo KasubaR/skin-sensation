@@ -1,0 +1,9 @@
+Hi {{ customer_name }},
+
+We could not verify your payment of K{{ payment_amount }} for booking {{ booking_reference }}.
+
+{% if rejection_reason %}Reason: {{ rejection_reason }}
+
+{% endif %}Please submit updated proof of payment from your account: {{ appointment_url }}
+
+Skin Sensation Spa

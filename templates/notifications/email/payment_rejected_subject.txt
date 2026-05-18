@@ -1,0 +1,1 @@
+Payment could not be verified — ref {{ booking_reference }}

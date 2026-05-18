@@ -11,6 +11,25 @@
 
   // Booking callout now links directly to booking.html
 
+  // Account dropdown
+  const navAccount = document.getElementById('navAccount');
+  const navAccountBtn = document.getElementById('navAccountBtn');
+  if (navAccount && navAccountBtn) {
+    navAccountBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = navAccount.classList.toggle('open');
+      navAccountBtn.setAttribute('aria-expanded', open);
+      document.getElementById('navAccountDropdown').setAttribute('aria-hidden', !open);
+    });
+    document.addEventListener('click', (e) => {
+      if (!navAccount.contains(e.target)) {
+        navAccount.classList.remove('open');
+        navAccountBtn.setAttribute('aria-expanded', 'false');
+        document.getElementById('navAccountDropdown').setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+
   // Hamburger menu
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');

@@ -1,0 +1,48 @@
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+{% block title %}Payment #{{ payment.pk }} · Skin Sensation{% endblock %}
+{% block portal_content %}
+<section class="portal-page portal-page--detail">
+  <nav class="portal-breadcrumb">
+    <a href="{% url 'payment_list' %}">Payments</a>
+    <span aria-hidden="true">/</span>
+    <span>Payment #{{ payment.pk }}</span>
+  </nav>
+
+  <header class="portal-detail-header">
+    <h1 class="portal-title">K{{ payment.amount }}</h1>
+    <span class="portal-badge portal-badge--{{ payment.status|lower }}">{{ payment.get_status_display }}</span>
+  </header>
+
+  <section class="portal-panel">
+    <dl class="portal-dl">
+      <div><dt>Booking</dt><dd><a class="portal-link" href="{% url 'appointment_detail' appointment.booking_reference %}">{{ appointment.booking_reference }}</a></dd></div>
+      <div><dt>Method</dt><dd>{{ payment.get_payment_method_display }}</dd></div>
+      <div><dt>Reference</dt><dd>{{ payment.payment_reference|default:"—" }}</dd></div>
+      <div><dt>Deposit required</dt><dd>K{{ appointment.deposit_amount }}</dd></div>
+      <div><dt>Appointment total</dt><dd>K{{ appointment.total_price }}</dd></div>
+      <div><dt>Balance remaining</dt><dd>K{{ remaining_balance }}</dd></div>
+      {% if payment.rejection_reason %}
+      <div><dt>Rejection reason</dt><dd>{{ payment.rejection_reason }}</dd></div>
+      {% endif %}
+      {% if payment.verified_at %}
+      <div><dt>Processed</dt><dd>{{ payment.verified_at|date:"j M Y, g:i A" }}</dd></div>
+      {% endif %}
+    </dl>
+  </section>
+
+  {% if payment.proof_of_payment %}
+  <section class="portal-section">
+    <h2 class="portal-section__title">Proof of payment</h2>
+    <img src="{{ payment.proof_of_payment.url }}" alt="Payment proof" class="portal-proof-img">
+  </section>
+  {% endif %}
+
+  <section class="portal-actions">
+    {% if payment.status == 'VERIFIED' %}
+    <a class="portal-btn portal-btn--primary" href="{% url 'payment_receipt_pdf' payment.pk %}">Download PDF receipt</a>
+    <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_receipt' appointment.booking_reference %}?payment={{ payment.pk }}&print=1">Print receipt</a>
+    {% endif %}
+    <a class="portal-btn portal-btn--secondary" href="{% url 'payment_list' %}">Back to payments</a>
+  </section>
+</section>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+{% block title %}My account · Skin Sensation{% endblock %}
+{% block portal_content %}
+<section class="portal-page">
+  <header class="portal-header">
+    <p class="portal-eyebrow">Member portal</p>
+    <h1 class="portal-title">Dashboard</h1>
+    <p class="portal-subtitle">Your upcoming visits, payments, and quick actions.</p>
+  </header>
+
+  <div class="portal-dashboard-grid">
+    <article class="portal-stat-card">
+      <h2 class="portal-stat-card__label">Upcoming appointment</h2>
+      {% if upcoming_appointment %}
+      <p class="portal-stat-card__value">{{ upcoming_appointment.appointment_date|date:"j M Y" }}</p>
+      <p class="portal-stat-card__meta">{{ upcoming_appointment.start_time|time:"g:i A" }} · {{ upcoming_appointment.booking_reference }}</p>
+      <a class="portal-link" href="{% url 'appointment_detail' upcoming_appointment.booking_reference %}">View details</a>
+      {% else %}
+      <p class="portal-stat-card__empty">No upcoming visits</p>
+      <a class="portal-link" href="{% url 'booking' %}">Book now</a>
+      {% endif %}
+    </article>
+
+    <article class="portal-stat-card">
+      <h2 class="portal-stat-card__label">Pending payments</h2>
+      <p class="portal-stat-card__value">{{ pending_payment_count }}</p>
+      <p class="portal-stat-card__meta">Awaiting verification</p>
+      {% if pending_payment_count %}
+      <a class="portal-link" href="{% url 'payment_list' %}?status=PENDING">Review payments</a>
+      {% endif %}
+    </article>
+
+    <article class="portal-stat-card">
+      <h2 class="portal-stat-card__label">Total visits</h2>
+      <p class="portal-stat-card__value">{{ total_visits }}</p>
+      <p class="portal-stat-card__meta">Completed appointments</p>
+    </article>
+
+    <article class="portal-stat-card">
+      <h2 class="portal-stat-card__label">Favorite service</h2>
+      {% if favorite_service %}
+      <p class="portal-stat-card__value portal-stat-card__value--text">{{ favorite_service }}</p>
+      {% else %}
+      <p class="portal-stat-card__empty">Book your first visit</p>
+      {% endif %}
+    </article>
+  </div>
+
+  <section class="portal-section" aria-labelledby="recent-heading">
+    <h2 id="recent-heading" class="portal-section__title">Recent bookings</h2>
+    {% if recent_bookings %}
+    <ul class="portal-card-list">
+      {% for appt in recent_bookings %}
+      <li class="portal-card">
+        <div class="portal-card__main">
+          <p class="portal-card__ref">{{ appt.booking_reference }}</p>
+          <p class="portal-card__when">{{ appt.appointment_date|date:"j M Y" }} · {{ appt.get_status_display }}</p>
+        </div>
+        <a class="portal-link" href="{% url 'appointment_detail' appt.booking_reference %}">Details</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <a class="portal-link" href="{% url 'appointment_list' %}">View all appointments</a>
+    {% else %}
+    <p class="portal-empty">No booking history yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="portal-quick-actions">
+    <h2 class="portal-section__title">Quick actions</h2>
+    <div class="portal-actions">
+      <a class="portal-btn portal-btn--primary" href="{% url 'booking' %}">Book appointment</a>
+      <a class="portal-btn portal-btn--secondary" href="{% url 'payment_list' %}">View payments</a>
+      <a class="portal-btn portal-btn--secondary" href="{% url 'profile_edit' %}">Edit profile</a>
+    </div>
+  </section>
+</section>
+{% endblock %}

@@ -1,10 +1,6 @@
-{% extends 'layouts/base.html' %}
-{% load static %}
+{% extends 'accounts/portal/layouts/portal_base.html' %}
 {% block title %}Appointment {{ booking_reference }} · Skin Sensation{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'portal.css' %}">
-{% endblock %}
-{% block content %}
+{% block portal_content %}
 <section class="portal-page portal-page--detail">
   <nav class="portal-breadcrumb">
     <a href="{% url 'appointment_list' %}">My appointments</a>
@@ -30,6 +26,7 @@
         <div><dt>Therapist</dt><dd>{{ staff_name|default:"To be assigned" }}</dd></div>
         <div><dt>Deposit</dt><dd>K{{ deposit_amount }}</dd></div>
         <div><dt>Total</dt><dd>K{{ total_price }}</dd></div>
+        {% if remaining_balance %}<div><dt>Balance due</dt><dd>K{{ remaining_balance }}</dd></div>{% endif %}
       </dl>
     </section>
 
@@ -43,8 +40,31 @@
     </section>
   </div>
 
+  {% if payments %}
+  <section class="portal-section">
+    <h2 class="portal-section__title">Payments</h2>
+    <ul class="portal-card-list">
+      {% for payment in payments %}
+      <li class="portal-card">
+        <div class="portal-card__main">
+          <p class="portal-card__when">K{{ payment.amount }} · {{ payment.get_payment_method_display }}</p>
+          <p class="portal-card__meta">{{ payment.payment_reference|default:"No reference" }}</p>
+        </div>
+        <div class="portal-card__aside">
+          <span class="portal-badge portal-badge--{{ payment.status|lower }}">{{ payment.get_status_display }}</span>
+          <a class="portal-link" href="{% url 'payment_detail' payment.pk %}">View</a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
   <section class="portal-actions">
-    <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_receipt' booking_reference %}?print=1">Download receipt</a>
+    <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_receipt' booking_reference %}?print=1">Print receipt</a>
+    {% if can_upload_proof %}
+    <a class="portal-btn portal-btn--primary" href="{% url 'payment_upload' booking_reference %}">Upload payment proof</a>
+    {% endif %}
     {% if can_reschedule %}
     <a class="portal-btn portal-btn--primary" href="{% url 'appointment_reschedule' booking_reference %}">Reschedule</a>
     {% else %}
@@ -64,7 +84,4 @@
     Changes and cancellations require at least 24 hours notice. Late cancellations may forfeit deposits.
   </p>
 </section>
-{% endblock %}
-{% block extra_js %}
-<script src="{% static 'portal.js' %}" defer></script>
 {% endblock %}

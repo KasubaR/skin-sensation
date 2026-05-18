@@ -1,82 +1,69 @@
-from datetime import datetime
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django_ratelimit.decorators import ratelimit
 
-from bookings.models import Appointment, AppointmentStatus
+from bookings.models import AppointmentStatus
 from bookings.portal import (
     PortalError,
     cancel_appointment,
     get_customer_appointment,
     reschedule_appointment,
 )
-from bookings.policies import can_cancel_appointment, can_reschedule_appointment
 from notifications.context import appointment_email_context
 from payments.models import PaymentStatus
 
+from .common import (
+    appointments_queryset,
+    parse_appointment_date,
+    parse_start_time,
+    portal_context,
+    services_summary,
+    split_appointments,
+)
 
-def _parse_appointment_date(value: str):
-    return datetime.strptime(value, '%Y-%m-%d').date()
-
-
-def _parse_start_time(value: str):
-    for fmt in ('%H:%M', '%H:%M:%S'):
-        try:
-            return datetime.strptime(value, fmt).time()
-        except ValueError:
-            continue
-    raise ValueError('Invalid time format.')
-
-
-def _portal_context(appointment: Appointment) -> dict:
-    ctx = appointment_email_context(appointment)
-    ctx.update({
-        'can_cancel': can_cancel_appointment(appointment),
-        'can_reschedule': can_reschedule_appointment(appointment),
-        'line_items': list(appointment.line_items.select_related('treatment')),
-        'payment_status_display': appointment.get_payment_status_display(),
-        'status_display': appointment.get_status_display(),
-    })
-    return ctx
-
-
-def _split_appointments(queryset):
-    today = timezone.localdate()
-    terminal = (
-        AppointmentStatus.COMPLETED,
-        AppointmentStatus.CANCELLED,
-        AppointmentStatus.NO_SHOW,
-    )
-    upcoming = queryset.filter(
-        status__in=(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED),
-        appointment_date__gte=today,
-    )
-    history = queryset.filter(
-        Q(appointment_date__lt=today) | Q(status__in=terminal),
-    )
-    return upcoming, history
+FILTER_CHOICES = ('upcoming', 'completed', 'cancelled', 'all')
 
 
 @login_required
 @require_GET
 def appointment_list(request):
-    qs = (
-        request.user.appointments.select_related('assigned_staff')
-        .prefetch_related('line_items__treatment')
-    )
-    upcoming, history = _split_appointments(qs)
+    active_filter = request.GET.get('filter', 'upcoming')
+    if active_filter not in FILTER_CHOICES:
+        active_filter = 'upcoming'
+
+    qs = appointments_queryset(request.user)
+
+    if active_filter == 'upcoming':
+        upcoming, history = split_appointments(qs)
+    elif active_filter == 'completed':
+        upcoming = qs.none()
+        history = qs.filter(status=AppointmentStatus.COMPLETED).order_by(
+            '-appointment_date', '-start_time',
+        )
+    elif active_filter == 'cancelled':
+        upcoming = qs.none()
+        history = qs.filter(
+            status__in=(AppointmentStatus.CANCELLED, AppointmentStatus.NO_SHOW),
+        ).order_by('-appointment_date', '-start_time')
+    else:
+        upcoming, history = split_appointments(qs)
+
+    history = history.order_by('-appointment_date', '-start_time')
+    upcoming = upcoming.order_by('appointment_date', 'start_time')
+
     return render(
         request,
         'accounts/portal/appointment_list.html',
         {
             'upcoming': upcoming,
             'history': history,
+            'active_filter': active_filter,
+            'filter_choices': FILTER_CHOICES,
+            'portal_nav': 'appointments',
         },
     )
 
@@ -85,9 +72,11 @@ def appointment_list(request):
 @require_GET
 def appointment_detail(request, booking_reference: str):
     appointment = get_customer_appointment(request.user, booking_reference)
-    ctx = _portal_context(appointment)
+    ctx = portal_context(appointment)
     ctx['service_ids'] = [line.treatment_id for line in appointment.line_items.all()]
     ctx['staff_id'] = appointment.assigned_staff_id or 'any'
+    ctx['services_summary'] = services_summary(appointment)
+    ctx['portal_nav'] = 'appointments'
     return render(request, 'accounts/portal/appointment_detail.html', ctx)
 
 
@@ -115,7 +104,7 @@ def appointment_reschedule(request, booking_reference: str):
         return redirect('appointment_detail', booking_reference=booking_reference)
 
     appointment = get_customer_appointment(request.user, booking_reference)
-    ctx = _portal_context(appointment)
+    ctx = portal_context(appointment)
     ctx['service_ids'] = [line.treatment_id for line in appointment.line_items.all()]
     ctx['staff_id'] = appointment.assigned_staff_id or 'any'
     ctx['availability_url'] = reverse('bookings:availability')
@@ -127,8 +116,8 @@ def appointment_reschedule(request, booking_reference: str):
         staff_raw = request.POST.get('staff_id', '').strip()
 
         try:
-            new_date = _parse_appointment_date(date_str)
-            new_start = _parse_start_time(time_str)
+            new_date = parse_appointment_date(date_str)
+            new_start = parse_start_time(time_str)
             staff_id = int(staff_raw) if staff_raw and staff_raw.lower() != 'any' else 'any'
             reschedule_appointment(
                 appointment,
@@ -141,6 +130,7 @@ def appointment_reschedule(request, booking_reference: str):
         except (ValueError, PortalError) as exc:
             messages.error(request, str(exc))
 
+    ctx['portal_nav'] = 'appointments'
     return render(request, 'accounts/portal/appointment_reschedule.html', ctx)
 
 
@@ -149,6 +139,13 @@ def appointment_reschedule(request, booking_reference: str):
 def appointment_receipt(request, booking_reference: str):
     appointment = get_customer_appointment(request.user, booking_reference)
     ctx = appointment_email_context(appointment)
-    ctx['verified_payments'] = appointment.payments.filter(status=PaymentStatus.VERIFIED)
+    payments = appointment.payments.filter(status=PaymentStatus.VERIFIED)
+    payment_id = request.GET.get('payment')
+    if payment_id:
+        try:
+            payments = payments.filter(pk=int(payment_id))
+        except (TypeError, ValueError):
+            pass
+    ctx['verified_payments'] = payments
     ctx['print_on_load'] = request.GET.get('print') == '1'
     return render(request, 'accounts/portal/receipt.html', ctx)

@@ -1,0 +1,37 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Schedule · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Daily schedule</h1>
+  <form class="dash-date-nav" method="get">
+    <a class="dash-btn dash-btn--secondary" href="?date={{ prev_date|date:'Y-m-d' }}">← Previous</a>
+    <input type="date" name="date" value="{{ schedule_date|date:'Y-m-d' }}" class="dash-input">
+    <button type="submit" class="dash-btn dash-btn--secondary">Go</button>
+    <a class="dash-btn dash-btn--secondary" href="?date={{ next_date|date:'Y-m-d' }}">Next →</a>
+  </form>
+</header>
+<p class="dash-subtitle">{{ schedule_date|date:"l, j F Y" }}</p>
+{% if appointments %}
+<ul class="dash-list">
+  {% for appt in appointments %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      <p class="dash-card__time">{{ appt.start_time|time:"g:i A" }} – {{ appt.end_time|time:"g:i A" }}</p>
+      <p class="dash-card__title">
+        <a href="{% url 'dashboard:appointment_detail' appt.booking_reference %}">{{ appt.booking_reference }}</a>
+      </p>
+      <p class="dash-card__meta">
+        {% if appt.assigned_staff %}{{ appt.assigned_staff.display_name }}{% else %}Unassigned{% endif %}
+        · K{{ appt.total_price }}
+      </p>
+    </div>
+    <div class="dash-card__aside">
+      <span class="dash-badge dash-badge--{{ appt.status|lower }}">{{ appt.get_status_display }}</span>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="dash-empty">No appointments on this day.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+Hi {{ customer_name }},
+
+This is a friendly reminder that your appointment at Skin Sensation is today.
+
+Booking reference: {{ booking_reference }}
+
+When: {{ appointment_date|date:"l, j F Y" }} at {{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}
+Therapist: {{ staff_name|default:"To be assigned" }}
+
+Services:
+{% for item in services %}- {{ item.name }}
+{% endfor %}
+
+We look forward to seeing you. If you are running late, please call {{ spa_phone }} or WhatsApp: {{ spa_whatsapp_url }}
+
+Skin Sensation Spa

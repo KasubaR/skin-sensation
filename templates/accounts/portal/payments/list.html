@@ -1,0 +1,49 @@
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+{% block title %}Payments · Skin Sensation{% endblock %}
+{% block portal_content %}
+<section class="portal-page">
+  <header class="portal-header">
+    <p class="portal-eyebrow">Member portal</p>
+    <h1 class="portal-title">Payments</h1>
+    <p class="portal-subtitle">Track deposits, verification status, and receipts.</p>
+  </header>
+
+  <nav class="portal-filters" aria-label="Filter payments">
+    <a href="{% url 'payment_list' %}" class="portal-filter{% if not active_status %} is-active{% endif %}">All</a>
+    {% for value, label in status_choices %}
+    <a href="?status={{ value }}" class="portal-filter{% if active_status == value %} is-active{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </nav>
+
+  {% if payments %}
+  <div class="portal-table-wrap">
+    <table class="portal-table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Booking</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Method</th>
+          <th scope="col">Status</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+        <tr>
+          <td>{{ payment.created_at|date:"j M Y" }}</td>
+          <td><code class="portal-ref">{{ payment.appointment.booking_reference }}</code></td>
+          <td>K{{ payment.amount }}</td>
+          <td>{{ payment.get_payment_method_display }}</td>
+          <td><span class="portal-badge portal-badge--{{ payment.status|lower }}">{{ payment.get_status_display }}</span></td>
+          <td><a class="portal-link" href="{% url 'payment_detail' payment.pk %}">Details</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="portal-empty">No payments found.</p>
+  {% endif %}
+</section>
+{% endblock %}

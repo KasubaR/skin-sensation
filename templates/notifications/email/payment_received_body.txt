@@ -1,0 +1,10 @@
+Hi {{ customer_name }},
+
+We received your payment of K{{ payment_amount }} for booking {{ booking_reference }}.
+
+Method: {{ payment_method }}
+Reference: {{ payment_reference }}
+
+Our team will verify your payment shortly. You can track status in your account: {{ appointment_url }}
+
+Skin Sensation Spa

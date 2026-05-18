@@ -72,4 +72,8 @@ Use `{% url 'name' %}` for core links (e.g. `{% url 'booking' %}`). Future booki
 - Django version: 4.2 (constrained by Python 3.9)
 - After pulling changes on server: run `python manage.py migrate` and `python manage.py collectstatic --noinput`, then restart the app in cPanel Setup Python App
 - Production creates `cache/` and `logs/` automatically on startup; check `logs/django.log` if email or booking errors occur
-- Appointment reminders: schedule a daily cron (e.g. 08:00 `Africa/Lusaka`) — `python manage.py send_appointment_reminders`
+- Appointment email reminders (cron in `Africa/Lusaka` timezone):
+  - Day before: `python manage.py send_appointment_reminders` (e.g. daily at 08:00)
+  - Same day: `python manage.py send_same_day_reminders` (e.g. daily at 07:00)
+  - Use `--dry-run` on either command to preview targets without sending
+- Set `NOTIFICATION_EMAIL_ENABLED=false` in env to disable outbound notification emails (staging)

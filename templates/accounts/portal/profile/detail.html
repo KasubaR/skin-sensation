@@ -1,0 +1,30 @@
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+{% block title %}Profile · Skin Sensation{% endblock %}
+{% block portal_content %}
+<section class="portal-page">
+  <header class="portal-header portal-header--profile">
+    {% if profile.avatar %}
+    <img src="{{ profile.avatar.url }}" alt="" class="portal-avatar">
+    {% else %}
+    <div class="portal-avatar portal-avatar--placeholder" aria-hidden="true">
+      <i class="fa-regular fa-user"></i>
+    </div>
+    {% endif %}
+    <div>
+      <h1 class="portal-title">{{ profile.display_name }}</h1>
+      <p class="portal-subtitle">{{ user.email }}</p>
+      {% if profile.phone %}<p class="portal-subtitle">{{ profile.phone_display }}</p>{% endif %}
+    </div>
+  </header>
+
+  <section class="portal-actions">
+    <a class="portal-btn portal-btn--primary" href="{% url 'profile_edit' %}">Edit profile</a>
+    <a class="portal-btn portal-btn--secondary" href="{% url 'profile_password' %}">Change password</a>
+  </section>
+
+  <section class="portal-panel">
+    <h2 class="portal-panel__title">Loyalty</h2>
+    <p>{{ profile.loyalty_points }} points</p>
+  </section>
+</section>
+{% endblock %}

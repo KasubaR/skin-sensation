@@ -1,0 +1,37 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}{% if is_create %}New service{% else %}{{ service.name }}{% endif %} · Dashboard{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-eyebrow"><a href="{% url 'dashboard:service_list' %}">Services</a></p>
+  <h1 class="dash-title">{% if is_create %}New service{% else %}{{ service.name }}{% endif %}</h1>
+</header>
+<form method="post" enctype="multipart/form-data" class="dash-form dash-panel">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="dash-btn dash-btn--primary">Save</button>
+</form>
+{% if not is_create %}
+<form method="post" class="dash-form">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="toggle_active">
+  <button type="submit" class="dash-btn dash-btn--secondary">
+    {% if service.is_active %}Deactivate{% else %}Activate{% endif %} service
+  </button>
+</form>
+<h2 class="dash-panel__title">Treatments</h2>
+<a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:treatment_create' %}?service={{ service.pk }}">Add treatment</a>
+<ul class="dash-list">
+  {% for t in treatments %}
+  <li class="dash-card dash-card--compact">
+    <div class="dash-card__main">
+      <a href="{% url 'dashboard:treatment_edit' t.pk %}">{{ t.name }}</a>
+      <p class="dash-card__meta">K{{ t.price }} · {{ t.duration_minutes }} min</p>
+    </div>
+    <div class="dash-card__aside">
+      {% if t.is_active %}<span class="dash-badge dash-badge--confirmed">Active</span>{% else %}<span class="dash-badge dash-badge--cancelled">Inactive</span>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

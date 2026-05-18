@@ -1,0 +1,51 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}{{ customer_name }} · Dashboard{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-eyebrow"><a href="{% url 'dashboard:customer_list' %}">Customers</a></p>
+  <h1 class="dash-title">{{ customer_name }}</h1>
+  <p class="dash-subtitle">{{ total_visits }} completed visit{{ total_visits|pluralize }} (appointments marked completed)</p>
+</header>
+<div class="dash-grid">
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Contact</h2>
+    <dl class="dash-dl">
+      <dt>Email</dt><dd>{{ customer.email|default:"—" }}</dd>
+      <dt>Phone</dt><dd>{% if profile %}{{ profile.phone_display|default:profile.phone|default:"—" }}{% else %}—{% endif %}</dd>
+    </dl>
+  </section>
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Staff notes</h2>
+    <form method="post" class="dash-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_note">
+      {{ note_form.body }}
+      <button type="submit" class="dash-btn dash-btn--primary">Add note</button>
+    </form>
+    <ul class="dash-notes-list">
+      {% for note in notes %}
+      <li>
+        <p>{{ note.body }}</p>
+        <p class="dash-card__meta">{{ note.author.get_username|default:"Staff" }} · {{ note.created_at|date:"j M Y, g:i A" }}</p>
+      </li>
+      {% empty %}
+      <li class="dash-empty">No staff notes yet.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+<section class="dash-panel">
+  <h2 class="dash-panel__title">Appointment history</h2>
+  <ul class="dash-list">
+    {% for appt in appt_page %}
+    <li class="dash-card dash-card--compact">
+      <div class="dash-card__main">
+        <a href="{% url 'dashboard:appointment_detail' appt.booking_reference %}">{{ appt.booking_reference }}</a>
+        <p class="dash-card__meta">{{ appt.appointment_date|date:"j M Y" }} · {{ appt.get_status_display }}</p>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% include 'dashboard/components/pagination.html' with page_obj=appt_page %}
+</section>
+{% endblock %}

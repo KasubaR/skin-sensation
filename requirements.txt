@@ -3,3 +3,4 @@ mysqlclient
 Pillow
 django-allauth==0.63.6
 django-ratelimit==4.1.0
+reportlab>=4.0,<5

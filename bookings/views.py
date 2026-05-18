@@ -26,7 +26,49 @@ from bookings.scheduling import (
     resolve_staff_for_slot,
     slot_is_available,
 )
+from payments.models import Payment, PaymentMethod, PaymentStatus
 from services.models import Treatment
+
+BOOKING_PAYMENT_MAP = {
+    'mobile_money': PaymentMethod.OTHER,
+    'bank_transfer': PaymentMethod.BANK,
+}
+
+
+def _parse_service_ids_list(raw):
+    if isinstance(raw, list):
+        return [int(x) for x in raw]
+    if isinstance(raw, str) and raw.strip():
+        try:
+            parsed = json.loads(raw)
+            if isinstance(parsed, list):
+                return [int(x) for x in parsed]
+        except json.JSONDecodeError:
+            parts = raw.split(',')
+            return [int(x.strip()) for x in parts if x.strip()]
+    return []
+
+
+def _parse_bool(value):
+    if isinstance(value, bool):
+        return value
+    return str(value).lower() in ('1', 'true', 'on', 'yes')
+
+
+def _create_booking_payment(appointment, payment_choice, payment_reference='', proof=None):
+    if payment_choice == 'pay_later' or not payment_choice:
+        return None
+    if appointment.deposit_amount <= 0:
+        return None
+    method = BOOKING_PAYMENT_MAP.get(payment_choice, PaymentMethod.OTHER)
+    return Payment.objects.create(
+        appointment=appointment,
+        amount=appointment.deposit_amount,
+        payment_method=method,
+        payment_reference=payment_reference or appointment.booking_reference,
+        proof_of_payment=proof,
+        status=PaymentStatus.PENDING,
+    )
 
 
 def _parse_service_ids(request):
@@ -174,11 +216,14 @@ def create_appointment(request):
             status=429,
         )
 
+    is_json = request.content_type and 'application/json' in request.content_type
     try:
-        if request.content_type == 'application/json':
+        if is_json:
             data = json.loads(request.body.decode('utf-8'))
+            files = {}
         else:
             data = request.POST
+            files = request.FILES
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON body.'}, status=400)
 
@@ -187,7 +232,12 @@ def create_appointment(request):
         return JsonResponse({'error': 'Invalid submission.'}, status=400)
 
     try:
-        service_ids = [int(x) for x in data.get('service_ids', [])]
+        raw_service_ids = data.get('service_ids', [])
+        if hasattr(data, 'getlist'):
+            listed = data.getlist('service_ids')
+            if listed:
+                raw_service_ids = listed if len(listed) > 1 else listed[0]
+        service_ids = _parse_service_ids_list(raw_service_ids)
         staff_id = data.get('staff_id', 'any')
         appointment_date = _parse_date(data.get('appointment_date', ''))
         start_time = _parse_time(data.get('start_time', ''))
@@ -196,7 +246,10 @@ def create_appointment(request):
         email = (data.get('email') or '').strip()
         notes = (data.get('notes') or '').strip()
         allergies = (data.get('allergies') or '').strip()
-        first_visit = bool(data.get('first_visit'))
+        first_visit = _parse_bool(data.get('first_visit'))
+        payment_choice = (data.get('payment_method') or data.get('booking_payment') or '').strip()
+        payment_reference = (data.get('payment_reference') or '').strip()
+        proof = files.get('proof_of_payment') or files.get('payment_proof')
     except (ValueError, TypeError, ValidationError) as exc:
         return JsonResponse({'error': str(exc)}, status=400)
 
@@ -281,6 +334,13 @@ def create_appointment(request):
                     price_snapshot=treatment.price,
                     duration_snapshot=treatment.duration_minutes,
                 )
+
+            _create_booking_payment(
+                appointment,
+                payment_choice=payment_choice,
+                payment_reference=payment_reference,
+                proof=proof,
+            )
 
     except ValidationError as exc:
         messages = exc.messages if hasattr(exc, 'messages') else [str(exc)]

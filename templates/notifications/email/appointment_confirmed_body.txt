@@ -1,0 +1,23 @@
+Hi {{ customer_name }},
+
+Great news — your appointment at Skin Sensation is confirmed.
+
+Booking reference: {{ booking_reference }}
+
+When: {{ appointment_date|date:"l, j F Y" }} at {{ start_time|time:"g:i A" }} – {{ end_time|time:"g:i A" }}
+Therapist: {{ staff_name|default:"To be assigned" }}
+
+Services:
+{% for item in services %}- {{ item.name }} — K{{ item.price }}
+{% endfor %}
+
+Total: K{{ total_price }}
+{% if deposit_amount %}Deposit due: K{{ deposit_amount }}
+{% endif %}
+View or manage your booking: {{ appointment_url }}
+
+Questions? Call us at {{ spa_phone }} or message us on WhatsApp: {{ spa_whatsapp_url }}
+
+We look forward to seeing you.
+
+Skin Sensation Spa

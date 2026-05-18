@@ -2,11 +2,12 @@ from datetime import date, time
 from typing import Optional, Union
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from bookings.models import Appointment, AppointmentStatus
-from bookings.policies import can_cancel_appointment, can_reschedule_appointment
+from bookings.validators import validate_cancellation_window
 from bookings.pricing import calculate_appointment_window
 from bookings.scheduling import (
     _is_any_staff,
@@ -34,11 +35,10 @@ def get_customer_appointment(user: User, booking_reference: str) -> Appointment:
 
 
 def cancel_appointment(appointment: Appointment) -> Appointment:
-    if not can_cancel_appointment(appointment):
-        raise PortalError(
-            'This appointment cannot be cancelled. '
-            'Cancellations require at least 24 hours notice and apply only to upcoming bookings.'
-        )
+    try:
+        validate_cancellation_window(appointment)
+    except ValidationError as exc:
+        raise PortalError(exc.messages[0] if exc.messages else str(exc)) from exc
 
     with transaction.atomic():
         appointment.status = AppointmentStatus.CANCELLED
@@ -56,11 +56,10 @@ def reschedule_appointment(
     new_start_time: time,
     staff_id: Union[int, str, None] = None,
 ) -> Appointment:
-    if not can_reschedule_appointment(appointment):
-        raise PortalError(
-            'This appointment cannot be rescheduled. '
-            'Changes require at least 24 hours notice and apply only to upcoming bookings.'
-        )
+    try:
+        validate_cancellation_window(appointment)
+    except ValidationError as exc:
+        raise PortalError(exc.messages[0] if exc.messages else str(exc)) from exc
 
     if new_date < date.today():
         raise PortalError('Appointment date must be today or in the future.')

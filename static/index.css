@@ -209,6 +209,94 @@
     color: #000;
   }
 
+  /* ── ACCOUNT DROPDOWN ── */
+  .nav-account {
+    position: relative;
+  }
+
+  .nav-account-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-account-chevron {
+    font-size: 9px;
+    transition: transform 0.2s;
+  }
+
+  .nav-account.open .nav-account-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav-account-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 14px);
+    right: 0;
+    min-width: 210px;
+    background: var(--white);
+    border: 1px solid var(--blush);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    z-index: 200;
+  }
+
+  .nav-account.open .nav-account-dropdown {
+    display: block;
+  }
+
+  .nav-account-email {
+    padding: 12px 16px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: var(--light);
+    border-bottom: 1px solid var(--blush);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-account-dropdown form {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--blush);
+  }
+
+  .nav-account-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font: 400 12px/1 'DM Sans', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--dark);
+    text-decoration: none;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .nav-account-item:hover {
+    background: var(--cream);
+    color: var(--rose);
+  }
+
+  .nav-account-item i {
+    width: 14px;
+    font-size: 13px;
+    color: inherit;
+    flex-shrink: 0;
+  }
+
   .badge {
     position: absolute;
     top: -6px;

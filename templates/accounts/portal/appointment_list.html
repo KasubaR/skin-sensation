@@ -1,10 +1,7 @@
-{% extends 'layouts/base.html' %}
-{% load static %}
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+{% load portal_extras %}
 {% block title %}My appointments · Skin Sensation{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'portal.css' %}">
-{% endblock %}
-{% block content %}
+{% block portal_content %}
 <section class="portal-page">
   <header class="portal-header">
     <p class="portal-eyebrow">Member portal</p>
@@ -13,6 +10,14 @@
     <a class="portal-btn portal-btn--primary" href="{% url 'booking' %}">Book a new appointment</a>
   </header>
 
+  <nav class="portal-filters" aria-label="Filter appointments">
+    <a href="?filter=upcoming" class="portal-filter{% if active_filter == 'upcoming' %} is-active{% endif %}">Upcoming</a>
+    <a href="?filter=completed" class="portal-filter{% if active_filter == 'completed' %} is-active{% endif %}">Completed</a>
+    <a href="?filter=cancelled" class="portal-filter{% if active_filter == 'cancelled' %} is-active{% endif %}">Cancelled</a>
+    <a href="?filter=all" class="portal-filter{% if active_filter == 'all' %} is-active{% endif %}">All</a>
+  </nav>
+
+  {% if active_filter == 'upcoming' or active_filter == 'all' %}
   <section class="portal-section" aria-labelledby="upcoming-heading">
     <h2 id="upcoming-heading" class="portal-section__title">Upcoming</h2>
     {% if upcoming %}
@@ -23,12 +28,14 @@
           <p class="portal-card__ref">{{ appt.booking_reference }}</p>
           <p class="portal-card__when">{{ appt.appointment_date|date:"l, j F Y" }} · {{ appt.start_time|time:"g:i A" }}</p>
           <p class="portal-card__meta">
-            {% if appt.assigned_staff %}{{ appt.assigned_staff.display_name }}{% else %}Therapist TBC{% endif %}
+            {{ appt|services_summary }}
+            · {% if appt.assigned_staff %}{{ appt.assigned_staff.display_name }}{% else %}Therapist TBC{% endif %}
             · K{{ appt.total_price }}
           </p>
         </div>
         <div class="portal-card__aside">
           <span class="portal-badge portal-badge--{{ appt.status|lower }}">{{ appt.get_status_display }}</span>
+          <span class="portal-badge portal-badge--payment">{{ appt.get_payment_status_display }}</span>
           <a class="portal-link" href="{% url 'appointment_detail' appt.booking_reference %}">View details</a>
         </div>
       </li>
@@ -38,18 +45,23 @@
     <p class="portal-empty">No upcoming appointments. <a href="{% url 'booking' %}">Book your next visit</a>.</p>
     {% endif %}
   </section>
+  {% endif %}
 
+  {% if active_filter != 'upcoming' %}
   <section class="portal-section" aria-labelledby="history-heading">
-    <h2 id="history-heading" class="portal-section__title">Booking history</h2>
+    <h2 id="history-heading" class="portal-section__title">{% if active_filter == 'upcoming' %}Booking history{% else %}Appointments{% endif %}</h2>
     {% if history %}
     <div class="portal-table-wrap">
       <table class="portal-table">
         <thead>
           <tr>
             <th scope="col">Reference</th>
+            <th scope="col">Services</th>
             <th scope="col">Date</th>
             <th scope="col">Time</th>
+            <th scope="col">Staff</th>
             <th scope="col">Status</th>
+            <th scope="col">Payment</th>
             <th scope="col">Total</th>
             <th scope="col"></th>
           </tr>
@@ -58,9 +70,12 @@
           {% for appt in history %}
           <tr>
             <td><code class="portal-ref">{{ appt.booking_reference }}</code></td>
+            <td>{{ appt|services_summary }}</td>
             <td>{{ appt.appointment_date|date:"j M Y" }}</td>
             <td>{{ appt.start_time|time:"g:i A" }}</td>
+            <td>{% if appt.assigned_staff %}{{ appt.assigned_staff.display_name }}{% else %}—{% endif %}</td>
             <td><span class="portal-badge portal-badge--{{ appt.status|lower }}">{{ appt.get_status_display }}</span></td>
+            <td><span class="portal-badge portal-badge--payment">{{ appt.get_payment_status_display }}</span></td>
             <td>K{{ appt.total_price }}</td>
             <td><a class="portal-link" href="{% url 'appointment_detail' appt.booking_reference %}">Details</a></td>
           </tr>
@@ -69,8 +84,9 @@
       </table>
     </div>
     {% else %}
-    <p class="portal-empty">No past appointments yet.</p>
+    <p class="portal-empty">No appointments in this view.</p>
     {% endif %}
   </section>
+  {% endif %}
 </section>
 {% endblock %}

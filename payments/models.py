@@ -43,6 +43,7 @@ class Payment(models.Model):
         related_name='verified_payments',
     )
     verified_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

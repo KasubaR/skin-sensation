@@ -1,0 +1,9 @@
+Payment submitted for review
+
+Booking: {{ booking_reference }}
+Customer: {{ customer_name }} ({{ customer_email }})
+Amount: K{{ payment_amount }}
+Method: {{ payment_method }}
+Reference: {{ payment_reference }}
+
+Review in the staff dashboard.

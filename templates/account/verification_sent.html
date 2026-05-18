@@ -8,6 +8,20 @@
 <section class="account-shell">
   <h1>{% trans "Check your inbox" %}</h1>
   <p>{% trans "We have sent you a confirmation email. Follow the link in that message to verify your address." %}</p>
-  <p class="account-secondary-links"><a href="{% url 'account_login' %}">{% trans "Return to sign in" %}</a></p>
+
+  <div class="resend-block">
+    <p class="resend-label">{% trans "Didn't receive it?" %}</p>
+    <form method="post" action="{% url 'resend_confirmation' %}">
+      {% csrf_token %}
+      <div class="resend-row">
+        <input type="email" name="email" placeholder="{% trans 'Your email address' %}" required class="resend-input">
+        <button type="submit" class="account-btn">{% trans "Resend" %}</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="account-actions">
+    <a href="{% url 'account_login' %}" class="account-btn account-btn--secondary"><i class="fa-solid fa-arrow-left"></i> {% trans "Return to sign in" %}</a>
+  </div>
 </section>
 {% endblock %}

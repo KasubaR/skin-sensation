@@ -1,10 +1,6 @@
-{% extends 'layouts/base.html' %}
-{% load static %}
+{% extends 'accounts/portal/layouts/portal_base.html' %}
 {% block title %}Reschedule {{ booking_reference }} · Skin Sensation{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'portal.css' %}">
-{% endblock %}
-{% block content %}
+{% block portal_content %}
 <section class="portal-page portal-page--reschedule"
   data-portal-reschedule
   data-availability-url="{{ availability_url }}"
@@ -50,7 +46,4 @@
     </div>
   </form>
 </section>
-{% endblock %}
-{% block extra_js %}
-<script src="{% static 'portal.js' %}" defer></script>
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}{% if is_create %}New treatment{% else %}{{ treatment.name }}{% endif %} · Dashboard{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-eyebrow"><a href="{% url 'dashboard:service_list' %}">Services</a></p>
+  <h1 class="dash-title">{% if is_create %}New treatment{% else %}{{ treatment.name }}{% endif %}</h1>
+</header>
+<form method="post" enctype="multipart/form-data" class="dash-form dash-panel">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="dash-btn dash-btn--primary">Save</button>
+</form>
+{% if not is_create %}
+<form method="post" class="dash-form">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="toggle_active">
+  <button type="submit" class="dash-btn dash-btn--secondary">
+    {% if treatment.is_active %}Deactivate{% else %}Activate{% endif %} treatment
+  </button>
+</form>
+{% endif %}
+{% endblock %}

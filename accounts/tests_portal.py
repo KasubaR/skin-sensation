@@ -51,7 +51,7 @@ class PortalPolicyTests(TestCase):
         self.appointment.appointment_date = tomorrow
         self.appointment.start_time = time(10, 0)
         self.appointment.save(update_fields=['appointment_date', 'start_time'])
-        with patch('bookings.policies.timezone.now') as mock_now:
+        with patch('bookings.validators.timezone.now') as mock_now:
             starts = timezone.make_aware(datetime.combine(tomorrow, time(10, 0)))
             mock_now.return_value = starts - timedelta(hours=CANCELLATION_NOTICE_HOURS - 1)
             self.assertFalse(can_modify_appointment(self.appointment))
@@ -119,6 +119,14 @@ class PortalViewTests(TestCase):
         response = self.client.get(reverse('appointment_list'))
         self.assertEqual(response.status_code, 302)
         self.assertIn('/accounts/login/', response.url)
+
+    def test_appointment_list_filter_completed(self):
+        self.client.login(username='user_a', password='testpass123')
+        self.appointment.status = AppointmentStatus.COMPLETED
+        self.appointment.save(update_fields=['status'])
+        response = self.client.get(reverse('appointment_list'), {'filter': 'completed'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.appointment.booking_reference)
 
     def test_anonymous_detail_redirects_to_login(self):
         response = self.client.get(

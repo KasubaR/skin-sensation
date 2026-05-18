@@ -1,0 +1,24 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Customers · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Customers</h1>
+</header>
+<form class="dash-filters" method="get">
+  {{ search_form.q }}
+  <button type="submit" class="dash-btn dash-btn--secondary">Search</button>
+</form>
+<ul class="dash-list">
+  {% for profile in page_obj %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      <p class="dash-card__title"><a href="{% url 'dashboard:customer_detail' profile.user_id %}">{{ profile.full_name|default:profile.user.email }}</a></p>
+      <p class="dash-card__meta">{{ profile.phone_display|default:profile.phone }} · {{ profile.visit_count }} completed visit{{ profile.visit_count|pluralize }}</p>
+    </div>
+  </li>
+  {% empty %}
+  <li class="dash-empty">No customers found.</li>
+  {% endfor %}
+</ul>
+{% include 'dashboard/components/pagination.html' with page_obj=page_obj %}
+{% endblock %}

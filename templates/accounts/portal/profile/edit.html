@@ -1,0 +1,45 @@
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+{% block title %}Edit profile · Skin Sensation{% endblock %}
+{% block portal_content %}
+<section class="portal-page">
+  <header class="portal-header">
+    <h1 class="portal-title">Edit profile</h1>
+  </header>
+
+  <form class="portal-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="portal-form-group">
+      <label for="id_full_name">Full name</label>
+      {{ form.full_name }}
+      {% if form.full_name.errors %}<p class="portal-field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="portal-form-group">
+      <label for="id_email">Email</label>
+      {{ form.email }}
+      {% if form.email.errors %}<p class="portal-field-error">{{ form.email.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="portal-form-group">
+      <label for="id_phone">Phone</label>
+      {{ form.phone }}
+      {% if form.phone.errors %}<p class="portal-field-error">{{ form.phone.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="portal-form-group">
+      <label for="id_avatar">Profile photo</label>
+      {{ form.avatar }}
+      {% if form.avatar.errors %}<p class="portal-field-error">{{ form.avatar.errors.0 }}</p>{% endif %}
+    </div>
+
+    <h2 class="portal-section__title">Email notifications</h2>
+    <div>
+      <label class="portal-checkbox">{{ notif_form.email_payments }} {{ notif_form.email_payments.label }}</label>
+      <label class="portal-checkbox">{{ notif_form.email_bookings }} {{ notif_form.email_bookings.label }}</label>
+      <label class="portal-checkbox">{{ notif_form.email_reminders }} {{ notif_form.email_reminders.label }}</label>
+    </div>
+
+    <div class="portal-actions">
+      <button type="submit" class="portal-btn portal-btn--primary">Save changes</button>
+      <a class="portal-btn portal-btn--secondary" href="{% url 'profile_detail' %}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

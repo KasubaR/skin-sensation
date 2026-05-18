@@ -1,0 +1,1 @@
+Reminder: your Skin Sensation appointment is today — ref {{ booking_reference }}

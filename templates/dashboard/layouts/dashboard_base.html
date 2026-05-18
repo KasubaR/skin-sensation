@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard.css' %}">
+{% endblock %}
+{% block content %}
+<div class="dash-layout">
+  <aside class="dash-sidebar" aria-label="Dashboard navigation">
+  <p class="dash-sidebar__brand">Staff dashboard</p>
+  <nav class="dash-nav">
+    <a class="dash-nav__link{% if request.resolver_match.url_name == 'appointment_calendar' %} is-active{% endif %}" href="{% url 'dashboard:appointment_calendar' %}">Calendar</a>
+    <a class="dash-nav__link{% if request.resolver_match.url_name == 'appointment_schedule' %} is-active{% endif %}" href="{% url 'dashboard:appointment_schedule' %}">Daily schedule</a>
+    <a class="dash-nav__link{% if request.resolver_match.url_name == 'appointment_list' %} is-active{% endif %}" href="{% url 'dashboard:appointment_list' %}">Appointments</a>
+    <a class="dash-nav__link{% if request.resolver_match.url_name == 'payment_list' or request.resolver_match.url_name == 'payment_detail' %} is-active{% endif %}" href="{% url 'dashboard:payment_list' %}">Payments</a>
+    <a class="dash-nav__link{% if 'service' in request.resolver_match.url_name or 'treatment' in request.resolver_match.url_name %} is-active{% endif %}" href="{% url 'dashboard:service_list' %}">Services</a>
+    <a class="dash-nav__link{% if 'customer' in request.resolver_match.url_name %} is-active{% endif %}" href="{% url 'dashboard:customer_list' %}">Customers</a>
+    <a class="dash-nav__link" href="{% url 'admin:index' %}" target="_blank" rel="noopener">Django admin</a>
+  </nav>
+  </aside>
+  <main class="dash-main">
+    {% block dashboard_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'dashboard.js' %}" defer></script>
+{% block dashboard_js %}{% endblock %}
+{% endblock %}

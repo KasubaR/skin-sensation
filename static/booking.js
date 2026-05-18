@@ -473,6 +473,10 @@ function clearBookingState() {
 async function submitAppointment(state) {
   const staffInput = document.querySelector('input[name="booking_staff"]:checked');
   const staffResolved = document.getElementById('bookingStaffResolved');
+  const payInput = document.querySelector('input[name="booking_payment"]:checked');
+  const proofInput = document.getElementById('bookingPaymentProof');
+  const hasProof = proofInput && proofInput.files && proofInput.files.length > 0;
+
   const payload = {
     service_ids: getSelectedServiceIds(),
     staff_id: staffResolved && staffResolved.value ? staffResolved.value : staffInput ? staffInput.value : 'any',
@@ -484,19 +488,42 @@ async function submitAppointment(state) {
     notes: (document.getElementById('bookingNotes').value || '').trim(),
     allergies: (document.getElementById('bookingAllergies').value || '').trim(),
     first_visit: !!(document.getElementById('bookingFirstVisit') || {}).checked,
+    payment_method: payInput ? payInput.value : '',
     website: '',
   };
 
-  const res = await fetch(apiConfig.appointmentsUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'X-CSRFToken': apiConfig.csrfToken,
-    },
-    credentials: 'same-origin',
-    body: JSON.stringify(payload),
-  });
+  let fetchOpts;
+  if (hasProof) {
+    const formData = new FormData();
+    formData.append('service_ids', JSON.stringify(payload.service_ids));
+    Object.keys(payload).forEach(function (key) {
+      if (key === 'service_ids') return;
+      formData.append(key, key === 'first_visit' ? (payload[key] ? 'true' : 'false') : payload[key]);
+    });
+    formData.append('proof_of_payment', proofInput.files[0]);
+    fetchOpts = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'X-CSRFToken': apiConfig.csrfToken,
+      },
+      credentials: 'same-origin',
+      body: formData,
+    };
+  } else {
+    fetchOpts = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-CSRFToken': apiConfig.csrfToken,
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    };
+  }
+
+  const res = await fetch(apiConfig.appointmentsUrl, fetchOpts);
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {

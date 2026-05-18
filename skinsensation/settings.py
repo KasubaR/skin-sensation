@@ -155,7 +155,7 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/accounts/appointments/'
+LOGIN_REDIRECT_URL = '/accounts/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -178,6 +178,9 @@ if _IS_PRODUCTION:
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # Prevent quoted-printable line-wrapping that breaks long URLs in console output
+    import email.charset as _ec
+    _ec.add_charset('utf-8', _ec.SHORTEST, None, 'utf-8')
 
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'info@skinsensationspa.com')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
@@ -190,6 +193,17 @@ MANAGERS = [('Skin Sensation', _contact_email)]
 SPA_WHATSAPP_E164 = os.environ.get('SPA_WHATSAPP_E164', '260973407110')
 SPA_PHONE_DISPLAY = os.environ.get('SPA_PHONE_DISPLAY', '+260 973 407 110')
 SPA_TIME_ZONE = os.environ.get('SPA_TIME_ZONE', 'Africa/Lusaka')
+
+# Notifications (email via Django mail / SMTP; SMS stub for future providers)
+NOTIFICATION_EMAIL_ENABLED = os.environ.get('NOTIFICATION_EMAIL_ENABLED', 'true').lower() in (
+    '1',
+    'true',
+    'yes',
+)
+NOTIFICATION_SMS_ENABLED = False
+NOTIFICATION_REMINDER_HOUR = int(os.environ.get('NOTIFICATION_REMINDER_HOUR', '8'))
+NOTIFICATION_SMS_BACKEND = 'notifications.backends.sms.NullSmsBackend'
+# Later: EMAIL_PROVIDER=sendgrid|mailgun with django-anymail and API keys in env
 
 
 # Internationalization

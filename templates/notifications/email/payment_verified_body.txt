@@ -1,0 +1,10 @@
+Hi {{ customer_name }},
+
+Your payment of K{{ payment_amount }} for booking {{ booking_reference }} has been verified.
+
+Method: {{ payment_method }}
+Reference: {{ payment_reference }}
+
+View your appointment: {{ appointment_url }}
+
+Skin Sensation Spa

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<body style="font-family: Georgia, serif; color: #2c2c2c; max-width: 560px; margin: 0 auto; padding: 24px;">
+  <p>Hi {{ customer_name }},</p>
+  <p>We received your payment of <strong>K{{ payment_amount }}</strong> for booking <code>{{ booking_reference }}</code>.</p>
+  <p><strong>Method:</strong> {{ payment_method }}<br>
+  <strong>Reference:</strong> {{ payment_reference }}</p>
+  <p>Our team will verify your payment shortly.</p>
+  <p><a href="{{ appointment_url }}">View your appointment</a></p>
+  <p style="color: #666;">Skin Sensation Spa</p>
+</body>
+</html>

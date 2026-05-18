@@ -1,0 +1,27 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Services · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Services</h1>
+  <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:service_create' %}">Add service</a>
+</header>
+<ul class="dash-list">
+  {% for service in services %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      <p class="dash-card__title"><a href="{% url 'dashboard:service_edit' service.pk %}">{{ service.name }}</a></p>
+      <p class="dash-card__meta">{{ service.treatment_count }} treatment{{ service.treatment_count|pluralize }}</p>
+    </div>
+    <div class="dash-card__aside">
+      {% if service.is_active %}
+      <span class="dash-badge dash-badge--confirmed">Active</span>
+      {% else %}
+      <span class="dash-badge dash-badge--cancelled">Inactive</span>
+      {% endif %}
+    </div>
+  </li>
+  {% empty %}
+  <li class="dash-empty">No services yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

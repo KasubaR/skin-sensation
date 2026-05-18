@@ -1,0 +1,79 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}{{ appointment.booking_reference }} · Dashboard{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-eyebrow"><a href="{% url 'dashboard:appointment_list' %}">Appointments</a></p>
+  <h1 class="dash-title">{{ appointment.booking_reference }}</h1>
+  <span class="dash-badge dash-badge--{{ appointment.status|lower }}">{{ appointment.get_status_display }}</span>
+  <span class="dash-badge">{{ appointment.get_payment_status_display }}</span>
+</header>
+<div class="dash-grid">
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Booking</h2>
+    <dl class="dash-dl">
+      <dt>Date</dt><dd>{{ appointment.appointment_date|date:"l, j F Y" }}</dd>
+      <dt>Time</dt><dd>{{ appointment.start_time|time:"g:i A" }} – {{ appointment.end_time|time:"g:i A" }}</dd>
+      <dt>Therapist</dt><dd>{% if appointment.assigned_staff %}{{ appointment.assigned_staff.display_name }}{% else %}—{% endif %}</dd>
+      <dt>Total</dt><dd>K{{ appointment.total_price }}</dd>
+      <dt>Deposit</dt><dd>K{{ appointment.deposit_amount }}</dd>
+    </dl>
+    <h3 class="dash-panel__subtitle">Services</h3>
+    <ul class="dash-simple-list">
+      {% for line in appointment.line_items.all %}
+      <li>{{ line.treatment.name }} · K{{ line.price_snapshot }} · {{ line.duration_snapshot }} min</li>
+      {% endfor %}
+    </ul>
+    {% if appointment.notes %}
+    <h3 class="dash-panel__subtitle">Customer notes</h3>
+    <pre class="dash-notes">{{ appointment.notes }}</pre>
+    {% endif %}
+  </section>
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Customer</h2>
+    <dl class="dash-dl">
+      <dt>Name</dt><dd>{{ customer_name }}</dd>
+      <dt>Email</dt><dd>{{ appointment.customer.email|default:"—" }}</dd>
+      <dt>Phone</dt><dd>{% if profile %}{{ profile.phone_display|default:profile.phone }}{% else %}—{% endif %}</dd>
+    </dl>
+    <a class="dash-link" href="{% url 'dashboard:customer_detail' appointment.customer_id %}">View customer profile</a>
+    {% if allowed_statuses %}
+    <h3 class="dash-panel__subtitle">Update status</h3>
+    <form method="post" class="dash-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_status">
+      {{ status_form.status }}
+      <button type="submit" class="dash-btn dash-btn--primary">Save status</button>
+    </form>
+    {% endif %}
+  </section>
+</div>
+<section class="dash-panel">
+  <h2 class="dash-panel__title">Payments</h2>
+  {% if payments %}
+  <ul class="dash-list dash-list--compact">
+    {% for p in payments %}
+    <li class="dash-card dash-card--compact">
+      <div class="dash-card__main">
+        <p>K{{ p.amount }} · {{ p.get_payment_method_display }} · {{ p.get_status_display }}</p>
+        {% if p.payment_reference %}<p class="dash-card__meta">Ref: {{ p.payment_reference }}</p>{% endif %}
+      </div>
+      <div class="dash-card__aside">
+        {% if p.status == 'PENDING' %}
+        <a class="dash-link" href="{% url 'dashboard:payment_detail' p.pk %}">Review</a>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="dash-empty">No payments recorded.</p>
+  {% endif %}
+  <h3 class="dash-panel__subtitle">Record manual payment</h3>
+  <form method="post" enctype="multipart/form-data" class="dash-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="manual_payment">
+    {{ manual_payment_form.as_p }}
+    <button type="submit" class="dash-btn dash-btn--primary">Record &amp; verify</button>
+  </form>
+</section>
+{% endblock %}

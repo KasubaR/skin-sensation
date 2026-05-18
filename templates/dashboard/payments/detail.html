@@ -1,0 +1,55 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Payment #{{ payment.pk }} · Dashboard{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-eyebrow"><a href="{% url 'dashboard:payment_list' %}">Payments</a></p>
+  <h1 class="dash-title">Payment review</h1>
+</header>
+<div class="dash-grid">
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Payment</h2>
+    <dl class="dash-dl">
+      <dt>Amount</dt><dd>K{{ payment.amount }}</dd>
+      <dt>Method</dt><dd>{{ payment.get_payment_method_display }}</dd>
+      <dt>Status</dt><dd>{{ payment.get_status_display }}</dd>
+      <dt>Reference</dt><dd>{{ payment.payment_reference|default:"—" }}</dd>
+      <dt>Submitted</dt><dd>{{ payment.created_at|date:"j M Y, g:i A" }}</dd>
+    </dl>
+    {% if payment.proof_of_payment %}
+    <p class="dash-panel__subtitle">Proof of payment</p>
+    <a href="{{ payment.proof_of_payment.url }}" target="_blank" rel="noopener">
+      <img src="{{ payment.proof_of_payment.url }}" alt="Payment proof" class="dash-proof-img">
+    </a>
+    {% endif %}
+    {% if payment.status == 'PENDING' %}
+    <div class="dash-actions">
+      <form method="post" class="dash-form dash-form--inline">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="approve">
+        <button type="submit" class="dash-btn dash-btn--primary">Approve</button>
+      </form>
+      <form method="post" class="dash-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="reject">
+        {{ reject_form.rejection_reason }}
+        <button type="submit" class="dash-btn dash-btn--danger">Reject</button>
+      </form>
+    </div>
+    {% endif %}
+    {% if payment.rejection_reason %}
+    <p class="dash-card__meta">Rejection reason: {{ payment.rejection_reason }}</p>
+    {% endif %}
+  </section>
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Appointment</h2>
+    <dl class="dash-dl">
+      <dt>Reference</dt>
+      <dd><a href="{% url 'dashboard:appointment_detail' appointment.booking_reference %}">{{ appointment.booking_reference }}</a></dd>
+      <dt>Customer</dt><dd>{{ customer_name }}</dd>
+      <dt>Date</dt><dd>{{ appointment.appointment_date|date:"j M Y" }}</dd>
+      <dt>Deposit due</dt><dd>K{{ appointment.deposit_amount }}</dd>
+      <dt>Total</dt><dd>K{{ appointment.total_price }}</dd>
+    </dl>
+  </section>
+</div>
+{% endblock %}

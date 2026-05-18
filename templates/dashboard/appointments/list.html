@@ -1,0 +1,36 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Appointments · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Appointments</h1>
+  <a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:appointment_calendar' %}">Calendar</a>
+</header>
+<form class="dash-filters" method="get">
+  {{ filter_form.q }}
+  {{ filter_form.status }}
+  {{ filter_form.payment_status }}
+  {{ filter_form.staff_id }}
+  {{ filter_form.date_from }}
+  {{ filter_form.date_to }}
+  <button type="submit" class="dash-btn dash-btn--secondary">Filter</button>
+</form>
+{% if page_obj.object_list %}
+<ul class="dash-list">
+  {% for appt in page_obj %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      <p class="dash-card__ref"><a href="{% url 'dashboard:appointment_detail' appt.booking_reference %}">{{ appt.booking_reference }}</a></p>
+      <p class="dash-card__when">{{ appt.appointment_date|date:"j M Y" }} · {{ appt.start_time|time:"g:i A" }}</p>
+      <p class="dash-card__meta">{{ appt.get_payment_status_display }} · K{{ appt.total_price }}</p>
+    </div>
+    <div class="dash-card__aside">
+      <span class="dash-badge dash-badge--{{ appt.status|lower }}">{{ appt.get_status_display }}</span>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% include 'dashboard/components/pagination.html' with page_obj=page_obj %}
+{% else %}
+<p class="dash-empty">No appointments match your filters.</p>
+{% endif %}
+{% endblock %}

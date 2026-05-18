@@ -7,22 +7,37 @@
     <li><a href="{% url 'booking' %}">Bookings</a></li>
     <li><a href="{% url 'gallery' %}">Gallery</a></li>
     <li><a href="{% url 'contact' %}">Contact Us</a></li>
-    {% if user.is_authenticated %}
-    <li><a href="{% url 'appointment_list' %}">My appointments</a></li>
-    <li class="nav-auth"><span class="nav-user-email" title="{{ user.email }}">{{ user.email }}</span></li>
-    <li class="nav-auth">
-      <form class="nav-logout-form" method="post" action="{% url 'account_logout' %}">
-        {% csrf_token %}
-        <button type="submit" class="nav-link-btn">Log out</button>
-      </form>
-    </li>
-    {% endif %}
   </ul>
   <a href="{% url 'home' %}" class="logo"><img src="{% static 'images/nav-bar-logo.svg' %}" alt="Skin Sensation" class="logo-img"></a>
   <div class="nav-icons">
     <button type="button" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     {% if user.is_authenticated %}
-    <a href="{% url 'appointment_list' %}" class="nav-icon-link" title="My appointments" aria-label="My appointments"><i class="fa-regular fa-user"></i></a>
+    <div class="nav-account" id="navAccount">
+      <button class="nav-icon-link nav-account-btn" id="navAccountBtn" aria-label="Account menu" aria-expanded="false">
+        <i class="fa-regular fa-user"></i>
+        <i class="fa-solid fa-chevron-down nav-account-chevron"></i>
+      </button>
+      <div class="nav-account-dropdown" id="navAccountDropdown" aria-hidden="true">
+        <div class="nav-account-email">{{ user.email }}</div>
+        {% if user.is_staff %}
+        <a href="{% url 'dashboard:home' %}" class="nav-account-item">
+          <i class="fa-solid fa-gauge-high"></i> Dashboard
+        </a>
+        {% endif %}
+        <a href="{% url 'portal_dashboard' %}" class="nav-account-item">
+          <i class="fa-regular fa-user"></i> My account
+        </a>
+        <a href="{% url 'appointment_list' %}" class="nav-account-item">
+          <i class="fa-regular fa-calendar-check"></i> Appointments
+        </a>
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="nav-account-item">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Log out
+          </button>
+        </form>
+      </div>
+    </div>
     {% else %}
     <a href="{% url 'account_login' %}" class="nav-icon-link" title="Log in" aria-label="Log in"><i class="fa-regular fa-user"></i></a>
     {% endif %}
@@ -37,7 +52,11 @@
     <li><a href="{% url 'gallery' %}">Gallery</a></li>
     <li><a href="{% url 'contact' %}">Contact Us</a></li>
     {% if user.is_authenticated %}
-    <li><a href="{% url 'appointment_list' %}">My appointments</a></li>
+    {% if user.is_staff %}
+    <li><a href="{% url 'dashboard:home' %}">Dashboard</a></li>
+    {% endif %}
+    <li><a href="{% url 'portal_dashboard' %}">My account</a></li>
+    <li><a href="{% url 'appointment_list' %}">Appointments</a></li>
     <li class="nav-auth-mobile"><span class="nav-user-email">{{ user.email }}</span></li>
     <li class="nav-auth-mobile">
       <form class="nav-logout-form" method="post" action="{% url 'account_logout' %}">

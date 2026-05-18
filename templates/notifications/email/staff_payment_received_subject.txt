@@ -1,0 +1,1 @@
+New payment to review — {{ booking_reference }}
