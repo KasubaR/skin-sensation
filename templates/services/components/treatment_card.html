@@ -2,25 +2,24 @@
   data-treatment-id="{{ treatment.id }}"
   data-treatment-name="{{ treatment.name }}"
   data-treatment-price="{{ treatment.price }}">
-  <div class="treatment-card-top">
-    <div class="treatment-card-meta-row">
-      <h3 class="treatment-card-title">{{ treatment.name }}</h3>
-      <span class="treatment-card-duration">
-        <i class="fa-regular fa-clock" aria-hidden="true"></i> {{ treatment.duration_minutes }} min
-      </span>
-    </div>
-    {% if treatment.description %}
-    <p class="treatment-card-desc">{{ treatment.description }}</p>
-    {% endif %}
-  </div>
-  <div class="treatment-card-footer">
+  <div class="treatment-card-main">
+    <h3 class="treatment-card-title">{{ treatment.name }}</h3>
+    <span class="treatment-card-leader" aria-hidden="true"></span>
     <div class="treatment-card-price">
       {% if treatment.price_from %}<span class="from-label">From</span>{% endif %}
       {% if treatment.price_label %}{{ treatment.price_label }}{% else %}K{{ treatment.price|floatformat:0 }}{% endif %}
     </div>
-    <div class="treatment-card-actions">
-      <a class="treatment-card-link" href="{% url 'treatment_detail' treatment.service.slug treatment.slug %}">Details</a>
-      <button class="treatment-card-select" data-treatment-select aria-pressed="false" type="button">Select</button>
-    </div>
+  </div>
+  <div class="treatment-card-sub">
+    <span class="treatment-card-duration">
+      <i class="fa-regular fa-clock" aria-hidden="true"></i> {{ treatment.duration_minutes }} min
+    </span>
+    {% if treatment.description %}
+    <p class="treatment-card-desc">{{ treatment.description }}</p>
+    {% endif %}
+  </div>
+  <div class="treatment-card-actions">
+    <a class="treatment-card-link" href="{% url 'treatment_detail' treatment.service.slug treatment.slug %}">Details</a>
+    <button class="treatment-card-select" data-treatment-select aria-pressed="false" type="button">Select</button>
   </div>
 </article>
