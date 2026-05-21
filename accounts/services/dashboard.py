@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils import timezone
 
 from bookings.models import Appointment, AppointmentService, AppointmentStatus
@@ -37,14 +37,9 @@ def get_total_visits(user) -> int:
 
 
 def get_favorite_service(user):
-    completed_ids = user.appointments.filter(
-        status=AppointmentStatus.COMPLETED,
-    ).values_list('id', flat=True)
-    if not completed_ids:
-        return None
-
     top = (
-        AppointmentService.objects.filter(appointment_id__in=completed_ids)
+        AppointmentService.objects
+        .filter(appointment__customer=user, appointment__status=AppointmentStatus.COMPLETED)
         .values('treatment__name')
         .annotate(count=Count('treatment_id'))
         .order_by('-count')
@@ -62,8 +57,6 @@ def get_recent_bookings(user, limit=5):
         AppointmentStatus.CANCELLED,
         AppointmentStatus.NO_SHOW,
     )
-    from django.db.models import Q
-
     return (
         _appointment_queryset(user)
         .filter(Q(appointment_date__lt=today) | Q(status__in=terminal))
@@ -72,10 +65,11 @@ def get_recent_bookings(user, limit=5):
 
 
 def get_dashboard_context(user) -> dict:
+    pending_payments = list(get_pending_payments(user))
     return {
         'upcoming_appointment': get_upcoming_appointment(user),
-        'pending_payments': get_pending_payments(user),
-        'pending_payment_count': get_pending_payments(user).count(),
+        'pending_payments': pending_payments,
+        'pending_payment_count': len(pending_payments),
         'total_visits': get_total_visits(user),
         'favorite_service': get_favorite_service(user),
         'recent_bookings': get_recent_bookings(user),

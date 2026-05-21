@@ -1,9 +1,9 @@
-import json
-
 from django.http import JsonResponse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_GET
+from django_ratelimit.decorators import ratelimit
 
-from .models import Treatment
+from services.selectors import MAX_SEARCH_LEN, filter_treatments
 
 MAX_TREATMENTS = 200
 
@@ -14,18 +14,20 @@ def _treatment_image_url(request, treatment):
     return None
 
 
+@cache_page(300)
+@ratelimit(key='ip', rate='60/m', block=True)
 @require_GET
 def service_list(request):
     """JSON catalog of bookable treatments. service_ids in booking APIs are treatment PKs."""
-    treatments = (
-        Treatment.objects.filter(is_active=True)
-        .select_related('service')
-        .order_by('service__sort_order', 'service__name', 'sort_order', 'name')
-    )
-    service_slug = request.GET.get('service', '').strip()
-    if service_slug:
-        treatments = treatments.filter(service__slug=service_slug)
-    treatments = treatments[:MAX_TREATMENTS]
+    service_slug = request.GET.get('service', '').strip() or None
+    search = request.GET.get('search', '').strip()[:MAX_SEARCH_LEN] or None
+    treatments = filter_treatments(
+        search=search,
+        category_slug=service_slug,
+    ).only(
+        'id', 'slug', 'name', 'price', 'duration_minutes', 'image',
+        'service__name', 'service__slug',
+    )[:MAX_TREATMENTS]
     payload = [
         {
             'id': treatment.pk,

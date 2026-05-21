@@ -1,0 +1,66 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Review · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-breadcrumb"><a href="{% url 'dashboard:testimonial_list' %}">Reviews</a></p>
+  <h1 class="dash-title">{{ testimonial.rating }}★ review</h1>
+  <p class="dash-subtitle">{{ testimonial.customer.email }} · {{ testimonial.created_at|date:"j M Y, g:i A" }}</p>
+</header>
+
+{% if featured_count >= featured_limit and not testimonial.is_featured and testimonial.status == 'approved' %}
+<p class="dash-notice">Homepage featured limit reached ({{ featured_limit }}). Unfeature another review first.</p>
+{% endif %}
+
+<div class="dash-panel">
+  <h2 class="dash-panel__title">Details</h2>
+  <dl class="dash-dl">
+    <dt>Customer</dt>
+    <dd>{{ testimonial.customer.email }}</dd>
+    <dt>Service</dt>
+    <dd>{{ testimonial.service.name|default:"—" }}</dd>
+    <dt>Status</dt>
+    <dd>{{ testimonial.get_status_display }}{% if testimonial.is_featured %} · Featured{% endif %}</dd>
+    {% if testimonial.title %}
+    <dt>Headline</dt>
+    <dd>{{ testimonial.title }}</dd>
+    {% endif %}
+  </dl>
+</div>
+
+<div class="dash-panel">
+  <h2 class="dash-panel__title">Review</h2>
+  <p class="dash-message-body">{{ testimonial.review|linebreaksbr }}</p>
+</div>
+
+<div class="dash-panel dash-panel--actions">
+  <h2 class="dash-panel__title">Moderation</h2>
+  <div class="dash-action-row">
+    {% if testimonial.status != 'approved' %}
+    <form method="post" action="{% url 'dashboard:testimonial_approve' testimonial.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="dash-btn dash-btn--primary">Approve</button>
+    </form>
+    {% endif %}
+    {% if testimonial.status != 'rejected' %}
+    <form method="post" action="{% url 'dashboard:testimonial_reject' testimonial.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="dash-btn dash-btn--secondary">Reject</button>
+    </form>
+    {% endif %}
+    {% if testimonial.status == 'approved' %}
+    <form method="post" action="{% url 'dashboard:testimonial_feature' testimonial.pk %}">
+      {% csrf_token %}
+      <input type="hidden" name="featured" value="{% if testimonial.is_featured %}0{% else %}1{% endif %}">
+      <button type="submit" class="dash-btn dash-btn--secondary">
+        {% if testimonial.is_featured %}Remove from homepage{% else %}Feature on homepage{% endif %}
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<form method="post" action="{% url 'dashboard:testimonial_delete' testimonial.pk %}" class="dash-form dash-form--danger">
+  {% csrf_token %}
+  <button type="submit" class="dash-btn dash-btn--danger" data-confirm="Delete this review permanently?">Delete review</button>
+</form>
+{% endblock %}

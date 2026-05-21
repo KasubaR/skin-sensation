@@ -1,0 +1,12 @@
+<article class="testimonial-card">
+  <div class="testimonial-card-inner">
+    {% include 'testimonials/partials/star_rating.html' with rating=testimonial.rating %}
+    <blockquote class="testimonial-quote">
+      <p>{{ testimonial.review|linebreaksbr }}</p>
+    </blockquote>
+    <p class="testimonial-author">{{ testimonial.display_author_name }}</p>
+    {% if testimonial.service %}
+    <p class="testimonial-service">{{ testimonial.service.name }}</p>
+    {% endif %}
+  </div>
+</article>

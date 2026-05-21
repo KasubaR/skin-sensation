@@ -1,0 +1,14 @@
+<div class="services-category-section" aria-labelledby="services-menu-heading">
+  <div class="services-category-head">
+    <h2 id="services-menu-heading">Skin Sensation Beauty Spa</h2>
+    <p>Select a service</p>
+  </div>
+  <div class="services-detail-grid">
+    {% for service in services %}
+      {% include 'services/components/service_card.html' %}
+    {% empty %}
+    {% url 'contact' as contact_url %}
+    <p class="services-empty">Our service menu is being updated. Please check back soon{% if contact_url %} or <a href="{{ contact_url }}">contact us</a>{% endif %}.</p>
+    {% endfor %}
+  </div>
+</div>

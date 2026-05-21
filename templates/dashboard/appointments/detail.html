@@ -36,6 +36,15 @@
       <dt>Phone</dt><dd>{% if profile %}{{ profile.phone_display|default:profile.phone }}{% else %}—{% endif %}</dd>
     </dl>
     <a class="dash-link" href="{% url 'dashboard:customer_detail' appointment.customer_id %}">View customer profile</a>
+    {% if can_reschedule %}
+    <h3 class="dash-panel__subtitle">Reschedule</h3>
+    <form method="post" class="dash-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="reschedule">
+      {{ reschedule_form.as_p }}
+      <button type="submit" class="dash-btn dash-btn--secondary">Reschedule</button>
+    </form>
+    {% endif %}
     {% if allowed_statuses %}
     <h3 class="dash-panel__subtitle">Update status</h3>
     <form method="post" class="dash-form">

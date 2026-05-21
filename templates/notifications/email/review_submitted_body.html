@@ -1,0 +1,10 @@
+<p>A customer submitted a new review for moderation.</p>
+<ul>
+  <li><strong>Service:</strong> {{ service_name }}</li>
+  <li><strong>Rating:</strong> {{ rating }} / 5</li>
+  <li><strong>Customer:</strong> {{ customer_email }}</li>
+</ul>
+{% if title %}<p><strong>Headline:</strong> {{ title }}</p>{% endif %}
+<p><strong>Review:</strong></p>
+<p>{{ review|linebreaksbr }}</p>
+<p><a href="{{ dashboard_url }}">Moderate this review</a></p>

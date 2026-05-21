@@ -1,0 +1,109 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Overview · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Overview</h1>
+  <div class="dash-header__actions">
+    <a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:appointment_calendar' %}">Calendar</a>
+    <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:payment_list' %}">Review payments</a>
+  </div>
+</header>
+<div class="dash-kpi-grid">
+  <a class="dash-kpi-card" href="{% url 'dashboard:appointment_schedule' %}?date={{ today|date:'Y-m-d' }}">
+    <span class="dash-kpi-card__label">Today's bookings</span>
+    <span class="dash-kpi-card__value">{{ today_bookings }}</span>
+  </a>
+  <a class="dash-kpi-card" href="{% url 'dashboard:payment_list' %}">
+    <span class="dash-kpi-card__label">Pending payments</span>
+    <span class="dash-kpi-card__value">{{ pending_payments_count }}</span>
+  </a>
+  <a class="dash-kpi-card" href="{% url 'dashboard:reports' %}">
+    <span class="dash-kpi-card__label">Revenue this month</span>
+    <span class="dash-kpi-card__value">K{{ month_revenue }}</span>
+  </a>
+  <a class="dash-kpi-card" href="{% url 'dashboard:customer_list' %}">
+    <span class="dash-kpi-card__label">New customers</span>
+    <span class="dash-kpi-card__value">{{ new_customers_month }}</span>
+    <span class="dash-kpi-card__hint">{{ total_customers }} total</span>
+  </a>
+</div>
+<div class="dash-kpi-grid dash-kpi-grid--secondary">
+  <div class="dash-kpi-card dash-kpi-card--static">
+    <span class="dash-kpi-card__label">Upcoming (7 days)</span>
+    <span class="dash-kpi-card__value">{{ upcoming_bookings }}</span>
+  </div>
+  <div class="dash-kpi-card dash-kpi-card--static">
+    <span class="dash-kpi-card__label">Cancellations this month</span>
+    <span class="dash-kpi-card__value">{{ cancellations_month }}</span>
+  </div>
+</div>
+<div class="dash-grid">
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Today's schedule</h2>
+    {% if today_schedule %}
+    <ul class="dash-list dash-list--compact">
+      {% for appt in today_schedule %}
+      <li class="dash-card dash-card--compact">
+        <div class="dash-card__main">
+          <p class="dash-card__time">{{ appt.start_time|time:"g:i A" }}</p>
+          <p class="dash-card__title">
+            <a href="{% url 'dashboard:appointment_detail' appt.booking_reference %}">{{ appt.booking_reference }}</a>
+          </p>
+          <p class="dash-card__meta">{{ appt.get_status_display }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <a class="dash-link" href="{% url 'dashboard:appointment_schedule' %}?date={{ today|date:'Y-m-d' }}">View full schedule</a>
+    {% else %}
+    <p class="dash-empty">No appointments scheduled for today.</p>
+    {% endif %}
+  </section>
+  <section class="dash-panel">
+    <h2 class="dash-panel__title">Pending payments</h2>
+    {% if pending_payments_preview %}
+    <ul class="dash-list dash-list--compact">
+      {% for p in pending_payments_preview %}
+      <li class="dash-card dash-card--compact">
+        <div class="dash-card__main">
+          <p class="dash-card__title">
+            <a href="{% url 'dashboard:payment_detail' p.pk %}">{{ p.appointment.booking_reference }}</a>
+          </p>
+          <p class="dash-card__meta">K{{ p.amount }} · {{ p.created_at|date:"j M, g:i A" }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="dash-empty">No pending payments.</p>
+    {% endif %}
+    <a class="dash-link" href="{% url 'dashboard:payment_list' %}">View all payments</a>
+  </section>
+</div>
+{% if top_services %}
+<section class="dash-panel">
+  <h2 class="dash-panel__title">Popular services</h2>
+  <ul class="dash-simple-list">
+    {% for row in top_services %}
+    <li>{{ row.treatment__name }} — {{ row.booking_count }} booking{{ row.booking_count|pluralize }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% if recent_activity %}
+<section class="dash-panel">
+  <h2 class="dash-panel__title">Recent activity</h2>
+  <ul class="dash-activity-list">
+    {% for entry in recent_activity %}
+    <li>
+      <span class="dash-activity-list__message">{{ entry.message }}</span>
+      <span class="dash-activity-list__meta">
+        {% if entry.user %}{{ entry.user.get_username }}{% else %}System{% endif %}
+        · {{ entry.created_at|timesince }} ago
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

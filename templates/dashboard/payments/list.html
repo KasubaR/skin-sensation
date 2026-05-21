@@ -2,9 +2,15 @@
 {% block title %}Payments · Dashboard · Skin Sensation{% endblock %}
 {% block dashboard_content %}
 <header class="dash-header">
-  <h1 class="dash-title">Pending payments</h1>
+  <h1 class="dash-title">Payments</h1>
 </header>
+<nav class="dash-tabs" aria-label="Payment status">
+  {% for value, label in status_tabs %}
+  <a class="dash-tabs__link{% if status_filter == value %} is-active{% endif %}" href="?status={{ value }}{% if request.GET.q %}&amp;q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.payment_method %}&amp;payment_method={{ request.GET.payment_method }}{% endif %}{% if request.GET.date_from %}&amp;date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&amp;date_to={{ request.GET.date_to }}{% endif %}">{{ label }}</a>
+  {% endfor %}
+</nav>
 <form class="dash-filters" method="get">
+  <input type="hidden" name="status" value="{{ status_filter }}">
   <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Reference…" class="dash-input">
   <select name="payment_method" class="dash-input">
     <option value="">All methods</option>
@@ -25,13 +31,17 @@
       <p class="dash-card__meta">K{{ p.amount }} · {{ p.get_payment_method_display }} · {{ p.created_at|date:"j M Y, g:i A" }}</p>
     </div>
     <div class="dash-card__aside">
+      {% if p.status == 'PENDING' %}
       <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:payment_detail' p.pk %}">Review</a>
+      {% else %}
+      <a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:payment_detail' p.pk %}">View</a>
+      {% endif %}
     </div>
   </li>
   {% endfor %}
 </ul>
 {% include 'dashboard/components/pagination.html' with page_obj=page_obj %}
 {% else %}
-<p class="dash-empty">No pending payments.</p>
+<p class="dash-empty">No {{ status_label|lower }} payments.</p>
 {% endif %}
 {% endblock %}

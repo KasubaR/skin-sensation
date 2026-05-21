@@ -88,6 +88,10 @@ def payment_upload(request, booking_reference: str):
     ctx['payment_methods'] = PaymentMethod.choices
     ctx['suggested_amount'] = deposit_outstanding(appointment) or remaining_balance(appointment)
 
+    if not can_upload_proof(appointment):
+        messages.info(request, 'This appointment does not require a new payment upload.')
+        return redirect('appointment_detail', booking_reference=booking_reference)
+
     if request.method == 'POST':
         amount_raw = request.POST.get('amount', '').strip()
         method = request.POST.get('payment_method', '').strip()
@@ -98,6 +102,10 @@ def payment_upload(request, booking_reference: str):
             amount = Decimal(amount_raw)
         except (InvalidOperation, ValueError):
             messages.error(request, 'Enter a valid amount.')
+            return render(request, 'accounts/portal/payments/upload.html', ctx)
+
+        if amount <= 0:
+            messages.error(request, 'Amount must be greater than zero.')
             return render(request, 'accounts/portal/payments/upload.html', ctx)
 
         try:
@@ -116,9 +124,5 @@ def payment_upload(request, booking_reference: str):
             return redirect('payment_list')
         except CustomerPaymentError as exc:
             messages.error(request, str(exc))
-
-    if not can_upload_proof(appointment) and request.method == 'GET':
-        messages.info(request, 'This appointment does not require a new payment upload.')
-        return redirect('appointment_detail', booking_reference=booking_reference)
 
     return render(request, 'accounts/portal/payments/upload.html', ctx)

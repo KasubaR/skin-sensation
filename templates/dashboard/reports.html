@@ -1,0 +1,134 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Reports · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Reports</h1>
+  <p class="dash-subtitle">Verified revenue and booking trends</p>
+</header>
+<div class="dash-kpi-grid dash-kpi-grid--compact">
+  <div class="dash-kpi-card dash-kpi-card--static">
+    <span class="dash-kpi-card__label">Revenue this month</span>
+    <span class="dash-kpi-card__value">K{{ month_revenue }}</span>
+  </div>
+  <div class="dash-kpi-card dash-kpi-card--static">
+    <span class="dash-kpi-card__label">Today's bookings</span>
+    <span class="dash-kpi-card__value">{{ today_bookings }}</span>
+  </div>
+  <div class="dash-kpi-card dash-kpi-card--static">
+    <span class="dash-kpi-card__label">Pending payments</span>
+    <span class="dash-kpi-card__value">{{ pending_payments_count }}</span>
+  </div>
+</div>
+<div class="dash-charts">
+  <section class="dash-panel dash-chart-panel">
+    <h2 class="dash-panel__title">Monthly revenue (verified)</h2>
+    <div class="dash-chart-wrap">
+      <canvas id="chartRevenue" aria-label="Monthly revenue chart"></canvas>
+    </div>
+  </section>
+  <section class="dash-panel dash-chart-panel">
+    <h2 class="dash-panel__title">Appointments this month by status</h2>
+    <div class="dash-chart-wrap">
+      <canvas id="chartStatus" aria-label="Appointments by status chart"></canvas>
+    </div>
+  </section>
+  <section class="dash-panel dash-chart-panel">
+    <h2 class="dash-panel__title">Top treatments</h2>
+    <div class="dash-chart-wrap">
+      <canvas id="chartTreatments" aria-label="Top treatments chart"></canvas>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block dashboard_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var revenueLabels = {{ chart_revenue_labels|safe }};
+    var revenueAmounts = {{ chart_revenue_amounts|safe }};
+    var statusLabels = {{ chart_status_labels|safe }};
+    var statusCounts = {{ chart_status_counts|safe }};
+    var treatmentLabels = {{ chart_treatment_labels|safe }};
+    var treatmentCounts = {{ chart_treatment_counts|safe }};
+
+    var gridColor = 'rgba(0,0,0,0.06)';
+    var fontFamily = "'Jost', sans-serif";
+
+    if (document.getElementById('chartRevenue')) {
+      new Chart(document.getElementById('chartRevenue'), {
+        type: 'line',
+        data: {
+          labels: revenueLabels,
+          datasets: [{
+            label: 'Revenue (K)',
+            data: revenueAmounts,
+            borderColor: '#c9a87c',
+            backgroundColor: 'rgba(201, 168, 124, 0.15)',
+            fill: true,
+            tension: 0.3,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: gridColor } },
+            x: { grid: { display: false } },
+          },
+        },
+      });
+    }
+
+    if (document.getElementById('chartStatus')) {
+      new Chart(document.getElementById('chartStatus'), {
+        type: 'bar',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            label: 'Appointments',
+            data: statusCounts,
+            backgroundColor: ['#c9a227', '#5a8f6a', '#8a8a8a', '#c47a7a', '#b0b0b0'],
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: gridColor } },
+            x: { grid: { display: false } },
+          },
+        },
+      });
+    }
+
+    if (document.getElementById('chartTreatments') && treatmentLabels.length) {
+      new Chart(document.getElementById('chartTreatments'), {
+        type: 'bar',
+        data: {
+          labels: treatmentLabels,
+          datasets: [{
+            label: 'Bookings',
+            data: treatmentCounts,
+            backgroundColor: '#c9a87c',
+          }],
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: gridColor } },
+            y: { grid: { display: false } },
+          },
+        },
+      });
+    } else if (document.getElementById('chartTreatments')) {
+      document.getElementById('chartTreatments').parentElement.innerHTML =
+        '<p class="dash-empty">No booking data yet.</p>';
+    }
+  });
+</script>
+{% endblock %}

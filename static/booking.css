@@ -1,5 +1,17 @@
 /* Booking page — extends index.css variables */
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .booking-page {
   padding-bottom: 64px;
 }
@@ -192,6 +204,35 @@
   color: var(--dark);
   line-height: 1.55;
   margin: 0;
+}
+
+/* Search input */
+.booking-search-wrap {
+  display: block;
+  padding: 16px 24px 0;
+}
+
+.booking-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e8e0d8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--dark);
+  background: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.booking-search-input::placeholder {
+  color: #b0a49a;
+}
+
+.booking-search-input:focus {
+  outline: none;
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(125, 85, 48, 0.12);
 }
 
 /* Category filter pills */
@@ -1114,7 +1155,7 @@
   .booking-summary {
     position: relative;
     top: 0;
-    order: -1;
+    order: 2;
   }
 
   .booking-main-col {

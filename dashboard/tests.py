@@ -16,6 +16,8 @@ from bookings.models import (
 )
 from bookings.tests import _make_treatment
 from dashboard.appointment_logic import can_transition
+from dashboard.models import StaffActivityLog
+from dashboard.stats import get_today_appointments_count
 from payments.models import Payment, PaymentMethod, PaymentStatus
 from payments.services import reject_payment, verify_payment
 
@@ -45,8 +47,9 @@ class StaffAccessTests(TestCase):
     def test_staff_can_access_dashboard(self):
         self.client.login(username='manager', password='secret')
         response = self.client.get(reverse('dashboard:home'))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('dashboard:appointment_calendar'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Overview')
+        self.assertContains(response, "Today's bookings")
 
 
 class StatusTransitionTests(TestCase):
@@ -159,6 +162,95 @@ class PaymentVerificationTests(TestCase):
         self.payment.refresh_from_db()
         self.assertEqual(self.payment.status, PaymentStatus.FAILED)
         self.assertEqual(self.payment.rejection_reason, 'Invalid proof')
+
+
+class OverviewStatsTests(TestCase):
+    def test_today_appointments_excludes_cancelled(self):
+        customer = User.objects.create_user(username='stats_c', password='x')
+        treatment = _make_treatment(treatment_slug='stats-t')
+        today = date.today()
+        Appointment.objects.create(
+            customer=customer,
+            appointment_date=today,
+            start_time=time(10, 0),
+            end_time=time(11, 0),
+            total_price=Decimal('100'),
+            status=AppointmentStatus.CONFIRMED,
+        )
+        Appointment.objects.create(
+            customer=customer,
+            appointment_date=today,
+            start_time=time(14, 0),
+            end_time=time(15, 0),
+            total_price=Decimal('100'),
+            status=AppointmentStatus.CANCELLED,
+        )
+        self.assertEqual(get_today_appointments_count(), 1)
+
+
+class PaymentListFilterTests(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(username='payfilt', password='x', is_staff=True)
+        self.customer = User.objects.create_user(username='payfilt_c', password='x')
+        self.appt = Appointment.objects.create(
+            customer=self.customer,
+            appointment_date=date.today() + timedelta(days=2),
+            start_time=time(9, 0),
+            end_time=time(10, 0),
+            total_price=Decimal('300'),
+            deposit_amount=Decimal('60'),
+        )
+
+    def test_payment_list_verified_filter(self):
+        Payment.objects.create(
+            appointment=self.appt,
+            amount=Decimal('60'),
+            status=PaymentStatus.VERIFIED,
+        )
+        client = Client()
+        client.login(username='payfilt', password='x')
+        response = client.get(reverse('dashboard:payment_list'), {'status': PaymentStatus.VERIFIED})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Verified')
+
+
+class ActivityLogTests(TestCase):
+    def test_verify_payment_creates_activity_from_view(self):
+        manager = User.objects.create_user(username='act_mgr', password='x', is_staff=True)
+        customer = User.objects.create_user(username='act_c', password='x')
+        appt = Appointment.objects.create(
+            customer=customer,
+            appointment_date=date.today() + timedelta(days=2),
+            start_time=time(9, 0),
+            end_time=time(10, 0),
+            total_price=Decimal('300'),
+            deposit_amount=Decimal('60'),
+        )
+        payment = Payment.objects.create(
+            appointment=appt,
+            amount=Decimal('60'),
+            status=PaymentStatus.PENDING,
+        )
+        client = Client()
+        client.login(username='act_mgr', password='x')
+        url = reverse('dashboard:payment_detail', args=[payment.pk])
+        response = client.post(url, {'action': 'approve'})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            StaffActivityLog.objects.filter(
+                action=StaffActivityLog.Action.PAYMENT_VERIFIED,
+            ).exists()
+        )
+
+
+class ReportsViewTests(TestCase):
+    def test_staff_can_access_reports(self):
+        manager = User.objects.create_user(username='rep_mgr', password='x', is_staff=True)
+        client = Client()
+        client.login(username='rep_mgr', password='x')
+        response = client.get(reverse('dashboard:reports'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Reports')
 
 
 class BookingPaymentCreationTests(TestCase):

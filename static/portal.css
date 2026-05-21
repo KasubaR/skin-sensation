@@ -113,6 +113,8 @@
 }
 
 .portal-badge--pending { border-color: #c9a227; color: #7a5c10; }
+.portal-badge--approved { border-color: #5a8f6a; color: #2d5a3a; }
+.portal-badge--rejected { border-color: #a44; color: #822; }
 .portal-badge--confirmed { border-color: #5a8f6a; color: #2d5a3a; }
 .portal-badge--completed { border-color: var(--mid); color: var(--mid); }
 .portal-badge--cancelled { border-color: #a44; color: #822; }
@@ -473,6 +475,8 @@
 }
 
 .portal-badge--pending { border-color: #c9a227; color: #7a5c10; }
+.portal-badge--approved { border-color: #5a8f6a; color: #2d5a3a; }
+.portal-badge--rejected { border-color: #a44; color: #822; }
 .portal-badge--verified { border-color: #5a8f6a; color: #2d5a3a; }
 .portal-badge--failed { border-color: #a44; color: #822; }
 .portal-badge--refunded { border-color: var(--mid); }

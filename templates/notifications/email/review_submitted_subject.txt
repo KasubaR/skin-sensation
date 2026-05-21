@@ -1,0 +1,1 @@
+New review: {{ rating }}★ — {{ service_name }}

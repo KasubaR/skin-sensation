@@ -8,11 +8,16 @@ let staffCache = [];
 let apiConfig = {};
 let calcTimer = null;
 let calcAbortController = null;
+const bookingCallbacks = {};
 
 function pad2(n) {
   return String(n).padStart(2, '0');
 }
 
+// Both functions use local-time date parts intentionally: appointments are always
+// in the salon's local timezone, so we want the date the customer sees on their
+// device, not a UTC-shifted value. If the server is ever moved to a different
+// timezone, these must be revisited alongside the availability API.
 function toDateKey(d) {
   return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 }
@@ -73,7 +78,13 @@ function getSelectedServices() {
 async function fetchCatalog() {
   const inline = document.getElementById('bookingCatalogData');
   if (inline) {
-    catalogCache = JSON.parse(inline.textContent);
+    try {
+      const parsed = JSON.parse(inline.textContent);
+      if (!Array.isArray(parsed)) throw new Error('Bad catalog');
+      catalogCache = parsed;
+    } catch (e) {
+      throw new Error('Could not load services.');
+    }
   } else {
     const res = await fetch(apiConfig.catalogUrl, { headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error('Could not load services.');
@@ -90,7 +101,9 @@ async function fetchCalculate(serviceIds) {
   if (!serviceIds.length) return null;
   if (calcAbortController) calcAbortController.abort();
   calcAbortController = new AbortController();
-  const url = apiConfig.calculateUrl + '?service_ids=' + serviceIds.join(',');
+  const params = new URLSearchParams();
+  serviceIds.forEach((id) => params.append('service_ids', id));
+  const url = apiConfig.calculateUrl + '?' + params.toString();
   try {
     const res = await fetch(url, {
       headers: { Accept: 'application/json' },
@@ -114,7 +127,9 @@ async function fetchStaff(serviceIds) {
     staffCache = [{ id: 'any', display_name: 'Any available', specialization: 'Fastest match' }];
     return staffCache;
   }
-  const url = apiConfig.staffUrl + '?service_ids=' + serviceIds.join(',');
+  const params = new URLSearchParams();
+  serviceIds.forEach((id) => params.append('service_ids', id));
+  const url = apiConfig.staffUrl + '?' + params.toString();
   const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) throw new Error('Could not load therapists.');
   staffCache = await res.json();
@@ -160,8 +175,8 @@ function renderStaffGrid(selectedStaffId) {
 
   grid.querySelectorAll('input[name="booking_staff"]').forEach((input) => {
     input.addEventListener('change', () => {
-      if (typeof window.__bookingOnStaffChange === 'function') {
-        window.__bookingOnStaffChange();
+      if (typeof bookingCallbacks.onStaffChange === 'function') {
+        bookingCallbacks.onStaffChange();
       }
     });
   });
@@ -241,8 +256,8 @@ function renderTimeSlots(container, slots, state) {
       if (timeInput) timeInput.value = btn.dataset.timeValue;
       if (staffResolved) staffResolved.value = btn.dataset.staffId;
       state.selectedStaffName = btn.dataset.staffName;
-      if (typeof window.__bookingOnSlotChange === 'function') {
-        window.__bookingOnSlotChange();
+      if (typeof bookingCallbacks.onSlotChange === 'function') {
+        bookingCallbacks.onSlotChange();
       }
     });
   });
@@ -444,16 +459,12 @@ function saveBookingState(currentStep) {
       date: (document.getElementById('bookingDate') || {}).value || '',
       time: (document.getElementById('bookingTime') || {}).value || '',
       staffResolved: (document.getElementById('bookingStaffResolved') || {}).value || '',
-      name: (document.getElementById('bookingFullName') || {}).value || '',
-      phone: (document.getElementById('bookingPhone') || {}).value || '',
-      email: (document.getElementById('bookingEmail') || {}).value || '',
-      notes: (document.getElementById('bookingNotes') || {}).value || '',
-      allergies: (document.getElementById('bookingAllergies') || {}).value || '',
-      firstVisit: !!(document.getElementById('bookingFirstVisit') || {}).checked,
       payment: (document.querySelector('input[name="booking_payment"]:checked') || {}).value || 'mobile_money',
     };
     sessionStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(data));
-  } catch (e) {}
+  } catch (e) {
+    console.warn('[booking] sessionStorage write failed', e);
+  }
 }
 
 function loadBookingState() {
@@ -500,7 +511,13 @@ async function submitAppointment(state) {
       if (key === 'service_ids') return;
       formData.append(key, key === 'first_visit' ? (payload[key] ? 'true' : 'false') : payload[key]);
     });
-    formData.append('proof_of_payment', proofInput.files[0]);
+    const file = proofInput.files[0];
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    const MAX_BYTES = 5 * 1024 * 1024;
+    if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_BYTES) {
+      throw new Error('Proof of payment must be a JPG, PNG, WebP, or PDF under 5 MB.');
+    }
+    formData.append('proof_of_payment', file);
     fetchOpts = {
       method: 'POST',
       headers: {
@@ -528,30 +545,77 @@ async function submitAppointment(state) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = data.error || 'Could not complete your booking. Please try again.';
-    throw { status: res.status, message: msg };
+    const err = new Error(msg);
+    err.status = res.status;
+    throw err;
   }
   return data;
 }
 
+let bookingSearchTerm = '';
+let bookingActiveCategory = null;
+
+function cardMatchesBookingSearch(card) {
+  if (!bookingSearchTerm) return true;
+  const haystack = (
+    (card.dataset.treatmentName || '') +
+    ' ' +
+    (card.dataset.serviceName || '')
+  ).toLowerCase();
+  return haystack.includes(bookingSearchTerm);
+}
+
+function applyBookingServiceFilters() {
+  const cards = document.querySelectorAll('.booking-service-card[data-category]');
+  let visibleCount = 0;
+  cards.forEach((card) => {
+    const categoryMatch =
+      bookingActiveCategory === null || card.dataset.category === bookingActiveCategory;
+    const searchMatch = cardMatchesBookingSearch(card);
+    const show = categoryMatch && searchMatch;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount += 1;
+  });
+  const emptyEl = document.getElementById('bookingSearchEmpty');
+  if (emptyEl) {
+    emptyEl.hidden = visibleCount > 0;
+  }
+}
+
+function initBookingSearch() {
+  const input = document.getElementById('bookingSearchInput');
+  if (!input) return;
+  let timer = null;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      bookingSearchTerm = input.value.trim().toLowerCase();
+      applyBookingServiceFilters();
+    }, 200);
+  });
+}
+
 function initCategoryFilter() {
   const pills = document.querySelectorAll('.booking-category-pill');
-  if (!pills.length) return;
+  const cards = document.querySelectorAll('.booking-service-card[data-category]');
+  if (!cards.length) return;
 
-  function applyFilter(selected) {
-    document.querySelectorAll('.booking-service-card[data-category]').forEach((card) => {
-      card.style.display = card.dataset.category !== selected ? 'none' : '';
-    });
+  if (!pills.length) {
+    bookingActiveCategory = null;
+    applyBookingServiceFilters();
+    return;
   }
 
-  // Activate first pill by default
   pills[0].classList.add('is-active');
-  applyFilter(pills[0].dataset.category);
+  bookingActiveCategory = pills[0].dataset.category;
+  applyBookingServiceFilters();
 
   pills.forEach((pill) => {
     pill.addEventListener('click', () => {
       pills.forEach((p) => p.classList.remove('is-active'));
       pill.classList.add('is-active');
-      applyFilter(pill.dataset.category);
+      bookingActiveCategory = pill.dataset.category;
+      applyBookingServiceFilters();
     });
   });
 }
@@ -561,6 +625,7 @@ function initBookingFlow() {
   if (!root) return;
 
   apiConfig = getApiConfig(root);
+  initBookingSearch();
   initCategoryFilter();
   const state = { totals: {}, staff: null, services: [], selectedStaffName: '' };
   let currentStep = 1;
@@ -638,7 +703,7 @@ function initBookingFlow() {
         escapeHtml(e.message || 'Could not load times.') +
         '</p></div>';
     }
-    updateSummary(state);
+    await updateSummary(state);
   }
 
   function renderBookingCalendar() {
@@ -715,7 +780,7 @@ function initBookingFlow() {
     }
   }
 
-  window.__bookingOnStaffChange = async () => {
+  bookingCallbacks.onStaffChange = async () => {
     updateSummary(state);
     saveBookingState(currentStep);
     if (dateInput && dateInput.value) {
@@ -725,7 +790,7 @@ function initBookingFlow() {
     }
   };
 
-  window.__bookingOnSlotChange = () => {
+  bookingCallbacks.onSlotChange = () => {
     updateSummary(state);
     saveBookingState(currentStep);
   };
@@ -929,19 +994,6 @@ function initBookingFlow() {
         if (saved.date && dateInput) dateInput.value = saved.date;
         if (saved.time) document.getElementById('bookingTime').value = saved.time;
         if (saved.staffResolved) document.getElementById('bookingStaffResolved').value = saved.staffResolved;
-        const fieldMap = {
-          bookingFullName:  'name',
-          bookingPhone:     'phone',
-          bookingEmail:     'email',
-          bookingNotes:     'notes',
-          bookingAllergies: 'allergies',
-        };
-        Object.entries(fieldMap).forEach(([elId, key]) => {
-          const el = document.getElementById(elId);
-          if (el && saved[key]) el.value = saved[key];
-        });
-        const firstVisitEl = document.getElementById('bookingFirstVisit');
-        if (firstVisitEl) firstVisitEl.checked = !!saved.firstVisit;
         if (saved.payment) {
           const inp = document.querySelector('input[name="booking_payment"][value="' + saved.payment + '"]');
           if (inp) inp.checked = true;
@@ -977,7 +1029,9 @@ function initBookingFlow() {
               }
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          console.warn('[booking] cart restore failed', e);
+        }
         const treatmentId = new URLSearchParams(window.location.search).get('treatment');
         if (treatmentId) {
           const preselect = document.querySelector(

@@ -1,0 +1,40 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Message · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-breadcrumb"><a href="{% url 'dashboard:contact_message_list' %}">Contact messages</a></p>
+  <h1 class="dash-title">{{ contact_message.get_subject_display }}</h1>
+  <p class="dash-subtitle">{{ contact_message.full_name }} · {{ contact_message.created_at|date:"j M Y, g:i A" }}</p>
+</header>
+
+<div class="dash-panel">
+  <h2 class="dash-panel__title">Details</h2>
+  <dl class="dash-dl">
+    <dt>Email</dt>
+    <dd><a href="mailto:{{ contact_message.email }}">{{ contact_message.email }}</a></dd>
+    <dt>Phone</dt>
+    <dd><a href="tel:{{ contact_message.phone_number }}">{{ contact_message.phone_number }}</a></dd>
+    <dt>Status</dt>
+    <dd>{{ contact_message.get_status_display }}</dd>
+  </dl>
+</div>
+
+<div class="dash-panel">
+  <h2 class="dash-panel__title">Message</h2>
+  <p class="dash-message-body">{{ contact_message.message|linebreaksbr }}</p>
+</div>
+
+<div class="dash-panel">
+  <h2 class="dash-panel__title">Update status</h2>
+  <form method="post" class="dash-form">
+    {% csrf_token %}
+    {{ form.status }}
+    <button type="submit" class="dash-btn dash-btn--primary">Save</button>
+  </form>
+</div>
+
+<form method="post" action="{% url 'dashboard:contact_message_delete' contact_message.pk %}" class="dash-form dash-form--danger">
+  {% csrf_token %}
+  <button type="submit" class="dash-btn dash-btn--danger" data-confirm="Delete this message?">Delete message</button>
+</form>
+{% endblock %}

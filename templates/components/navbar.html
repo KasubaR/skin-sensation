@@ -10,8 +10,11 @@
     <li><a href="{% url 'contact' %}">Contact Us</a></li>
   </ul>
   <div class="nav-icons">
-    <button class="nav-search-btn" type="button" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-    {% if user.is_authenticated %}
+    <div class="nav-contact-quick" aria-label="Quick contact">
+      <a href="{{ business.tel_href }}" title="Call us" aria-label="Call us"><i class="fa-solid fa-phone"></i></a>
+      <a href="{{ business.whatsapp_href }}" title="WhatsApp" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+{% if user.is_authenticated %}
     <div class="nav-account" id="navAccount">
       <button class="nav-icon-link nav-account-btn" id="navAccountBtn" aria-label="Account menu" aria-expanded="false">
         <i class="fa-regular fa-user"></i>
@@ -46,15 +49,13 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <ul>
-    <li class="mobile-search-item">
-      <button type="button" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-      <span>Search</span>
-    </li>
-    <li><a href="{% url 'home' %}">Home</a></li>
+<li><a href="{% url 'home' %}">Home</a></li>
     <li><a href="{% url 'services' %}">Services</a></li>
     <li><a href="{% url 'booking' %}">Bookings</a></li>
     <li><a href="{% url 'gallery' %}">Gallery</a></li>
     <li><a href="{% url 'contact' %}">Contact Us</a></li>
+    <li><a href="{{ business.tel_href }}"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call {{ business.phone_number }}</a></li>
+    <li><a href="{{ business.whatsapp_href }}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a></li>
     {% if user.is_authenticated %}
     {% if user.is_staff %}
     <li><a href="{% url 'dashboard:home' %}">Dashboard</a></li>

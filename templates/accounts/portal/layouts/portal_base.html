@@ -17,6 +17,9 @@
       <a href="{% url 'payment_list' %}" class="portal-nav__link{% if portal_nav == 'payments' %} is-active{% endif %}">
         <i class="fa-regular fa-credit-card" aria-hidden="true"></i> Payments
       </a>
+      <a href="{% url 'review_list' %}" class="portal-nav__link{% if portal_nav == 'reviews' %} is-active{% endif %}">
+        <i class="fa-regular fa-star" aria-hidden="true"></i> My reviews
+      </a>
       <a href="{% url 'profile_detail' %}" class="portal-nav__link{% if portal_nav == 'profile' %} is-active{% endif %}">
         <i class="fa-regular fa-user" aria-hidden="true"></i> Profile
       </a>

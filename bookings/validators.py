@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from bookings.models import Appointment, AppointmentStatus
 
-CANCELLATION_NOTICE_HOURS = 24
+CANCELLATION_NOTICE_HOURS = settings.CANCELLATION_NOTICE_HOURS
 
 MODIFIABLE_STATUSES = (
     AppointmentStatus.PENDING,
@@ -36,7 +36,7 @@ def validate_cancellation_window(appointment: Appointment) -> None:
     if not can_modify_appointment(appointment):
         raise ValidationError(
             'This appointment cannot be changed. '
-            'Cancellations and reschedules require at least 24 hours notice '
+            f'Cancellations and reschedules require at least {CANCELLATION_NOTICE_HOURS} hours notice '
             'and apply only to upcoming bookings.'
         )
 

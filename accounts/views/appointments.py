@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from django_ratelimit.decorators import ratelimit
 
@@ -15,6 +16,7 @@ from bookings.portal import (
 )
 from notifications.context import appointment_email_context
 from payments.models import PaymentStatus
+from testimonials.services import get_reviewable_services
 
 from .common import (
     appointments_queryset,
@@ -39,6 +41,8 @@ def appointment_list(request):
 
     if active_filter == 'upcoming':
         upcoming, history = split_appointments(qs)
+        upcoming = upcoming.order_by('appointment_date', 'start_time')
+        history = history.order_by('-appointment_date', '-start_time')
     elif active_filter == 'completed':
         upcoming = qs.none()
         history = qs.filter(status=AppointmentStatus.COMPLETED).order_by(
@@ -49,11 +53,20 @@ def appointment_list(request):
         history = qs.filter(
             status__in=(AppointmentStatus.CANCELLED, AppointmentStatus.NO_SHOW),
         ).order_by('-appointment_date', '-start_time')
-    else:
-        upcoming, history = split_appointments(qs)
-
-    history = history.order_by('-appointment_date', '-start_time')
-    upcoming = upcoming.order_by('appointment_date', 'start_time')
+    else:  # 'all'
+        today = timezone.localdate()
+        terminal = (
+            AppointmentStatus.COMPLETED,
+            AppointmentStatus.CANCELLED,
+            AppointmentStatus.NO_SHOW,
+        )
+        upcoming = qs.filter(
+            status__in=(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED),
+            appointment_date__gte=today,
+        ).order_by('appointment_date', 'start_time')
+        history = qs.filter(
+            Q(appointment_date__lt=today) | Q(status__in=terminal),
+        ).order_by('-appointment_date', '-start_time')
 
     return render(
         request,
@@ -77,6 +90,20 @@ def appointment_detail(request, booking_reference: str):
     ctx['staff_id'] = appointment.assigned_staff_id or 'any'
     ctx['services_summary'] = services_summary(appointment)
     ctx['portal_nav'] = 'appointments'
+    if appointment.status == AppointmentStatus.COMPLETED:
+        reviewable_ids = set(
+            get_reviewable_services(request.user).values_list('pk', flat=True)
+        )
+        seen = set()
+        review_cta_services = []
+        for line in appointment.line_items.all():
+            service = line.treatment.service
+            if service.pk in reviewable_ids and service.pk not in seen:
+                seen.add(service.pk)
+                review_cta_services.append(service)
+        ctx['review_cta_services'] = review_cta_services
+    else:
+        ctx['review_cta_services'] = []
     return render(request, 'accounts/portal/appointment_detail.html', ctx)
 
 
@@ -118,12 +145,13 @@ def appointment_reschedule(request, booking_reference: str):
         try:
             new_date = parse_appointment_date(date_str)
             new_start = parse_start_time(time_str)
-            staff_id = int(staff_raw) if staff_raw and staff_raw.lower() != 'any' else 'any'
+            staff_id = int(staff_raw) if staff_raw and staff_raw.lower() != 'any' else None
             reschedule_appointment(
                 appointment,
                 new_date=new_date,
                 new_start_time=new_start,
                 staff_id=staff_id,
+                user=request.user,
             )
             messages.success(request, 'Your appointment has been rescheduled.')
             return redirect('appointment_detail', booking_reference=booking_reference)

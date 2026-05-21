@@ -3,11 +3,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{% block title %}Skin Sensation{% endblock %}</title>
 <link rel="icon" type="image/svg+xml" href="{% static 'images/tab-logo.svg' %}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css'">
 <link rel="stylesheet" href="{% static 'index.css' %}">
 {# Page-specific CSS in head (avoids hosts that mishandle child-only extra_css blocks) #}
 {% if request.resolver_match and request.resolver_match.url_name == 'booking' %}
@@ -17,6 +17,7 @@
 </head>
 <body>
 
+{% include 'components/whatsapp_fab.html' %}
 
 {% include 'components/navbar.html' %}
 
@@ -32,7 +33,10 @@
 
 {% include 'components/footer.html' %}
 
+{% include 'components/nav_search_overlay.html' %}
+
 <script src="{% static 'index.js' %}" defer></script>
+<script src="{% static 'services-search.js' %}" defer></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

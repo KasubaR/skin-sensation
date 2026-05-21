@@ -1,0 +1,80 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Write a Review · Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'testimonials.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="testimonials-page testimonials-page--form">
+  <section class="testimonials-page-intro" aria-labelledby="review-form-title">
+    <nav class="testimonials-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <a href="{% url 'testimonials' %}">Reviews</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">Write a review</span>
+    </nav>
+    <h1 id="review-form-title">Share your experience</h1>
+    <p class="testimonials-page-lead">Reviews are published after our team approves them. You can only review services from completed appointments.</p>
+  </section>
+
+  {% if messages %}
+  <div class="testimonials-messages" role="alert">
+    {% for message in messages %}
+    <p class="testimonials-message testimonials-message--{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <form class="testimonials-form" method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="testimonials-form-errors" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="testimonials-field">
+      <label for="{{ form.service.id_for_label }}">Service <span class="testimonials-required">*</span></label>
+      {{ form.service }}
+      {% if form.service.errors %}<p class="testimonials-field-error">{{ form.service.errors.0 }}</p>{% endif %}
+    </div>
+
+    <fieldset class="testimonials-field testimonials-rating-field">
+      <legend>Rating <span class="testimonials-required">*</span></legend>
+      <div class="testimonials-star-input" data-star-input>
+        {% for radio in form.rating %}
+        <label class="testimonials-star-label" for="{{ radio.id_for_label }}">
+          {{ radio.tag }}
+          <span class="testimonials-star-icon" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
+          <span class="visually-hidden">{{ radio.choice_label }} star</span>
+        </label>
+        {% endfor %}
+      </div>
+      {% if form.rating.errors %}<p class="testimonials-field-error">{{ form.rating.errors.0 }}</p>{% endif %}
+    </fieldset>
+
+    <div class="testimonials-field">
+      <label for="{{ form.title.id_for_label }}">Headline <span class="testimonials-optional">(optional)</span></label>
+      {{ form.title }}
+    </div>
+
+    <div class="testimonials-field">
+      <label for="{{ form.review.id_for_label }}">Your review <span class="testimonials-required">*</span></label>
+      {{ form.review }}
+      {% if form.review.errors %}<p class="testimonials-field-error">{{ form.review.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div class="testimonials-form-actions">
+      <button type="submit" class="testimonials-cta-btn">Submit for approval</button>
+      <a class="testimonials-link-btn" href="{% url 'review_list' %}">My reviews</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'testimonials.js' %}" defer></script>
+{% endblock %}

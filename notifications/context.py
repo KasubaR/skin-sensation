@@ -45,6 +45,54 @@ def appointment_detail_url(appointment: Appointment) -> str:
     return f'{protocol}://{site.domain}{path}'
 
 
+def contact_message_dashboard_url(contact_message) -> str:
+    path = reverse(
+        'dashboard:contact_message_detail',
+        kwargs={'pk': contact_message.pk},
+    )
+    site = Site.objects.get_current()
+    protocol = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+    return f'{protocol}://{site.domain}{path}'
+
+
+def testimonial_dashboard_url(testimonial) -> str:
+    path = reverse(
+        'dashboard:testimonial_detail',
+        kwargs={'pk': testimonial.pk},
+    )
+    site = Site.objects.get_current()
+    protocol = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+    return f'{protocol}://{site.domain}{path}'
+
+
+def testimonial_email_context(testimonial) -> dict:
+    return {
+        'testimonial': testimonial,
+        'customer_name': testimonial.display_author_name,
+        'customer_email': testimonial.customer.email or '',
+        'service_name': testimonial.service.name if testimonial.service else 'General',
+        'rating': testimonial.rating,
+        'title': testimonial.title,
+        'review': testimonial.review,
+        'status': testimonial.get_status_display(),
+        'created_at': testimonial.created_at,
+        'dashboard_url': testimonial_dashboard_url(testimonial),
+    }
+
+
+def contact_message_email_context(contact_message) -> dict:
+    return {
+        'contact_message': contact_message,
+        'full_name': contact_message.full_name,
+        'email': contact_message.email,
+        'phone_number': contact_message.phone_number,
+        'subject': contact_message.get_subject_display(),
+        'message': contact_message.message,
+        'created_at': contact_message.created_at,
+        'dashboard_url': contact_message_dashboard_url(contact_message),
+    }
+
+
 def appointment_email_context(appointment: Appointment) -> dict:
     staff_name = ''
     if appointment.assigned_staff:

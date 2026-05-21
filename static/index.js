@@ -1,3 +1,4 @@
+(() => {
   // Wishlist toggle
   document.querySelectorAll('.wishlist-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -34,7 +35,9 @@
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
   if (hamburger && mobileMenu) {
+    const siteNav = document.querySelector('nav.site-nav');
     hamburger.addEventListener('click', () => {
+      if (siteNav) mobileMenu.style.top = siteNav.offsetHeight + 'px';
       mobileMenu.classList.toggle('open');
       const icon = hamburger.querySelector('i');
       if (!icon) return;
@@ -109,4 +112,25 @@
 
     window.addEventListener('resize', syncDots);
     syncDots();
+
+    // Auto-slide every 5 seconds; pause on hover or focus
+    let autoTimer = setInterval(() => {
+      const i = activeIndex();
+      goToIndex(i < dots.length - 1 ? i + 1 : 0);
+    }, 5000);
+
+    function pauseAuto() { clearInterval(autoTimer); }
+    function resumeAuto() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(() => {
+        const i = activeIndex();
+        goToIndex(i < dots.length - 1 ? i + 1 : 0);
+      }, 5000);
+    }
+
+    testimonialsRoot.addEventListener('mouseenter', pauseAuto);
+    testimonialsRoot.addEventListener('mouseleave', resumeAuto);
+    testimonialsRoot.addEventListener('focusin', pauseAuto);
+    testimonialsRoot.addEventListener('focusout', resumeAuto);
   }
+})();

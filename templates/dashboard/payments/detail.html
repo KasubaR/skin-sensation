@@ -3,7 +3,7 @@
 {% block dashboard_content %}
 <header class="dash-header">
   <p class="dash-eyebrow"><a href="{% url 'dashboard:payment_list' %}">Payments</a></p>
-  <h1 class="dash-title">Payment review</h1>
+  <h1 class="dash-title">{% if payment.status == 'PENDING' %}Payment review{% else %}Payment details{% endif %}</h1>
 </header>
 <div class="dash-grid">
   <section class="dash-panel">

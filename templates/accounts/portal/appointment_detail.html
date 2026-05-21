@@ -60,6 +60,18 @@
   </section>
   {% endif %}
 
+  {% if review_cta_services %}
+  <section class="portal-section">
+    <h2 class="portal-section__title">Share your experience</h2>
+    <p class="portal-section__lead">Tell us about your visit — reviews are published after approval.</p>
+    <div class="portal-actions">
+      {% for service in review_cta_services %}
+      <a class="portal-btn portal-btn--primary" href="{% url 'review_create' %}?service={{ service.slug }}">Review {{ service.name }}</a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
   <section class="portal-actions">
     <a class="portal-btn portal-btn--secondary" href="{% url 'appointment_receipt' booking_reference %}?print=1">Print receipt</a>
     {% if can_upload_proof %}

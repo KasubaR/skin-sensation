@@ -1,0 +1,12 @@
+A customer submitted a new review for moderation.
+
+Service: {{ service_name }}
+Rating: {{ rating }} / 5
+Customer: {{ customer_email }}
+
+{% if title %}Headline: {{ title }}
+
+{% endif %}Review:
+{{ review }}
+
+Moderate: {{ dashboard_url }}

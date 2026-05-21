@@ -476,67 +476,57 @@
 
 /* ── Treatment list cards ── */
 .treatment-list-grid {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid #e8e0d8;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 .treatment-card {
-  border-bottom: 1px solid #e8e0d8;
-  padding: 20px 0;
-  transition: background .15s;
+  background: var(--white);
+  border: 1px solid #e8e0d8;
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: border-color .2s, box-shadow .2s;
 }
 
 .treatment-card:hover {
-  background: #faf7f4;
-  padding-left: 6px;
-  padding-right: 6px;
-  margin-left: -6px;
-  margin-right: -6px;
-  border-radius: 6px;
-  border-bottom-color: transparent;
+  border-color: #ccc3b8;
+  box-shadow: 0 4px 20px rgba(0,0,0,.06);
 }
 
 .treatment-card.is-selected {
-  background: #f5f0ea;
-  padding-left: 6px;
-  padding-right: 6px;
-  margin-left: -6px;
-  margin-right: -6px;
-  border-radius: 6px;
-  border-bottom-color: transparent;
+  border-color: var(--rose);
+  background: #fdf8f6;
+  box-shadow: 0 4px 20px rgba(0,0,0,.06);
 }
 
-/* Name ·········· Price */
-.treatment-card-main {
+/* Duration + price row */
+.treatment-card-top {
   display: flex;
-  align-items: baseline;
-  gap: 0;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
-.treatment-card-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 21px;
-  font-weight: 500;
-  color: var(--dark);
-  line-height: 1.2;
-  margin: 0;
-  white-space: nowrap;
-}
-
-.treatment-card-leader {
-  flex: 1;
-  border-bottom: 1px dotted #c8bfb6;
-  margin: 0 10px;
-  position: relative;
-  top: -5px;
-  min-width: 20px;
+.treatment-card-duration {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--mid);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 20px;
+  padding: 4px 10px;
 }
 
 .treatment-card-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 21px;
-  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--dark);
   white-space: nowrap;
 }
@@ -551,57 +541,37 @@
   color: var(--mid);
 }
 
-/* Duration + description row */
-.treatment-card-sub {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-top: 5px;
-}
-
-.treatment-card-duration {
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  color: var(--mid);
-  white-space: nowrap;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(0,0,0,0.05);
-  border-radius: 20px;
-  padding: 3px 8px;
+.treatment-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--dark);
+  line-height: 1.2;
+  margin: 0 0 8px;
 }
 
 .treatment-card-desc {
   font-size: 13px;
   color: var(--mid);
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
+  flex: 1;
 }
 
-/* Actions — revealed on hover / selected */
+/* Actions */
 .treatment-card-actions {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height .25s ease, opacity .2s ease, margin-top .25s ease;
-  margin-top: 0;
-}
-
-.treatment-card:hover .treatment-card-actions,
-.treatment-card.is-selected .treatment-card-actions {
-  max-height: 48px;
-  opacity: 1;
-  margin-top: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #eee7e0;
 }
 
 .treatment-card-link {
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--mid);
   text-decoration: none;
@@ -613,10 +583,10 @@
 }
 
 .treatment-card-select {
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 12px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  padding: 7px 16px;
+  padding: 8px 20px;
   border: 1px solid var(--dark);
   border-radius: 6px;
   background: transparent;
@@ -635,9 +605,9 @@
 }
 
 .treatment-card.is-selected .treatment-card-select {
-  background: var(--dark);
+  background: var(--rose);
   color: var(--white);
-  border-color: var(--dark);
+  border-color: var(--rose);
 }
 
 /* ── Floating booking bar ── */
@@ -1294,5 +1264,312 @@
 
   .how-to-book-header {
     margin-bottom: 8px;
+  }
+}
+
+/* ── Catalog search & filters ── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.catalog-toolbar {
+  max-width: 1100px;
+  margin: 36px auto 32px;
+  padding: 0 24px;
+}
+
+.catalog-toolbar-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.catalog-search-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.catalog-search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--mid);
+  pointer-events: none;
+}
+
+.catalog-search-input {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border: 1px solid #e8e0d8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.catalog-search-input:focus {
+  outline: 2px solid var(--rose);
+  outline-offset: 1px;
+  border-color: var(--rose);
+}
+
+.catalog-filters-toggle {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid #e8e0d8;
+  border-radius: 8px;
+  background: var(--white);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--dark);
+}
+
+.catalog-filters-panel {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+@media (min-width: 769px) {
+  .catalog-toolbar-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .catalog-toolbar-row {
+    flex: 1;
+  }
+
+  .catalog-filters-panel {
+    margin-top: 0;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .catalog-sort-label span {
+    display: none;
+  }
+
+  .catalog-sort-select {
+    height: 100%;
+  }
+}
+
+
+.catalog-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.catalog-pill {
+  cursor: pointer;
+}
+
+.catalog-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.catalog-pill span {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #e8e0d8;
+  border-radius: 999px;
+  font-size: 13px;
+  transition: background .2s, border-color .2s, color .2s;
+}
+
+.catalog-pill input:checked + span,
+.catalog-pill input:focus-visible + span {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--white);
+}
+
+.catalog-sort-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--mid);
+}
+
+.catalog-sort-select {
+  padding: 10px 12px;
+  border: 1px solid #e8e0d8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.catalog-results-section {
+  max-width: 1100px;
+  margin: 0 auto 48px;
+  padding: 0 24px;
+}
+
+.catalog-results-head {
+  margin-bottom: 24px;
+}
+
+.catalog-results-head h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.catalog-results-count {
+  color: var(--mid);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.catalog-treatment-grid {
+  margin-bottom: 32px;
+}
+
+.catalog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 8px;
+}
+
+.catalog-page-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--rose);
+  text-decoration: none;
+}
+
+.catalog-page-link:hover {
+  text-decoration: underline;
+}
+
+.catalog-page-status {
+  font-size: 14px;
+  color: var(--mid);
+}
+
+.catalog-empty {
+  text-align: center;
+  padding: 48px 24px;
+  border: 1px dashed #e8e0d8;
+  border-radius: 12px;
+}
+
+.catalog-empty-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.catalog-empty-lead {
+  color: var(--mid);
+  margin-bottom: 24px;
+}
+
+.catalog-empty-suggestions {
+  margin-bottom: 24px;
+}
+
+.catalog-empty-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 20px;
+  margin-top: 8px;
+}
+
+.catalog-empty-list a {
+  color: var(--rose);
+}
+
+.catalog-browse-hint {
+  display: flex;
+  justify-content: center;
+  margin: 24px auto 40px;
+}
+
+.catalog-browse-hint .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 1px solid var(--dark);
+  border-radius: 6px;
+  color: var(--dark);
+  text-decoration: none;
+  transition: background .2s, color .2s;
+}
+
+.catalog-browse-hint .btn-outline:hover {
+  background: var(--dark);
+  color: var(--white);
+}
+
+.booking-search-wrap {
+  margin-bottom: 16px;
+}
+
+.booking-search-input {
+  width: 100%;
+  max-width: 420px;
+  padding: 12px 14px;
+  border: 1px solid #e8e0d8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.booking-search-input:focus {
+  outline: 2px solid var(--rose);
+  outline-offset: 1px;
+}
+
+@media (max-width: 768px) {
+  .catalog-filters-toggle {
+    display: inline-flex;
+  }
+
+  .catalog-filters-panel[hidden] {
+    display: none !important;
+  }
+
+  .catalog-filters-panel:not([hidden]) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .catalog-sort-select {
+    width: 100%;
+  }
+
+  .treatment-list-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,0 +1,52 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Reviews · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Reviews</h1>
+  <p class="dash-subtitle">Featured on homepage: {{ featured_count }} / {{ featured_limit }}</p>
+</header>
+<form class="dash-filters" method="get">
+  <select name="status" class="dash-input">
+    <option value="">All statuses</option>
+    {% for value, label in status_choices %}
+    <option value="{{ value }}"{% if status_filter == value %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <label class="dash-checkbox">
+    <input type="checkbox" name="featured" value="1"{% if request.GET.featured == '1' %} checked{% endif %}> Featured only
+  </label>
+  <select name="rating_lte" class="dash-input">
+    <option value="">Any rating</option>
+    <option value="2"{% if request.GET.rating_lte == '2' %} selected{% endif %}>2 stars or below</option>
+    <option value="3"{% if request.GET.rating_lte == '3' %} selected{% endif %}>3 stars or below</option>
+  </select>
+  <label class="dash-checkbox">
+    <input type="checkbox" name="recent" value="1"{% if request.GET.recent == '1' %} checked{% endif %}> Recent first
+  </label>
+  <button type="submit" class="dash-btn dash-btn--secondary">Filter</button>
+</form>
+{% if page_obj.object_list %}
+<ul class="dash-list">
+  {% for item in page_obj %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      <p class="dash-card__title">
+        <a href="{% url 'dashboard:testimonial_detail' item.pk %}">
+          {{ item.customer.email }} — {{ item.rating }}★
+          {% if item.service %}· {{ item.service.name }}{% endif %}
+        </a>
+      </p>
+      <p class="dash-card__meta">{{ item.created_at|date:"j M Y, g:i A" }}</p>
+    </div>
+    <div class="dash-card__aside">
+      <span class="dash-badge">{{ item.get_status_display }}</span>
+      {% if item.is_featured %}<span class="dash-badge">Featured</span>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% include 'dashboard/components/pagination.html' with page_obj=page_obj %}
+{% else %}
+<p class="dash-empty">No reviews{% if status_filter %} with this filter{% endif %}.</p>
+{% endif %}
+{% endblock %}

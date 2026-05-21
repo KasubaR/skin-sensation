@@ -1,0 +1,36 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Contact messages · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Contact messages</h1>
+</header>
+<form class="dash-filters" method="get">
+  <select name="status" class="dash-input">
+    <option value="">All statuses</option>
+    {% for value, label in status_choices %}
+    <option value="{{ value }}"{% if status_filter == value %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="dash-btn dash-btn--secondary">Filter</button>
+</form>
+{% if page_obj.object_list %}
+<ul class="dash-list">
+  {% for msg in page_obj %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      <p class="dash-card__title">
+        <a href="{% url 'dashboard:contact_message_detail' msg.pk %}">{{ msg.full_name }} — {{ msg.get_subject_display }}</a>
+      </p>
+      <p class="dash-card__meta">{{ msg.email }} · {{ msg.created_at|date:"j M Y, g:i A" }}</p>
+    </div>
+    <div class="dash-card__aside">
+      <span class="dash-badge">{{ msg.get_status_display }}</span>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% include 'dashboard/components/pagination.html' with page_obj=page_obj %}
+{% else %}
+<p class="dash-empty">No contact messages{% if status_filter %} with this status{% endif %}.</p>
+{% endif %}
+{% endblock %}

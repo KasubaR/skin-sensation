@@ -1,0 +1,64 @@
+{% if treatments_page %}
+<section class="catalog-results-section" aria-labelledby="catalog-results-heading">
+  <div class="catalog-results-head">
+    <h2 id="catalog-results-heading">
+      {% if search or category %}
+        Search results
+      {% elif service %}
+        Treatments
+      {% else %}
+        All treatments
+      {% endif %}
+    </h2>
+    {% if treatments_page.paginator.count %}
+    <p class="catalog-results-count">{{ treatments_page.paginator.count }} treatment{{ treatments_page.paginator.count|pluralize }}</p>
+    {% endif %}
+  </div>
+
+  {% if treatments_page.object_list %}
+  <div class="treatment-list-grid catalog-treatment-grid">
+    {% for treatment in treatments_page %}
+      {% include 'services/components/treatment_card.html' %}
+    {% endfor %}
+  </div>
+
+  {% if treatments_page.has_other_pages %}
+  <nav class="catalog-pagination" aria-label="Treatment results pages">
+    {% if treatments_page.has_previous %}
+    <a class="catalog-page-link"
+      href="?{% if base_query %}{{ base_query }}&{% endif %}page={{ treatments_page.previous_page_number }}"
+      hx-get="{{ catalog_url }}?{% if base_query %}{{ base_query }}&{% endif %}page={{ treatments_page.previous_page_number }}"
+      hx-target="#catalog-results"
+      hx-push-url="true">Previous</a>
+    {% endif %}
+    <span class="catalog-page-status">Page {{ treatments_page.number }} of {{ treatments_page.paginator.num_pages }}</span>
+    {% if treatments_page.has_next %}
+    <a class="catalog-page-link"
+      href="?{% if base_query %}{{ base_query }}&{% endif %}page={{ treatments_page.next_page_number }}"
+      hx-get="{{ catalog_url }}?{% if base_query %}{{ base_query }}&{% endif %}page={{ treatments_page.next_page_number }}"
+      hx-target="#catalog-results"
+      hx-push-url="true">Next</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="catalog-empty">
+    <p class="catalog-empty-title">No treatments found.</p>
+    <p class="catalog-empty-lead">Try a different keyword or browse all categories.</p>
+    {% if featured_treatments %}
+    <div class="catalog-empty-suggestions">
+      <p class="catalog-empty-sub">You might like:</p>
+      <ul class="catalog-empty-list">
+        {% for t in featured_treatments %}
+        <li><a href="{% url 'treatment_detail' t.service.slug t.slug %}">{{ t.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <a class="btn-outline" href="{% url 'services' %}">View all services</a>
+    <a class="btn-dark" href="{% url 'contact' %}">Contact us</a>
+  </div>
+  {% endif %}
+</section>
+{% endif %}

@@ -18,6 +18,11 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def card_image_url(self) -> str:
+        from services.constants import service_card_image_url
+        return service_card_image_url(self.slug)
+
 
 class Treatment(models.Model):
     """Bookable treatment within a service group."""
@@ -60,6 +65,11 @@ class Treatment(models.Model):
         indexes = [
             models.Index(fields=['is_active', 'is_featured']),
             models.Index(fields=['service', 'is_active']),
+            models.Index(fields=['name']),
+            models.Index(
+                fields=['subsection', 'sort_order', 'name'],
+                name='services_tr_subsection_sort_idx',
+            ),
         ]
 
     def __str__(self):

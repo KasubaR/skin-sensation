@@ -13,7 +13,7 @@
   <div class="hero-content">
     <h1>Discover<em>The Secrets<br>Of Beauty</em></h1>
     <p>Get them together (for less!) for dewy, natural-looking coverage that still looks like skin.</p>
-    <a href="{% url 'booking' %}" class="btn-dark">Book Now</a>
+    <a href="{% url 'booking' %}" class="btn-dark">Book Now <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </section>
 
@@ -113,6 +113,7 @@
       <h2 id="testimonials-heading">Client Reviews</h2>
       <p>What our guests say about Skin Sensation</p>
     </div>
+    <a href="{% url 'testimonials' %}" class="view-all-services-btn">View All Reviews</a>
   </div>
 
   <div class="testimonials-carousel" data-testimonials-carousel>
@@ -121,6 +122,11 @@
     </button>
     <div class="testimonials-viewport" data-testimonials-viewport tabindex="0" aria-roledescription="carousel" aria-label="Customer testimonials">
       <div class="testimonials-track">
+        {% if featured_testimonials %}
+        {% for testimonial in featured_testimonials %}
+        {% include 'testimonials/partials/testimonial_card.html' with testimonial=testimonial %}
+        {% endfor %}
+        {% else %}
         <article class="testimonial-card">
           <div class="testimonial-card-inner">
             <div class="stars testimonial-stars" aria-label="5 out of 5 stars">
@@ -176,17 +182,24 @@
             <p class="testimonial-author">Linda H.</p>
           </div>
         </article>
+        {% endif %}
       </div>
     </div>
     <button type="button" class="testimonials-nav testimonials-next" aria-label="Next testimonial" data-testimonials-next>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
     </button>
     <div class="testimonials-dots" role="tablist" aria-label="Choose testimonial slide">
+      {% if featured_testimonials %}
+      {% for testimonial in featured_testimonials %}
+      <button type="button" class="testimonials-dot{% if forloop.first %} is-active{% endif %}" role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Testimonial {{ forloop.counter }} of {{ featured_testimonials|length }}" data-testimonials-dot></button>
+      {% endfor %}
+      {% else %}
       <button type="button" class="testimonials-dot is-active" role="tab" aria-selected="true" aria-label="Testimonial 1 of 5" data-testimonials-dot></button>
       <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 2 of 5" data-testimonials-dot></button>
       <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 3 of 5" data-testimonials-dot></button>
       <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 4 of 5" data-testimonials-dot></button>
       <button type="button" class="testimonials-dot" role="tab" aria-selected="false" aria-label="Testimonial 5 of 5" data-testimonials-dot></button>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -263,14 +276,14 @@
     <div class="contact-card">
       <div class="contact-item">
         <h4>Phone Number</h4>
-        <a href="tel:+260973407110">+260 973 407 110</a>
+        <a href="{{ business.tel_href }}">{{ business.phone_number }}</a>
       </div>
 
       <div class="contact-item">
         <h4>WhatsApp</h4>
         <p class="whatsapp-inline">
           WhatsApp
-          <a class="whatsapp-btn" href="https://wa.me/260973407110" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+          <a class="whatsapp-btn" href="{{ business.whatsapp_href }}" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
             <i class="fa-brands fa-whatsapp"></i>
           </a>
         </p>
@@ -278,12 +291,14 @@
 
       <div class="contact-item">
         <h4>Address</h4>
-        <p>Kabulonga, Kudu Road, Springbok Close, Lusaka</p>
+        <p>{{ business.address }}</p>
       </div>
 
       <div class="contact-item">
         <h4>Opening Hours</h4>
-        <p>Mon - Sat: 08:00 - 18:00<br>Sunday: 10:00 - 16:00</p>
+        <p>Mon – Fri: {{ business.opening_hours.monday_friday|default:"8:00 am – 6:00 pm" }}<br>
+        Sat: {{ business.opening_hours.saturday|default:"9:00 am – 5:00 pm" }}<br>
+        Sun: {{ business.opening_hours.sunday|default:"10:00 am – 4:00 pm" }}</p>
       </div>
     </div>
 
@@ -292,7 +307,7 @@
         title="Skin Sensation location map"
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps?q=Kabulonga%2C%20Kudu%20Road%2C%20Springbok%20Close%2C%20Lusaka&output=embed">
+        src="{{ business.maps_embed_src }}">
       </iframe>
     </div>
   </div>

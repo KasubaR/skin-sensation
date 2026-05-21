@@ -1,0 +1,12 @@
+New contact form message
+
+From: {{ full_name }}
+Email: {{ email }}
+Phone: {{ phone_number }}
+Subject: {{ subject }}
+Received: {{ created_at|date:"j M Y, g:i A" }}
+
+Message:
+{{ message }}
+
+View in staff dashboard: {{ dashboard_url }}

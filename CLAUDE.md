@@ -54,7 +54,7 @@ Root URL config: `skinsensation/urls.py` includes each app under a prefix, then 
 
 **Marketing (core)** — `core/urls.py`, `core/views.py`:
 - `/` → `home` → `index.html`
-- `/services/` → `services` → `services.html`
+- `/services/` → `services` → `services/index.html` (search/filter via query params + HTMX)
 - `/booking/` → `booking` → `booking.html`
 - `/gallery/` → `gallery` → `gallery.html`
 
@@ -77,3 +77,23 @@ Use `{% url 'name' %}` for core links (e.g. `{% url 'booking' %}`). Future booki
   - Same day: `python manage.py send_same_day_reminders` (e.g. daily at 07:00)
   - Use `--dry-run` on either command to preview targets without sending
 - Set `NOTIFICATION_EMAIL_ENABLED=false` in env to disable outbound notification emails (staging)
+
+### Staff dashboard (`dashboard` app)
+- Mount: `/dashboard/` — requires `User.is_staff` (`@staff_required` in `dashboard/decorators.py`)
+- **Overview** (`/dashboard/`) — KPI cards via `dashboard/stats.py`
+- **Reports** (`/dashboard/reports/`) — Chart.js revenue/status/treatment charts
+- **Appointments** — calendar, daily schedule, list, detail (status updates, staff reschedule, manual payment)
+- **Payments** — list with status tabs (`?status=pending|verified|failed|refunded`); verify/reject on detail
+- **Services / treatments** — CRUD under `/dashboard/services/`, `/dashboard/treatments/`
+- **Customers** — list, detail, staff notes
+- **Messages / reviews / business settings** — contact inbox, testimonial moderation, `BusinessInformation` edit
+- **Activity log** — `StaffActivityLog` in `dashboard/models.py`; recent entries on overview
+- **Promotions** — deferred (no `promotions` app; home page packages section is static HTML until requirements are defined)
+- `accounts.models.Staff` = bookable therapist on calendar, **not** an admin role (admin access is `User.is_staff` only)
+
+### Contact & communications (`communications` app)
+- Public contact page: `/contact/` (form persists `ContactMessage`, emails managers via `send_contact_notification`)
+- Success page: `/contact/success/`
+- Site-wide phone/WhatsApp/maps come from `BusinessInformation` singleton (pk=1), exposed as `{{ business }}` via context processor
+- Staff dashboard: `/dashboard/contact-messages/`, `/dashboard/business-settings/`
+- After deploy: run `python manage.py migrate`; paste Google Maps embed URL in Business settings (Share → Embed a map → copy iframe `src`)

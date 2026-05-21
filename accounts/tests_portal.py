@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from accounts.models import CustomerProfile, Staff
 from bookings.models import Appointment, AppointmentService, AppointmentStatus, DayOfWeek, StaffAvailability
-from bookings.policies import CANCELLATION_NOTICE_HOURS, can_modify_appointment
+from bookings.validators import CANCELLATION_NOTICE_HOURS, can_modify_appointment
 from bookings.portal import PortalError, cancel_appointment, reschedule_appointment
 from services.models import Service, Treatment
 

@@ -398,6 +398,148 @@
 .dash-legend-item--completed { border-left-color: var(--mid); }
 .dash-legend-item--cancelled { border-left-color: #a44; }
 
+.dash-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.dash-action-row form {
+  margin: 0;
+}
+
+.dash-notice {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: #fff8e6;
+  border: 1px solid #e8d9a8;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Overview KPI cards */
+.dash-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dash-kpi-grid--secondary {
+  margin-bottom: 2rem;
+}
+
+.dash-kpi-grid--compact {
+  margin-bottom: 2rem;
+}
+
+.dash-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.25rem;
+  border: 1px solid var(--peach);
+  background: var(--cream);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.dash-kpi-card:hover {
+  border-color: var(--rose);
+}
+
+.dash-kpi-card--static {
+  pointer-events: none;
+}
+
+.dash-kpi-card__label {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+.dash-kpi-card__value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.dash-kpi-card__hint {
+  font-size: 0.8rem;
+  color: var(--mid);
+}
+
+/* Payment status tabs */
+.dash-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--peach);
+  padding-bottom: 0.5rem;
+}
+
+.dash-tabs__link {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--mid);
+  border-bottom: 2px solid transparent;
+}
+
+.dash-tabs__link:hover,
+.dash-tabs__link.is-active {
+  color: var(--dark);
+  border-bottom-color: var(--rose);
+}
+
+/* Reports charts */
+.dash-charts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dash-chart-panel {
+  margin-bottom: 0;
+}
+
+.dash-chart-wrap {
+  position: relative;
+  height: 280px;
+}
+
+/* Activity feed */
+.dash-activity-list {
+  list-style: none;
+}
+
+.dash-activity-list li {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--peach);
+}
+
+.dash-activity-list__message {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.dash-activity-list__meta {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--mid);
+  margin-top: 0.2rem;
+}
+
+.dash-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
   .dash-layout {
     grid-template-columns: 1fr;

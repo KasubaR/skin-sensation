@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from accounts.forms import NotificationPreferencesForm, ProfileEditForm
@@ -60,10 +61,5 @@ def profile_edit(request):
 
 
 @login_required
-@require_GET
 def profile_password(request):
-    return render(
-        request,
-        'accounts/portal/profile/password.html',
-        {'portal_nav': 'profile'},
-    )
+    return redirect(reverse('account_change_password'))

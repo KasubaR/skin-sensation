@@ -1,0 +1,25 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Business settings · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Business settings</h1>
+  <p class="dash-subtitle">Contact details shown on the website, emails, and WhatsApp links.</p>
+</header>
+
+<form method="post" class="dash-form dash-form--stacked">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="dash-field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}<p class="dash-field__help">{{ field.help_text }}</p>{% endif %}
+    {% if field.errors %}<p class="dash-field__error">{{ field.errors.0 }}</p>{% endif %}
+  </div>
+  {% endfor %}
+  <p class="dash-field__help">
+    Opening hours: JSON with keys <code>monday_friday</code>, <code>saturday</code>, <code>sunday</code>.
+    Google Maps: paste the full iframe <code>src</code> URL from Google Maps → Share → Embed a map.
+  </p>
+  <button type="submit" class="dash-btn dash-btn--primary">Save settings</button>
+</form>
+{% endblock %}

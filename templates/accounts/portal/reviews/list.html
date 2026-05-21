@@ -1,0 +1,39 @@
+{% extends 'accounts/portal/layouts/portal_base.html' %}
+
+{% block title %}My Reviews · Skin Sensation{% endblock %}
+
+{% block portal_content %}
+<section class="portal-page">
+  <header class="portal-page-header">
+    <h1 class="portal-title">My reviews</h1>
+    <a class="portal-btn portal-btn--primary" href="{% url 'review_create' %}">Write a review</a>
+  </header>
+
+  {% if reviews %}
+  <ul class="portal-card-list">
+    {% for review in reviews %}
+    <li class="portal-card">
+      <div class="portal-card__main">
+        <p class="portal-card__title">
+          {% if review.service %}{{ review.service.name }}{% else %}General{% endif %}
+          · {{ review.rating }}★
+        </p>
+        <p class="portal-card__meta">{{ review.created_at|date:"j M Y" }}</p>
+        {% if review.title %}<p class="portal-card__subtitle">{{ review.title }}</p>{% endif %}
+        <p class="portal-card__excerpt">{{ review.review|truncatewords:30 }}</p>
+      </div>
+      <div class="portal-card__aside">
+        <span class="portal-badge portal-badge--{{ review.status }}">{{ review.get_status_display }}</span>
+        {% if review.is_featured and review.status == 'approved' %}
+        <span class="portal-badge">Featured</span>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="portal-empty">You have not submitted any reviews yet.</p>
+  <a class="portal-link" href="{% url 'review_create' %}">Share your experience</a>
+  {% endif %}
+</section>
+{% endblock %}

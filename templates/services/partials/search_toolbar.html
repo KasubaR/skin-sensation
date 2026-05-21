@@ -1,0 +1,69 @@
+{% load static %}
+<div class="catalog-toolbar" id="catalogToolbar" data-catalog-toolbar>
+  <form class="catalog-toolbar-form" role="search" aria-label="Search treatments"
+    hx-get="{{ catalog_url }}"
+    hx-target="#catalog-results"
+    hx-trigger="change from:select[name='sort'], submit"
+    hx-push-url="true"
+    hx-include="[data-catalog-toolbar]">
+    <div class="catalog-toolbar-row">
+      <label class="catalog-search-wrap">
+        <span class="visually-hidden">Search treatments</span>
+        <i class="fa-solid fa-magnifying-glass catalog-search-icon" aria-hidden="true"></i>
+        <input type="search" name="search" class="catalog-search-input"
+          placeholder="Search treatments…"
+          value="{{ search }}"
+          autocomplete="off"
+          hx-get="{{ catalog_url }}"
+          hx-target="#catalog-results"
+          hx-trigger="keyup changed delay:300ms"
+          hx-push-url="true"
+          hx-include="[data-catalog-toolbar]">
+      </label>
+      <button type="button" class="catalog-filters-toggle" data-filters-toggle aria-expanded="false" aria-controls="catalogFiltersPanel">
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+        <span>Filters</span>
+      </button>
+    </div>
+
+    <div class="catalog-filters-panel" id="catalogFiltersPanel" data-filters-panel hidden>
+      {% if show_category_filters and categories %}
+      <div class="catalog-category-pills" role="group" aria-label="Filter by category">
+        <label class="catalog-pill">
+          <input type="radio" name="category" value=""
+            {% if not category %}checked{% endif %}
+            hx-get="{{ catalog_url }}"
+            hx-target="#catalog-results"
+            hx-trigger="change"
+            hx-push-url="true"
+            hx-include="[data-catalog-toolbar]">
+          <span>All</span>
+        </label>
+        {% for cat in categories %}
+        <label class="catalog-pill">
+          <input type="radio" name="category" value="{{ cat.slug }}"
+            {% if category == cat.slug %}checked{% endif %}
+            hx-get="{{ catalog_url }}"
+            hx-target="#catalog-results"
+            hx-trigger="change"
+            hx-push-url="true"
+            hx-include="[data-catalog-toolbar]">
+          <span>{{ cat.name }}</span>
+        </label>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <label class="catalog-sort-label">
+        <span>Sort by</span>
+        <select name="sort" class="catalog-sort-select">
+          <option value="" {% if not sort %}selected{% endif %}>Default</option>
+          <option value="featured" {% if sort == 'featured' %}selected{% endif %}>Featured</option>
+          <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A–Z</option>
+          <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: low to high</option>
+          <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: high to low</option>
+        </select>
+      </label>
+    </div>
+  </form>
+</div>

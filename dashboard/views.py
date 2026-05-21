@@ -1,8 +1,10 @@
 import json
+import logging
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -15,6 +17,8 @@ from django.views.decorators.http import require_GET, require_POST
 
 from accounts.models import CustomerNote, CustomerProfile, Staff
 from bookings.models import Appointment, AppointmentStatus
+from bookings.portal import PortalError, reschedule_appointment
+from dashboard.activity import log_staff_activity
 from dashboard.appointment_logic import (
   allowed_next_statuses,
   appointment_list_queryset,
@@ -24,6 +28,7 @@ from dashboard.appointment_logic import (
 from dashboard.decorators import staff_required
 from dashboard.forms import (
   AppointmentFilterForm,
+  AppointmentRescheduleForm,
   AppointmentStatusForm,
   CustomerNoteForm,
   CustomerSearchForm,
@@ -34,8 +39,13 @@ from dashboard.forms import (
 )
 from notifications.services import notify_appointment_cancelled, notify_appointment_confirmed
 from payments.models import Payment, PaymentMethod, PaymentStatus
+from dashboard.models import StaffActivityLog
+from dashboard.stats import get_overview_context, get_reports_context
 from payments.services import record_and_verify_payment, reject_payment, verify_payment
 from services.models import Service, Treatment
+
+User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def _staff_choices():
@@ -56,8 +66,23 @@ def _appointment_queryset():
 
 
 @staff_required
+@require_GET
 def home(request):
-  return redirect('dashboard:appointment_calendar')
+  context = get_overview_context()
+  return render(request, 'dashboard/overview.html', context)
+
+
+@staff_required
+@require_GET
+def reports(request):
+  context = get_reports_context()
+  context['chart_revenue_labels'] = json.dumps(context['chart_revenue_labels'])
+  context['chart_revenue_amounts'] = json.dumps(context['chart_revenue_amounts'])
+  context['chart_status_labels'] = json.dumps(context['chart_status_labels'])
+  context['chart_status_counts'] = json.dumps(context['chart_status_counts'])
+  context['chart_treatment_labels'] = json.dumps(context['chart_treatment_labels'])
+  context['chart_treatment_counts'] = json.dumps(context['chart_treatment_counts'])
+  return render(request, 'dashboard/reports.html', context)
 
 
 @staff_required
@@ -180,6 +205,19 @@ def appointment_detail(request, booking_reference):
     initial={'amount': appointment.deposit_amount},
   )
   payments = appointment.payments.select_related('verified_by').order_by('-created_at')
+  can_reschedule = appointment.status in (
+    AppointmentStatus.PENDING,
+    AppointmentStatus.CONFIRMED,
+  )
+  staff_choices = _staff_choices()
+  reschedule_form = AppointmentRescheduleForm(
+    staff_choices=staff_choices,
+    initial={
+      'appointment_date': appointment.appointment_date,
+      'start_time': appointment.start_time,
+      'staff_id': str(appointment.assigned_staff_id) if appointment.assigned_staff_id else '',
+    },
+  )
 
   if request.method == 'POST':
     action = request.POST.get('action', '')
@@ -187,6 +225,8 @@ def appointment_detail(request, booking_reference):
       return _handle_status_update(request, appointment)
     if action == 'manual_payment':
       return _handle_manual_payment(request, appointment)
+    if action == 'reschedule':
+      return _handle_reschedule(request, appointment, staff_choices)
 
   return render(
     request,
@@ -199,8 +239,20 @@ def appointment_detail(request, booking_reference):
       'manual_payment_form': manual_payment_form,
       'payments': payments,
       'allowed_statuses': allowed_next_statuses(appointment.status),
+      'can_reschedule': can_reschedule,
+      'reschedule_form': reschedule_form,
     },
   )
+
+
+def _send_status_notifications(new_status, old_status, appt):
+    try:
+        if new_status == AppointmentStatus.CANCELLED and old_status != AppointmentStatus.CANCELLED:
+            notify_appointment_cancelled(appt)
+        elif new_status == AppointmentStatus.CONFIRMED and old_status != AppointmentStatus.CONFIRMED:
+            notify_appointment_confirmed(appt)
+    except Exception:
+        logger.exception('Failed to send status notification for appointment %s', appt.booking_reference)
 
 
 def _handle_status_update(request, appointment):
@@ -221,13 +273,48 @@ def _handle_status_update(request, appointment):
       return redirect('dashboard:appointment_detail', booking_reference=appt.booking_reference)
     appt.status = new_status
     appt.save(update_fields=['status'])
+    transaction.on_commit(lambda: _send_status_notifications(new_status, old_status, appt))
 
-  if new_status == AppointmentStatus.CANCELLED and old_status != AppointmentStatus.CANCELLED:
-    notify_appointment_cancelled(appt)
-  elif new_status == AppointmentStatus.CONFIRMED and old_status != AppointmentStatus.CONFIRMED:
-    notify_appointment_confirmed(appt)
-
+  log_staff_activity(
+    user=request.user,
+    action=StaffActivityLog.Action.APPOINTMENT_STATUS,
+    target_type='appointment',
+    target_id=appt.booking_reference,
+    message=f'Changed {appt.booking_reference} from {old_status} to {new_status}',
+  )
   messages.success(request, f'Appointment marked as {appt.get_status_display()}.')
+  return redirect('dashboard:appointment_detail', booking_reference=appointment.booking_reference)
+
+
+def _handle_reschedule(request, appointment, staff_choices):
+  form = AppointmentRescheduleForm(request.POST, staff_choices=staff_choices)
+  if not form.is_valid():
+    messages.error(request, 'Could not reschedule. Check the form and try again.')
+    return redirect('dashboard:appointment_detail', booking_reference=appointment.booking_reference)
+
+  staff_raw = form.cleaned_data.get('staff_id') or ''
+  staff_id = int(staff_raw) if staff_raw else None
+
+  try:
+    reschedule_appointment(
+      appointment,
+      new_date=form.cleaned_data['appointment_date'],
+      new_start_time=form.cleaned_data['start_time'],
+      staff_id=staff_id,
+      staff_override=True,
+    )
+  except PortalError as exc:
+    messages.error(request, str(exc))
+    return redirect('dashboard:appointment_detail', booking_reference=appointment.booking_reference)
+
+  log_staff_activity(
+    user=request.user,
+    action=StaffActivityLog.Action.APPOINTMENT_RESCHEDULED,
+    target_type='appointment',
+    target_id=appointment.booking_reference,
+    message=f'Rescheduled {appointment.booking_reference} to {form.cleaned_data["appointment_date"]}',
+  )
+  messages.success(request, 'Appointment rescheduled.')
   return redirect('dashboard:appointment_detail', booking_reference=appointment.booking_reference)
 
 
@@ -250,18 +337,38 @@ def _handle_manual_payment(request, appointment):
     messages.error(request, str(exc))
     return redirect('dashboard:appointment_detail', booking_reference=appointment.booking_reference)
 
+  log_staff_activity(
+    user=request.user,
+    action=StaffActivityLog.Action.PAYMENT_RECORDED,
+    target_type='appointment',
+    target_id=appointment.booking_reference,
+    message=f'Recorded manual payment for {appointment.booking_reference}',
+  )
   messages.success(request, 'Payment recorded and verified.')
   return redirect('dashboard:appointment_detail', booking_reference=appointment.booking_reference)
+
+
+_PAYMENT_STATUS_TABS = [
+  (PaymentStatus.PENDING, 'Pending'),
+  (PaymentStatus.VERIFIED, 'Verified'),
+  (PaymentStatus.FAILED, 'Failed'),
+  (PaymentStatus.REFUNDED, 'Refunded'),
+]
 
 
 @staff_required
 @require_GET
 def payment_list(request):
+  status_filter = request.GET.get('status', PaymentStatus.PENDING).strip()
+  valid_statuses = {s for s, _ in PaymentStatus.choices}
+  if status_filter not in valid_statuses:
+    status_filter = PaymentStatus.PENDING
+
   payments = Payment.objects.select_related(
     'appointment',
     'appointment__customer',
     'appointment__customer__customer_profile',
-  ).filter(status=PaymentStatus.PENDING)
+  ).filter(status=status_filter)
 
   ref = request.GET.get('q', '').strip()
   if ref:
@@ -296,12 +403,17 @@ def payment_list(request):
   paginator = Paginator(payments, 20)
   page = paginator.get_page(request.GET.get('page'))
 
+  status_label = dict(PaymentStatus.choices).get(status_filter, status_filter)
+
   return render(
     request,
     'dashboard/payments/list.html',
     {
       'page_obj': page,
       'payment_methods': PaymentMethod.choices,
+      'status_filter': status_filter,
+      'status_label': status_label,
+      'status_tabs': _PAYMENT_STATUS_TABS,
     },
   )
 
@@ -323,6 +435,13 @@ def payment_detail(request, pk):
     if action == 'approve':
       try:
         verify_payment(payment, request.user)
+        log_staff_activity(
+          user=request.user,
+          action=StaffActivityLog.Action.PAYMENT_VERIFIED,
+          target_type='payment',
+          target_id=str(payment.pk),
+          message=f'Verified payment #{payment.pk} for {payment.appointment.booking_reference}',
+        )
         messages.success(request, 'Payment approved.')
       except ValueError as exc:
         messages.error(request, str(exc))
@@ -336,6 +455,13 @@ def payment_detail(request, pk):
             payment,
             request.user,
             reason=reject_form.cleaned_data.get('rejection_reason', ''),
+          )
+          log_staff_activity(
+            user=request.user,
+            action=StaffActivityLog.Action.PAYMENT_REJECTED,
+            target_type='payment',
+            target_id=str(payment.pk),
+            message=f'Rejected payment #{payment.pk} for {payment.appointment.booking_reference}',
           )
           messages.success(request, 'Payment rejected.')
         except ValueError as exc:
@@ -391,20 +517,29 @@ def service_edit(request, pk):
   if request.method == 'POST':
     action = request.POST.get('action', '')
     if action == 'toggle_active':
-      if service.is_active and Treatment.objects.filter(
-        service=service,
-        is_active=True,
-      ).exists():
-        future = Appointment.objects.filter(
-          line_items__treatment__service=service,
-          status__in=(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED),
-          appointment_date__gte=timezone.localdate(),
-        ).exists()
-        if future:
-          messages.error(request, 'Cannot deactivate: future appointments use this service.')
-          return redirect('dashboard:service_edit', pk=pk)
-      service.is_active = not service.is_active
-      service.save(update_fields=['is_active'])
+      with transaction.atomic():
+        service = Service.objects.select_for_update().get(pk=pk)
+        if service.is_active and Treatment.objects.filter(
+          service=service,
+          is_active=True,
+        ).exists():
+          future = Appointment.objects.filter(
+            line_items__treatment__service=service,
+            status__in=(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED),
+            appointment_date__gte=timezone.localdate(),
+          ).exists()
+          if future:
+            messages.error(request, 'Cannot deactivate: future appointments use this service.')
+            return redirect('dashboard:service_edit', pk=pk)
+        service.is_active = not service.is_active
+        service.save(update_fields=['is_active'])
+      log_staff_activity(
+        user=request.user,
+        action=StaffActivityLog.Action.SERVICE_TOGGLED,
+        target_type='service',
+        target_id=str(service.pk),
+        message=f'Service "{service.name}" set to {"active" if service.is_active else "inactive"}',
+      )
       messages.success(request, 'Service updated.')
       return redirect('dashboard:service_edit', pk=pk)
 
@@ -456,11 +591,20 @@ def treatment_edit(request, pk):
   if request.method == 'POST':
     action = request.POST.get('action', '')
     if action == 'toggle_active':
-      if treatment.is_active and _treatment_has_future_bookings(treatment):
-        messages.error(request, 'Cannot deactivate: future appointments include this treatment.')
-        return redirect('dashboard:treatment_edit', pk=pk)
-      treatment.is_active = not treatment.is_active
-      treatment.save(update_fields=['is_active'])
+      with transaction.atomic():
+        treatment = Treatment.objects.select_for_update().get(pk=pk)
+        if treatment.is_active and _treatment_has_future_bookings(treatment):
+          messages.error(request, 'Cannot deactivate: future appointments include this treatment.')
+          return redirect('dashboard:treatment_edit', pk=pk)
+        treatment.is_active = not treatment.is_active
+        treatment.save(update_fields=['is_active'])
+      log_staff_activity(
+        user=request.user,
+        action=StaffActivityLog.Action.TREATMENT_TOGGLED,
+        target_type='treatment',
+        target_id=str(treatment.pk),
+        message=f'Treatment "{treatment.name}" set to {"active" if treatment.is_active else "inactive"}',
+      )
       messages.success(request, 'Treatment updated.')
       return redirect('dashboard:treatment_edit', pk=pk)
 
@@ -517,11 +661,8 @@ def customer_list(request):
 
 @staff_required
 def customer_detail(request, user_id):
-  from django.contrib.auth import get_user_model
-
-  User = get_user_model()
   customer = get_object_or_404(
-    User.objects.select_related('customer_profile'),
+    User.objects.select_related('customer_profile').filter(is_staff=False),
     pk=user_id,
   )
   profile = getattr(customer, 'customer_profile', None)
@@ -544,6 +685,13 @@ def customer_detail(request, user_id):
       note.customer = customer
       note.author = request.user
       note.save()
+      log_staff_activity(
+        user=request.user,
+        action=StaffActivityLog.Action.CUSTOMER_NOTE_ADDED,
+        target_type='customer',
+        target_id=str(user_id),
+        message=f'Added note to customer #{user_id}',
+      )
       messages.success(request, 'Note added.')
       return redirect('dashboard:customer_detail', user_id=user_id)
   else:

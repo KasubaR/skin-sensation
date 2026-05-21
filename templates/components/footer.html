@@ -1,13 +1,21 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <h3>Skin Sensation</h3>
+      <h3>{{ business.business_name }}</h3>
       <p>Your trusted wellness and beauty destination in Lusaka for premium spa treatments.</p>
       <div class="social-links">
-        <a href="https://www.instagram.com/skinsensationbeautyspa" aria-label="Instagram" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-        <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        {% if business.instagram_url %}
+        <a href="{{ business.instagram_url }}" aria-label="Instagram" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        {% endif %}
+        {% if business.facebook_url %}
+        <a href="{{ business.facebook_url }}" aria-label="Facebook" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+        {% endif %}
+        {% if business.tiktok_url %}
+        <a href="{{ business.tiktok_url }}" aria-label="TikTok" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+        {% endif %}
+        {% if business.whatsapp_href %}
+        <a href="{{ business.whatsapp_href }}" aria-label="WhatsApp" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        {% endif %}
       </div>
     </div>
 
@@ -18,15 +26,15 @@
         <li><a href="{% url 'services' %}">Services</a></li>
         <li><a href="{% url 'booking' %}">Bookings</a></li>
         <li><a href="{% url 'gallery' %}">Gallery</a></li>
-        <li><a href="{% url 'home' %}#contact">Contact Us</a></li>
+        <li><a href="{% url 'contact' %}">Contact Us</a></li>
       </ul>
     </div>
 
     <div class="footer-col footer-contact">
       <h4>Contact Details</h4>
-      <p><a href="tel:+260973407110">+260 973 407 110</a></p>
-      <p><a href="mailto:info@skinsensationspa.com">info@skinsensationspa.com</a></p>
-      <p>Kabulonga, Kudu Road, Springbok Close, Lusaka</p>
+      <p><a href="{{ business.tel_href }}">{{ business.phone_number }}</a></p>
+      <p><a href="mailto:{{ business.email }}">{{ business.email }}</a></p>
+      <p>{{ business.address }}</p>
     </div>
   </div>
 

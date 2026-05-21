@@ -69,6 +69,10 @@
             <h2>Select services</h2>
             <p class="booking-step-intro">Select one or more treatments. Totals update in the summary as you go.</p>
           </div>
+          <label class="booking-search-wrap">
+            <span class="visually-hidden">Search treatments</span>
+            <input type="search" id="bookingSearchInput" class="booking-search-input" placeholder="Search treatments…" autocomplete="off">
+          </label>
           {% if categories %}
           <div class="booking-category-pills" role="group" aria-label="Filter by category">
             {% for cat in categories %}
@@ -78,7 +82,7 @@
           {% endif %}
           <div class="booking-service-grid" id="bookingServiceGrid">
             {% for treatment in treatments %}
-            <label class="booking-service-card" data-category="{{ treatment.service_id }}">
+            <label class="booking-service-card" data-category="{{ treatment.service_id }}" data-treatment-name="{{ treatment.name }}" data-service-name="{{ treatment.service__name }}">
               <input type="checkbox" name="booking_service" value="{{ treatment.id }}">
               <span class="booking-service-card-inner">
                 <span class="booking-service-icon"><i class="fa-solid fa-spa" aria-hidden="true"></i></span>
@@ -212,7 +216,7 @@
           </div>
           <div class="booking-deposit-note">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-            Deposit is <strong>20% of services</strong> with a <strong>minimum of K50</strong> when applicable. You'll receive a booking reference on the next screen—use it as your payment reference.
+            <span>Deposit is <strong>20% of services</strong> with a <strong>minimum of K50</strong> when applicable. You'll receive a booking reference on the next screen, use it as your payment reference.</span>
           </div>
           <div class="booking-payment-options">
             <label class="booking-payment-option">
@@ -325,6 +329,6 @@
 {% endblock %}
 
 {% block extra_js %}
-{{ catalog_data|json_script:"bookingCatalogData" }}
+{{ treatments|json_script:"bookingCatalogData" }}
 <script src="{% static 'booking.js' %}" defer></script>
 {% endblock %}

@@ -9,6 +9,7 @@ from .auth import resend_confirmation_email
 from .dashboard import portal_dashboard
 from .payments import payment_detail, payment_list, payment_receipt_pdf, payment_upload
 from .profile import profile_detail, profile_edit, profile_password
+from .reviews import review_create_redirect, review_list
 
 __all__ = [
     'appointment_cancel',
@@ -25,4 +26,6 @@ __all__ = [
     'profile_detail',
     'profile_edit',
     'profile_password',
+    'review_list',
+    'review_create_redirect',
 ]

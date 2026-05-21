@@ -4,7 +4,11 @@ from django.conf import settings
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
 
-from notifications.context import appointment_email_context
+from notifications.context import (
+    appointment_email_context,
+    contact_message_email_context,
+    testimonial_email_context,
+)
 from notifications.dispatch import prepare_notification_log, send_html_email
 from notifications.models import NotificationChannel, NotificationLog, NotificationStatus
 
@@ -311,3 +315,122 @@ def notify_payment_verified(payment):
 
 def notify_payment_rejected(payment):
     send_payment_rejected(payment)
+
+
+def send_review_submitted_notification(testimonial) -> bool:
+    if not getattr(settings, 'NOTIFICATION_EMAIL_ENABLED', True):
+        return False
+    if not settings.MANAGERS:
+        return False
+
+    try:
+        context = testimonial_email_context(testimonial)
+        subject = render_to_string(
+            'notifications/email/review_submitted_subject.txt',
+            context,
+        ).strip()
+        body_text = render_to_string(
+            'notifications/email/review_submitted_body.txt',
+            context,
+        )
+        body_html = render_to_string(
+            'notifications/email/review_submitted_body.html',
+            context,
+        )
+        from django.core.mail import EmailMultiAlternatives
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[email for _, email in settings.MANAGERS],
+        )
+        msg.attach_alternative(body_html, 'text/html')
+        msg.send(fail_silently=False)
+        return True
+    except Exception:
+        logger.exception(
+            'Failed to send review notification for testimonial pk=%s',
+            testimonial.pk,
+        )
+        return False
+
+
+def send_review_approved_email(testimonial) -> bool:
+    if not getattr(settings, 'NOTIFICATION_EMAIL_ENABLED', True):
+        return False
+
+    recipient = (testimonial.customer.email or '').strip()
+    if not recipient:
+        return False
+
+    try:
+        context = testimonial_email_context(testimonial)
+        subject = render_to_string(
+            'notifications/email/review_approved_subject.txt',
+            context,
+        ).strip()
+        body_text = render_to_string(
+            'notifications/email/review_approved_body.txt',
+            context,
+        )
+        body_html = render_to_string(
+            'notifications/email/review_approved_body.html',
+            context,
+        )
+        from django.core.mail import EmailMultiAlternatives
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[recipient],
+        )
+        msg.attach_alternative(body_html, 'text/html')
+        msg.send(fail_silently=False)
+        return True
+    except Exception:
+        logger.exception(
+            'Failed to send review approved email for testimonial pk=%s',
+            testimonial.pk,
+        )
+        return False
+
+
+def send_contact_notification(contact_message) -> bool:
+    if not getattr(settings, 'NOTIFICATION_EMAIL_ENABLED', True):
+        return False
+    if not settings.MANAGERS:
+        return False
+
+    try:
+        context = contact_message_email_context(contact_message)
+        subject = render_to_string(
+            'notifications/email/contact_received_subject.txt',
+            context,
+        ).strip()
+        body_text = render_to_string(
+            'notifications/email/contact_received_body.txt',
+            context,
+        )
+        body_html = render_to_string(
+            'notifications/email/contact_received_body.html',
+            context,
+        )
+        from django.core.mail import EmailMultiAlternatives
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[email for _, email in settings.MANAGERS],
+        )
+        msg.attach_alternative(body_html, 'text/html')
+        msg.send(fail_silently=False)
+        return True
+    except Exception:
+        logger.exception(
+            'Failed to send contact notification for message pk=%s',
+            contact_message.pk,
+        )
+        return False

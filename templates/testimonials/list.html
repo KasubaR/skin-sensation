@@ -1,0 +1,77 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Client Reviews · Skin Sensation{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'testimonials.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="testimonials-page">
+  <section class="testimonials-page-intro" aria-labelledby="reviews-page-title">
+    <nav class="testimonials-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span aria-current="page">Reviews</span>
+    </nav>
+    <h1 id="reviews-page-title">Client Reviews</h1>
+    <p class="testimonials-page-lead">Real experiences from guests who have visited Skin Sensation Spa.</p>
+    {% if user.is_authenticated %}
+    <a class="testimonials-cta-btn" href="{% url 'review_create' %}">Write a review</a>
+    {% else %}
+    <a class="testimonials-cta-btn" href="{% url 'account_login' %}?next={% url 'review_create' %}">Log in to write a review</a>
+    {% endif %}
+  </section>
+
+  {% if services_with_reviews %}
+  <form class="testimonials-filters" method="get">
+    <label for="service-filter">Filter by service</label>
+    <select id="service-filter" name="service" class="testimonials-select">
+      <option value="">All services</option>
+      {% for svc in services_with_reviews %}
+      <option value="{{ svc.slug }}"{% if service_filter == svc.slug %} selected{% endif %}>{{ svc.name }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="testimonials-filter-btn">Apply</button>
+  </form>
+  {% endif %}
+
+  {% if page_obj.object_list %}
+  <div class="testimonials-grid">
+    {% for testimonial in page_obj %}
+    <article class="testimonials-grid-card">
+      {% include 'testimonials/partials/star_rating.html' with rating=testimonial.rating %}
+      {% if testimonial.title %}<h2 class="testimonials-grid-card__title">{{ testimonial.title }}</h2>{% endif %}
+      <blockquote class="testimonials-grid-card__quote">
+        <p>{{ testimonial.review|linebreaksbr }}</p>
+      </blockquote>
+      <footer class="testimonials-grid-card__meta">
+        <span class="testimonials-grid-card__author">{{ testimonial.display_author_name }}</span>
+        {% if testimonial.service %}<span class="testimonials-grid-card__service">{{ testimonial.service.name }}</span>{% endif %}
+        <time datetime="{{ testimonial.created_at|date:'c' }}">{{ testimonial.created_at|date:"j M Y" }}</time>
+      </footer>
+    </article>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <nav class="testimonials-pagination" aria-label="Reviews pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if service_filter %}&service={{ service_filter }}{% endif %}">Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if service_filter %}&service={{ service_filter }}{% endif %}">Next</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="testimonials-empty-state">
+    <i class="fa-regular fa-star testimonials-empty-icon"></i>
+    <p class="testimonials-empty-title">No published reviews yet.</p>
+    <p class="testimonials-empty-sub">Be the first to share your experience.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

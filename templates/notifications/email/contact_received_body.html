@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>New contact message</title>
+</head>
+<body style="font-family: sans-serif; line-height: 1.5; color: #333;">
+  <h2 style="margin: 0 0 16px;">New contact form message</h2>
+  <p><strong>From:</strong> {{ full_name }}<br>
+  <strong>Email:</strong> <a href="mailto:{{ email }}">{{ email }}</a><br>
+  <strong>Phone:</strong> <a href="tel:{{ phone_number }}">{{ phone_number }}</a><br>
+  <strong>Subject:</strong> {{ subject }}<br>
+  <strong>Received:</strong> {{ created_at|date:"j M Y, g:i A" }}</p>
+  <p><strong>Message:</strong></p>
+  <p style="white-space: pre-wrap;">{{ message }}</p>
+  <p><a href="{{ dashboard_url }}">View in staff dashboard</a></p>
+</body>
+</html>

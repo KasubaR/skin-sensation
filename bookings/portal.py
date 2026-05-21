@@ -4,6 +4,7 @@ from typing import Optional, Union
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 from bookings.models import Appointment, AppointmentStatus
@@ -17,6 +18,7 @@ from bookings.scheduling import (
     slot_is_available,
 )
 from accounts.models import Staff
+from notifications.services import notify_appointment_cancelled, notify_appointment_rescheduled
 
 User = get_user_model()
 
@@ -28,7 +30,7 @@ class PortalError(Exception):
 def get_customer_appointment(user: User, booking_reference: str) -> Appointment:
     return get_object_or_404(
         Appointment.objects.select_related('assigned_staff', 'customer')
-        .prefetch_related('line_items__treatment', 'payments'),
+        .prefetch_related('line_items__treatment__service', 'payments'),
         customer=user,
         booking_reference=booking_reference,
     )
@@ -43,10 +45,7 @@ def cancel_appointment(appointment: Appointment) -> Appointment:
     with transaction.atomic():
         appointment.status = AppointmentStatus.CANCELLED
         appointment.save(update_fields=['status'])
-
-    from notifications.services import notify_appointment_cancelled
-
-    notify_appointment_cancelled(appointment)
+        transaction.on_commit(lambda: notify_appointment_cancelled(appointment))
     return appointment
 
 
@@ -55,13 +54,24 @@ def reschedule_appointment(
     new_date: date,
     new_start_time: time,
     staff_id: Union[int, str, None] = None,
+    user=None,
+    *,
+    staff_override: bool = False,
 ) -> Appointment:
-    try:
-        validate_cancellation_window(appointment)
-    except ValidationError as exc:
-        raise PortalError(exc.messages[0] if exc.messages else str(exc)) from exc
+    if user is not None and appointment.customer_id != user.pk:
+        raise PortalError('You do not have permission to reschedule this appointment.')
+    if not staff_override:
+        try:
+            validate_cancellation_window(appointment)
+        except ValidationError as exc:
+            raise PortalError(exc.messages[0] if exc.messages else str(exc)) from exc
+    elif appointment.status not in (
+        AppointmentStatus.PENDING,
+        AppointmentStatus.CONFIRMED,
+    ):
+        raise PortalError('Only pending or confirmed appointments can be rescheduled.')
 
-    if new_date < date.today():
+    if new_date < timezone.localdate():
         raise PortalError('Appointment date must be today or in the future.')
 
     service_ids = list(appointment.line_items.values_list('treatment_id', flat=True))
@@ -74,10 +84,7 @@ def reschedule_appointment(
         staff_id = appointment.assigned_staff_id if appointment.assigned_staff_id else 'any'
 
     with transaction.atomic():
-        Appointment.objects.select_for_update().filter(
-            appointment_date=new_date,
-            status__in=(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED),
-        ).values('id')
+        Appointment.objects.select_for_update().get(pk=appointment.pk)
 
         if not _is_any_staff(staff_id):
             staff = Staff.objects.filter(pk=int(staff_id), is_available=True).first()
@@ -119,7 +126,5 @@ def reschedule_appointment(
             ]
         )
 
-    from notifications.services import notify_appointment_rescheduled
-
-    notify_appointment_rescheduled(appointment)
+        transaction.on_commit(lambda: notify_appointment_rescheduled(appointment))
     return appointment

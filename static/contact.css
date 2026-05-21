@@ -150,9 +150,13 @@
 }
 
 /* ── Form column ── */
-.contact-form-col {
+.contact-info-col {
   position: sticky;
   top: 100px;
+}
+
+.contact-form-col {
+  position: static;
 }
 
 .contact-form-wrap {
@@ -362,6 +366,91 @@
 
 .contact-book-btn:hover { background: #2a2a2a; }
 
+.contact-field-error {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #9b2c2c;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.contact-actions__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  padding: 12px 20px;
+  transition: background .2s, color .2s;
+}
+
+.contact-actions__btn--call {
+  color: var(--white);
+  background: var(--dark);
+}
+
+.contact-actions__btn--call:hover { background: #2a2a2a; }
+
+.contact-actions__btn--wa {
+  color: #fff;
+  background: #25d366;
+}
+
+.contact-actions__btn--wa:hover { background: #128c4a; }
+
+.contact-map-section {
+  margin: 0 48px 40px;
+}
+
+.contact-map-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0 0 16px;
+  color: var(--dark);
+}
+
+.contact-map-wrap {
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #e8e4df;
+  aspect-ratio: 16 / 9;
+  max-height: 450px;
+}
+
+.contact-map-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.contact-success-page .contact-success-actions {
+  margin: 32px 48px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.contact-success-home {
+  font-size: 14px;
+  color: var(--mid);
+  text-decoration: underline;
+}
+
+.contact-success-home:hover { color: var(--rose); }
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .contact-main {
@@ -370,11 +459,13 @@
     gap: 32px;
   }
 
-  .contact-form-col { position: static; }
+  .contact-info-col { position: static; }
 
   .contact-intro { margin: 22px 24px 0; }
 
   .contact-social-strip { padding: 28px 24px; }
+
+  .contact-map-section { margin: 0 24px 32px; }
 }
 
 @media (max-width: 600px) {
@@ -393,4 +484,6 @@
   .contact-intro { margin: 18px 16px 0; }
 
   .contact-social-strip { padding: 24px 16px; }
+
+  .contact-map-section { margin: 0 16px 24px; }
 }

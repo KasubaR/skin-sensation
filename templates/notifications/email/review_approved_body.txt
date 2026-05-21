@@ -1,0 +1,5 @@
+Hello {{ customer_name }},
+
+Thank you for sharing your experience. Your {{ rating }}-star review for {{ service_name }} is now published on our website.
+
+We appreciate you helping other guests discover Skin Sensation Spa.

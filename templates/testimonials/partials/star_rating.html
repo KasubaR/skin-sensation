@@ -1,0 +1,10 @@
+{% comment %}Display-only star rating. Expects: rating (1-5){% endcomment %}
+<div class="stars testimonial-stars" aria-label="{{ rating }} out of 5 stars">
+  {% for i in "12345" %}
+    {% if forloop.counter <= rating %}
+    <i class="fa-solid fa-star" aria-hidden="true"></i>
+    {% else %}
+    <i class="fa-regular fa-star" aria-hidden="true"></i>
+    {% endif %}
+  {% endfor %}
+</div>
