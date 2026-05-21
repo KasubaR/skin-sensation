@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
             model_name='treatment',
             index=models.Index(
                 fields=['subsection', 'sort_order', 'name'],
-                name='services_tr_subsection_sort_idx',
+                name='svc_tr_subsection_sort_idx',
             ),
         ),
     ]

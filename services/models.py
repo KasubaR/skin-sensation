@@ -68,7 +68,7 @@ class Treatment(models.Model):
             models.Index(fields=['name']),
             models.Index(
                 fields=['subsection', 'sort_order', 'name'],
-                name='services_tr_subsection_sort_idx',
+                name='svc_tr_subsection_sort_idx',
             ),
         ]
 
