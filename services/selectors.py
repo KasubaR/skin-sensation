@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.core.cache import cache
 from django.db.models import Min, Q
 
@@ -22,7 +24,7 @@ def _active_treatments_base():
     )
 
 
-def apply_sort(queryset, sort: str | None):
+def apply_sort(queryset, sort: Optional[str]):
     if sort == 'price_low':
         return queryset.order_by('price', 'sort_order', 'name')
     if sort == 'price_high':
@@ -42,10 +44,10 @@ def apply_sort(queryset, sort: str | None):
 
 def filter_treatments(
     *,
-    search: str | None = None,
-    category_slug: str | None = None,
-    sort: str | None = None,
-    service_slug: str | None = None,
+    search: Optional[str] = None,
+    category_slug: Optional[str] = None,
+    sort: Optional[str] = None,
+    service_slug: Optional[str] = None,
 ):
     """Bookable treatments for public browse and catalog API."""
     qs = _active_treatments_base()
@@ -67,8 +69,8 @@ def filter_treatments(
 
 def filter_services(
     *,
-    search: str | None = None,
-    category_slug: str | None = None,
+    search: Optional[str] = None,
+    category_slug: Optional[str] = None,
 ):
     """Top-level service groups for the /services/ category hub."""
     qs = (

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db.models import Avg, Count, Q
 
 from services.models import Service
@@ -17,7 +19,7 @@ def featured_for_homepage(limit: int = FEATURED_LIMIT):
     )
 
 
-def approved_for_public_list(*, service_slug: str | None = None):
+def approved_for_public_list(*, service_slug: Optional[str] = None):
     qs = (
         Testimonial.objects.filter(status=Testimonial.Status.APPROVED)
         .select_related('customer', 'customer__customer_profile', 'service')
