@@ -1350,6 +1350,14 @@
     gap: 12px;
   }
 
+  .catalog-toolbar--stacked .catalog-toolbar-form {
+    display: block;
+  }
+
+  .catalog-toolbar--stacked .catalog-filters-panel {
+    margin-top: 16px;
+  }
+
   .catalog-toolbar-row {
     flex: 1;
   }

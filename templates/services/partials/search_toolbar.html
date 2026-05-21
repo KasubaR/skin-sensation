@@ -1,5 +1,5 @@
 {% load static %}
-<div class="catalog-toolbar" id="catalogToolbar" data-catalog-toolbar>
+<div class="catalog-toolbar{% if search_stacked %} catalog-toolbar--stacked{% endif %}" id="catalogToolbar" data-catalog-toolbar>
   <form class="catalog-toolbar-form" role="search" aria-label="Search treatments"
     hx-get="{{ catalog_url }}"
     hx-target="#catalog-results"
