@@ -364,5 +364,5 @@ JAZZMIN_SETTINGS = {
         "auth.user": "collapsible",
     },
     "language_chooser": False,
-    "custom_css": "admin/custom_jazzmin.css",
+    "custom_css": "custom_jazzmin.css",
 }
