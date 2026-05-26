@@ -308,6 +308,8 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Skin Sensation Spa",
     "welcome_sign": "Welcome to Skin Sensation Administration",
     "copyright": "Skin Sensation Spa",
+    "site_icon": "images/tab-logo.svg",   # browser tab favicon
+    "site_logo": "images/tab-logo.svg",   # sidebar brand logo
 
     # Top nav search
     "search_model": ["auth.user", "bookings.Appointment"],
