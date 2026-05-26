@@ -1,0 +1,7 @@
+<figure class="gallery-item{% if image.grid_modifier_class %} {{ image.grid_modifier_class }}{% endif %}" data-category="{{ image.category }}"
+        data-src="{{ image.lightbox_url }}"
+        data-caption="{{ image.caption }}" tabindex="0" role="button" aria-label="View: {{ image.caption }}">
+  <img src="{{ image.image.url }}"
+       alt="{{ image.alt_text }}" loading="lazy">
+  <figcaption><span>{{ image.category_label }}</span> {{ image.caption }}</figcaption>
+</figure>

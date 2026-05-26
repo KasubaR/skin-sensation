@@ -54,7 +54,7 @@
       </li>
       {% endfor %}
     </ul>
-    <a class="dash-link" href="{% url 'dashboard:appointment_schedule' %}?date={{ today|date:'Y-m-d' }}">View full schedule</a>
+    <a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:appointment_schedule' %}?date={{ today|date:'Y-m-d' }}">View full schedule</a>
     {% else %}
     <p class="dash-empty">No appointments scheduled for today.</p>
     {% endif %}
@@ -77,7 +77,7 @@
     {% else %}
     <p class="dash-empty">No pending payments.</p>
     {% endif %}
-    <a class="dash-link" href="{% url 'dashboard:payment_list' %}">View all payments</a>
+    <a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:payment_list' %}">View all payments</a>
   </section>
 </div>
 {% if top_services %}

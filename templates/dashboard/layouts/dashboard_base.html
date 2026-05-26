@@ -18,8 +18,8 @@
     <a class="dash-nav__link{% if 'customer' in request.resolver_match.url_name %} is-active{% endif %}" href="{% url 'dashboard:customer_list' %}">Customers</a>
     <a class="dash-nav__link{% if 'contact_message' in request.resolver_match.url_name %} is-active{% endif %}" href="{% url 'dashboard:contact_message_list' %}">Messages</a>
     <a class="dash-nav__link{% if 'testimonial' in request.resolver_match.url_name %} is-active{% endif %}" href="{% url 'dashboard:testimonial_list' %}">Reviews</a>
+    <a class="dash-nav__link{% if 'gallery' in request.resolver_match.url_name %} is-active{% endif %}" href="{% url 'dashboard:gallery_list' %}">Gallery</a>
     <a class="dash-nav__link{% if request.resolver_match.url_name == 'business_settings' %} is-active{% endif %}" href="{% url 'dashboard:business_settings' %}">Business settings</a>
-    <a class="dash-nav__link" href="{% url 'admin:index' %}" target="_blank" rel="noopener">Django admin</a>
   </nav>
   </aside>
   <main class="dash-main">

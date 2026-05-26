@@ -1,6 +1,6 @@
 from django.urls import path
 
-from dashboard import contact_views, testimonial_views, views
+from dashboard import contact_views, gallery_views, testimonial_views, views
 
 app_name = 'dashboard'
 
@@ -37,6 +37,10 @@ urlpatterns = [
     name='contact_message_delete',
   ),
   path('business-settings/', contact_views.business_settings_edit, name='business_settings'),
+  path('gallery/', gallery_views.gallery_list, name='gallery_list'),
+  path('gallery/new/', gallery_views.gallery_create, name='gallery_create'),
+  path('gallery/<int:pk>/', gallery_views.gallery_edit, name='gallery_edit'),
+  path('gallery/<int:pk>/delete/', gallery_views.gallery_delete, name='gallery_delete'),
   path('reviews/', testimonial_views.testimonial_list, name='testimonial_list'),
   path('reviews/<int:pk>/', testimonial_views.testimonial_detail, name='testimonial_detail'),
   path(

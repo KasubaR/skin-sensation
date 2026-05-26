@@ -6,20 +6,45 @@
   <p class="dash-subtitle">Contact details shown on the website, emails, and WhatsApp links.</p>
 </header>
 
-<form method="post" class="dash-form dash-form--stacked">
+<form method="post" class="dash-form dash-form--settings">
   {% csrf_token %}
-  {% for field in form %}
-  <div class="dash-field">
-    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-    {{ field }}
-    {% if field.help_text %}<p class="dash-field__help">{{ field.help_text }}</p>{% endif %}
-    {% if field.errors %}<p class="dash-field__error">{{ field.errors.0 }}</p>{% endif %}
+
+  <div class="dash-settings-cards">
+    {% for field in form %}
+      {% if field.html_name == 'business_name' %}
+        <section class="dash-panel dash-settings-card">
+          <h2 class="dash-panel__title">Business details</h2>
+      {% elif field.html_name == 'address' %}
+        </section>
+        <section class="dash-panel dash-settings-card">
+          <h2 class="dash-panel__title">Address & map</h2>
+      {% elif field.html_name == 'hours_monday_friday' %}
+        </section>
+        <section class="dash-panel dash-settings-card">
+          <h2 class="dash-panel__title">Opening hours</h2>
+      {% elif field.html_name == 'whatsapp_prefill_message' %}
+        </section>
+        <section class="dash-panel dash-settings-card">
+          <h2 class="dash-panel__title">WhatsApp</h2>
+      {% elif field.html_name == 'facebook_url' %}
+        </section>
+        <section class="dash-panel dash-settings-card">
+          <h2 class="dash-panel__title">Social links</h2>
+      {% endif %}
+
+      <div class="dash-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="dash-field__help">{{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="dash-field__error">{{ field.errors.0 }}</p>{% endif %}
+      </div>
+    {% endfor %}
+
+    </section>
   </div>
-  {% endfor %}
-  <p class="dash-field__help">
-    Opening hours: JSON with keys <code>monday_friday</code>, <code>saturday</code>, <code>sunday</code>.
-    Google Maps: paste the full iframe <code>src</code> URL from Google Maps → Share → Embed a map.
-  </p>
-  <button type="submit" class="dash-btn dash-btn--primary">Save settings</button>
+
+  <div class="dash-actions dash-actions--settings">
+    <button type="submit" class="dash-btn dash-btn--primary">Save settings</button>
+  </div>
 </form>
 {% endblock %}

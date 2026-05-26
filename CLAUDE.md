@@ -45,7 +45,7 @@ Each page has its own CSS/JS pair in `static/`:
 - `index.css` / `index.js` — home page
 - `services.css` / `services.js` — services page
 - `booking.css` / `booking.js` — booking page (multi-step flow)
-- `gallery.css` — gallery page
+- `gallery.css` / `gallery.js` — gallery page (filter grid + lightbox)
 
 Pages load their own CSS via `{% block extra_css %}` and JS via `{% block extra_js %}`.
 
@@ -56,7 +56,7 @@ Root URL config: `skinsensation/urls.py` includes each app under a prefix, then 
 - `/` → `home` → `index.html`
 - `/services/` → `services` → `services/index.html` (search/filter via query params + HTMX)
 - `/booking/` → `booking` → `booking.html`
-- `/gallery/` → `gallery` → `gallery.html`
+- `/gallery/` → `gallery` → `gallery.html` (images from `gallery.models.GalleryImage`)
 
 Use `{% url 'name' %}` for core links (e.g. `{% url 'booking' %}`). Future booking APIs will live under the prefixed app includes above.
 
@@ -86,10 +86,16 @@ Use `{% url 'name' %}` for core links (e.g. `{% url 'booking' %}`). Future booki
 - **Payments** — list with status tabs (`?status=pending|verified|failed|refunded`); verify/reject on detail
 - **Services / treatments** — CRUD under `/dashboard/services/`, `/dashboard/treatments/`
 - **Customers** — list, detail, staff notes
-- **Messages / reviews / business settings** — contact inbox, testimonial moderation, `BusinessInformation` edit
+- **Messages / reviews / gallery / business settings** — contact inbox, testimonial moderation, gallery image CRUD (`/dashboard/gallery/`), `BusinessInformation` edit
 - **Activity log** — `StaffActivityLog` in `dashboard/models.py`; recent entries on overview
 - **Promotions** — deferred (no `promotions` app; home page packages section is static HTML until requirements are defined)
 - `accounts.models.Staff` = bookable therapist on calendar, **not** an admin role (admin access is `User.is_staff` only)
+
+### Gallery (`gallery` app)
+- Public page: `/gallery/` — active images from DB; category filters + lightbox unchanged (`gallery.js`)
+- Staff dashboard: `/dashboard/gallery/` — upload JPEG/PNG/WebP (max 5 MB), category, caption, alt text, layout (default/wide/tall), sort order, active flag
+- Optional bulk import: place files as `media/gallery/seed/01.jpg` etc., then `python manage.py seed_gallery` (metadata in `gallery/data/gallery_seed.json`; use `--dry-run` to preview)
+- Local dev serves uploads via `MEDIA_URL` when `DEBUG=True`; production must serve `/media/` (cPanel or web server)
 
 ### Contact & communications (`communications` app)
 - Public contact page: `/contact/` (form persists `ContactMessage`, emails managers via `send_contact_notification`)

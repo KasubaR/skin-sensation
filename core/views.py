@@ -13,6 +13,7 @@ from services.selectors import (
     filter_services,
     filter_treatments,
 )
+from gallery.selectors import active_gallery_images, gallery_categories
 from testimonials.services import get_featured_testimonials
 
 CATALOG_PAGE_SIZE = 12
@@ -184,7 +185,14 @@ def booking(request):
 
 
 def gallery(request):
-    return render(request, 'gallery.html')
+    return render(
+        request,
+        'gallery.html',
+        {
+            'images': active_gallery_images(),
+            'categories': gallery_categories(),
+        },
+    )
 
 
 def ratelimit_error(request, exception=None):

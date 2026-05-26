@@ -18,6 +18,9 @@ class StaffActivityLog(models.Model):
     CUSTOMER_NOTE_ADDED = 'customer_note_added', 'Customer note added'
     CONTACT_MESSAGE_STATUS = 'contact_message_status', 'Contact message status changed'
     CONTACT_MESSAGE_DELETED = 'contact_message_deleted', 'Contact message deleted'
+    GALLERY_CREATED = 'gallery_created', 'Gallery image created'
+    GALLERY_UPDATED = 'gallery_updated', 'Gallery image updated'
+    GALLERY_DELETED = 'gallery_deleted', 'Gallery image deleted'
 
   user = models.ForeignKey(
     settings.AUTH_USER_MODEL,

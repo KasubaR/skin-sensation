@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'dashboard',
     'communications',
     'testimonials',
+    'gallery',
     'core',
 ]
 

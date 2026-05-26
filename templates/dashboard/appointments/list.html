@@ -5,14 +5,22 @@
   <h1 class="dash-title">Appointments</h1>
   <a class="dash-btn dash-btn--secondary" href="{% url 'dashboard:appointment_calendar' %}">Calendar</a>
 </header>
-<form class="dash-filters" method="get">
-  {{ filter_form.q }}
-  {{ filter_form.status }}
-  {{ filter_form.payment_status }}
-  {{ filter_form.staff_id }}
-  {{ filter_form.date_from }}
-  {{ filter_form.date_to }}
-  <button type="submit" class="dash-btn dash-btn--secondary">Filter</button>
+<form class="dash-filters dash-filters--search" method="get" role="search" aria-label="Search appointments">
+  <div class="dash-search-row">
+    <label class="dash-search-wrap">
+      <span class="visually-hidden">Search appointments</span>
+      <i class="fa-solid fa-magnifying-glass dash-search-icon" aria-hidden="true"></i>
+      {{ filter_form.q }}
+    </label>
+  </div>
+  <div class="dash-filters__row">
+    {{ filter_form.status }}
+    {{ filter_form.payment_status }}
+    {{ filter_form.staff_id }}
+    {{ filter_form.date_from }}
+    {{ filter_form.date_to }}
+    <button type="submit" class="dash-btn dash-btn--secondary">Filter</button>
+  </div>
 </form>
 {% if page_obj.object_list %}
 <ul class="dash-list">

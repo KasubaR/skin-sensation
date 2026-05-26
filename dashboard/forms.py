@@ -1,5 +1,3 @@
-import json
-
 from django import forms
 from django.utils.text import slugify
 
@@ -7,6 +5,8 @@ from accounts.models import CustomerNote
 from communications.models import BusinessInformation, ContactMessage
 from bookings.models import AppointmentPaymentStatus, AppointmentStatus
 from payments.models import Payment, PaymentMethod
+from gallery.models import GalleryImage
+from gallery.validators import validate_gallery_image
 from services.models import Service, Treatment
 
 
@@ -19,7 +19,19 @@ class AppointmentFilterForm(forms.Form):
   staff_id = forms.ChoiceField(required=False, choices=[])
   date_from = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
   date_to = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-  q = forms.CharField(required=False, max_length=200, label='Search')
+  q = forms.CharField(
+    required=False,
+    max_length=200,
+    label='Search',
+    widget=forms.TextInput(
+      attrs={
+        'class': 'dash-search-input',
+        'type': 'search',
+        'placeholder': 'Reference, name, email, phone…',
+        'aria-label': 'Search appointments',
+      },
+    ),
+  )
 
   def __init__(self, *args, staff_choices=None, **kwargs):
     super().__init__(*args, **kwargs)
@@ -27,6 +39,8 @@ class AppointmentFilterForm(forms.Form):
       AppointmentPaymentStatus.choices,
     )
     self.fields['staff_id'].choices = [('', 'All staff')] + (staff_choices or [])
+    for name in ('status', 'payment_status', 'staff_id', 'date_from', 'date_to'):
+      self.fields[name].widget.attrs.setdefault('class', 'dash-input')
 
   def clean(self):
     cleaned = super().clean()
@@ -156,7 +170,19 @@ class CustomerNoteForm(forms.ModelForm):
 
 
 class CustomerSearchForm(forms.Form):
-  q = forms.CharField(required=False, max_length=200, label='Search customers')
+  q = forms.CharField(
+    required=False,
+    max_length=200,
+    label='Search customers',
+    widget=forms.TextInput(
+      attrs={
+        'class': 'dash-search-input',
+        'type': 'search',
+        'placeholder': 'Name, email, or phone…',
+        'aria-label': 'Search customers',
+      },
+    ),
+  )
 
 
 class ContactMessageStatusForm(forms.ModelForm):
@@ -166,9 +192,23 @@ class ContactMessageStatusForm(forms.ModelForm):
 
 
 class BusinessSettingsForm(forms.ModelForm):
-  opening_hours = forms.CharField(
-    widget=forms.Textarea(attrs={'rows': 5}),
-    help_text='JSON object, e.g. {"monday_friday": "8:00 am – 6:00 pm", ...}',
+  hours_monday_friday = forms.CharField(
+    label='Monday – Friday',
+    max_length=50,
+    required=False,
+    help_text='e.g. 8:00 am – 6:00 pm',
+  )
+  hours_saturday = forms.CharField(
+    label='Saturday',
+    max_length=50,
+    required=False,
+    help_text='e.g. 9:00 am – 5:00 pm',
+  )
+  hours_sunday = forms.CharField(
+    label='Sunday',
+    max_length=50,
+    required=False,
+    help_text='e.g. 10:00 am – 4:00 pm',
   )
 
   class Meta:
@@ -180,7 +220,6 @@ class BusinessSettingsForm(forms.ModelForm):
       'email',
       'address',
       'google_maps_embed_url',
-      'opening_hours',
       'whatsapp_prefill_message',
       'facebook_url',
       'instagram_url',
@@ -188,31 +227,64 @@ class BusinessSettingsForm(forms.ModelForm):
     )
     widgets = {
       'address': forms.Textarea(attrs={'rows': 3}),
-      'google_maps_embed_url': forms.Textarea(attrs={'rows': 2}),
+      'google_maps_embed_url': forms.Textarea(attrs={'rows': 4}),
       'whatsapp_prefill_message': forms.Textarea(attrs={'rows': 2}),
     }
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     if self.instance and self.instance.pk and self.instance.opening_hours:
-      self.fields['opening_hours'].initial = json.dumps(
-        self.instance.opening_hours,
-        indent=2,
-      )
+      oh = self.instance.opening_hours
+      self.fields['hours_monday_friday'].initial = oh.get('monday_friday', '')
+      self.fields['hours_saturday'].initial = oh.get('saturday', '')
+      self.fields['hours_sunday'].initial = oh.get('sunday', '')
+    # Insert opening hours fields between google_maps_embed_url and whatsapp_prefill_message
+    field_order = [
+      'business_name', 'phone_number', 'whatsapp_number', 'email',
+      'address', 'google_maps_embed_url',
+      'hours_monday_friday', 'hours_saturday', 'hours_sunday',
+      'whatsapp_prefill_message', 'facebook_url', 'instagram_url', 'tiktok_url',
+    ]
+    self.fields = {k: self.fields[k] for k in field_order}
 
-  def clean_opening_hours(self):
-    value = self.cleaned_data.get('opening_hours', '')
-    if isinstance(value, dict):
-      data = value
-    else:
-      try:
-        data = json.loads(value)
-      except json.JSONDecodeError as exc:
-        raise forms.ValidationError('Enter valid JSON for opening hours.') from exc
-    if not isinstance(data, dict) or not all(
-      isinstance(k, str) and isinstance(v, str) for k, v in data.items()
-    ):
-      raise forms.ValidationError(
-        'Opening hours must be a JSON object with string keys and values.'
-      )
-    return data
+  def save(self, commit=True):
+    instance = super().save(commit=False)
+    instance.opening_hours = {
+      'monday_friday': self.cleaned_data.get('hours_monday_friday', ''),
+      'saturday': self.cleaned_data.get('hours_saturday', ''),
+      'sunday': self.cleaned_data.get('hours_sunday', ''),
+    }
+    if commit:
+      instance.save()
+    return instance
+
+
+class GalleryImageForm(forms.ModelForm):
+  class Meta:
+    model = GalleryImage
+    fields = (
+      'image',
+      'category',
+      'caption',
+      'alt_text',
+      'layout',
+      'sort_order',
+      'is_active',
+    )
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    for name in ('image', 'category', 'caption', 'alt_text', 'layout', 'sort_order'):
+      if name in self.fields:
+        self.fields[name].widget.attrs.setdefault('class', 'dash-input')
+    if self.instance and self.instance.pk:
+      self.fields['image'].required = False
+      self.fields['image'].help_text = 'Leave blank to keep the current image.'
+
+  def clean_image(self):
+    image = self.cleaned_data.get('image')
+    if image:
+      validate_gallery_image(image)
+    elif not (self.instance and self.instance.pk and self.instance.image):
+      raise forms.ValidationError('An image is required.')
+    return image

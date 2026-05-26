@@ -4,9 +4,15 @@
 <header class="dash-header">
   <h1 class="dash-title">Customers</h1>
 </header>
-<form class="dash-filters" method="get">
-  {{ search_form.q }}
-  <button type="submit" class="dash-btn dash-btn--secondary">Search</button>
+<form class="dash-filters dash-filters--search" method="get" role="search" aria-label="Search customers">
+  <div class="dash-search-row">
+    <label class="dash-search-wrap">
+      <span class="visually-hidden">Search customers</span>
+      <i class="fa-solid fa-magnifying-glass dash-search-icon" aria-hidden="true"></i>
+      {{ search_form.q }}
+    </label>
+    <button type="submit" class="dash-btn dash-btn--secondary">Search</button>
+  </div>
 </form>
 <ul class="dash-list">
   {% for profile in page_obj %}

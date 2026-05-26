@@ -1,0 +1,19 @@
+[
+  {"id": "01", "category": "interior", "layout": "wide", "caption": "Reception & lounge area", "alt_text": "Calm spa reception and lounge area", "sort_order": 10},
+  {"id": "02", "category": "interior", "layout": "default", "caption": "Treatment suite with soft lighting", "alt_text": "Treatment suite with soft lighting", "sort_order": 20},
+  {"id": "03", "category": "interior", "layout": "default", "caption": "Massage room setup", "alt_text": "Massage room with fresh linens", "sort_order": 30},
+  {"id": "04", "category": "facials", "layout": "default", "caption": "Deep cleansing facial treatment", "alt_text": "Deep cleansing facial treatment", "sort_order": 40},
+  {"id": "05", "category": "facials", "layout": "tall", "caption": "Express facial — quick radiance boost", "alt_text": "Express facial treatment", "sort_order": 50},
+  {"id": "06", "category": "facials", "layout": "default", "caption": "Brightening facial — even tone & radiance", "alt_text": "Brightening facial for even tone", "sort_order": 60},
+  {"id": "07", "category": "massage", "layout": "wide", "caption": "Swedish relaxation massage", "alt_text": "Swedish relaxation massage session", "sort_order": 70},
+  {"id": "08", "category": "massage", "layout": "default", "caption": "Hot stone massage — heat-assisted muscle release", "alt_text": "Hot stone massage treatment", "sort_order": 80},
+  {"id": "09", "category": "massage", "layout": "default", "caption": "Deep tissue focus — targeted relief", "alt_text": "Deep tissue massage", "sort_order": 90},
+  {"id": "10", "category": "body-nails", "layout": "tall", "caption": "Full-body polish for silky skin", "alt_text": "Body polish treatment", "sort_order": 100},
+  {"id": "11", "category": "body-nails", "layout": "default", "caption": "Gel manicure — chip-resistant shine", "alt_text": "Gel manicure treatment", "sort_order": 110},
+  {"id": "12", "category": "body-nails", "layout": "default", "caption": "Spa pedicure — soak, exfoliate, polish", "alt_text": "Spa pedicure treatment", "sort_order": 120},
+  {"id": "13", "category": "body-nails", "layout": "default", "caption": "Acrylic nail set with colour finish", "alt_text": "Acrylic full set nail treatment", "sort_order": 130},
+  {"id": "14", "category": "body-nails", "layout": "default", "caption": "Back treatment — clarify and restore", "alt_text": "Back treatment facial protocol", "sort_order": 140},
+  {"id": "15", "category": "team", "layout": "wide", "caption": "Our therapists — skilled, caring, certified", "alt_text": "Spa therapist welcoming a guest", "sort_order": 150},
+  {"id": "16", "category": "team", "layout": "default", "caption": "Premium skincare products we use and recommend", "alt_text": "Premium skincare products on shelf", "sort_order": 160},
+  {"id": "17", "category": "team", "layout": "default", "caption": "The calm ambiance that sets us apart", "alt_text": "Spa ambiance and product display", "sort_order": 170}
+]

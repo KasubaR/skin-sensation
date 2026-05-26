@@ -223,6 +223,10 @@
     gap: 4px;
   }
 
+  .nav-icons .nav-account-btn {
+    color: #c0392b;
+  }
+
   .nav-account-chevron {
     font-size: 9px;
     transition: transform 0.2s;

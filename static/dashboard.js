@@ -134,6 +134,15 @@
       });
   }
 
+  document.querySelectorAll('[data-confirm]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      var message = btn.getAttribute('data-confirm');
+      if (message && !window.confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  });
+
   window.DashCalendar = {
     init: function () {
       var el = document.getElementById('dashCalendar');

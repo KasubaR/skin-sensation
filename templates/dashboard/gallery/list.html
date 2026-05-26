@@ -1,0 +1,54 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Gallery · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Gallery</h1>
+  <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:gallery_create' %}">Add image</a>
+</header>
+<form class="dash-filters" method="get">
+  <select name="category" class="dash-input">
+    <option value="">All categories</option>
+    {% for value, label in category_choices %}
+    <option value="{{ value }}"{% if category_filter == value %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <select name="active" class="dash-input">
+    <option value="">All statuses</option>
+    <option value="1"{% if active_filter == '1' %} selected{% endif %}>Active</option>
+    <option value="0"{% if active_filter == '0' %} selected{% endif %}>Inactive</option>
+  </select>
+  <button type="submit" class="dash-btn dash-btn--secondary">Filter</button>
+</form>
+{% if page_obj.object_list %}
+<ul class="dash-list">
+  {% for item in page_obj %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      {% if item.image %}
+      <img class="dash-gallery-thumb" src="{{ item.image.url }}" alt="" width="80" height="80">
+      {% endif %}
+      <div>
+        <p class="dash-card__title">
+          <a href="{% url 'dashboard:gallery_edit' item.pk %}">{{ item.caption }}</a>
+        </p>
+        <p class="dash-card__meta">{{ item.get_category_display }} · Sort {{ item.sort_order }}</p>
+      </div>
+    </div>
+    <div class="dash-card__aside">
+      {% if item.is_active %}
+      <span class="dash-badge dash-badge--confirmed">Active</span>
+      {% else %}
+      <span class="dash-badge dash-badge--cancelled">Inactive</span>
+      {% endif %}
+      {% if item.layout != 'default' %}
+      <span class="dash-badge">{{ item.get_layout_display }}</span>
+      {% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% include 'dashboard/components/pagination.html' with page_obj=page_obj %}
+{% else %}
+<p class="dash-empty">No gallery images{% if category_filter or active_filter %} match your filters{% endif %}.</p>
+{% endif %}
+{% endblock %}
