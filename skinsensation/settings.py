@@ -62,6 +62,7 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -299,3 +300,69 @@ if _IS_PRODUCTION:
             },
         },
     }
+
+JAZZMIN_SETTINGS = {
+    # Title on the login screen and browser tab
+    "site_title": "Skin Sensation Admin",
+    "site_header": "Skin Sensation",
+    "site_brand": "Skin Sensation Spa",
+    "welcome_sign": "Welcome to Skin Sensation Administration",
+    "copyright": "Skin Sensation Spa",
+
+    # Top nav search
+    "search_model": ["auth.user", "bookings.Appointment"],
+
+    # Icons for apps/models (uses Font Awesome 5)
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "bookings.Appointment": "fas fa-calendar-check",
+        "services.Service": "fas fa-spa",
+        "services.Treatment": "fas fa-hand-sparkles",
+        "payments.Payment": "fas fa-credit-card",
+        "accounts.Staff": "fas fa-user-nurse",
+        "communications.ContactMessage": "fas fa-envelope",
+        "testimonials.Testimonial": "fas fa-star",
+    },
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-circle",
+
+    # Sidebar nav order
+    "order_with_respect_to": [
+        "bookings",
+        "payments",
+        "services",
+        "accounts",
+        "communications",
+        "testimonials",
+        "auth",
+    ],
+
+    # UI tweaks
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+
+    # Theme — closest neutral/light feel to match site aesthetic
+    "theme": "flatly",
+    "dark_mode_theme": None,
+
+    "topmenu_links": [
+        {"name": "View Site", "url": "/", "new_window": True},
+        {"name": "Staff Dashboard", "url": "/dashboard/", "new_window": False},
+    ],
+
+    "usermenu_links": [
+        {"name": "View Site", "url": "/", "new_window": True},
+    ],
+
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+    },
+    "language_chooser": False,
+    "custom_css": "admin/custom_jazzmin.css",
+}
