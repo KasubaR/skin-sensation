@@ -71,7 +71,7 @@ def home(request):
         Q(starts_at__isnull=True) | Q(starts_at__lte=today),
     ).filter(
         Q(ends_at__isnull=True) | Q(ends_at__gte=today),
-    ).order_by('sort_order', '-created_at')
+    ).order_by('sort_order', '-created_at')[:4]
 
     return render(
         request,
