@@ -26,19 +26,36 @@
   </div>
   <div class="announcements-grid">
     {% for item in announcements %}
-    <article class="announcement-card">
+    <article class="announcement-card{% if not item.image %} announcement-card--no-image{% endif %}"
+      data-announcement-title="{{ item.title }}"
+      data-announcement-label="{{ item.label }}"
+      data-announcement-body="{{ item.body }}"
+      {% if item.image %}data-announcement-image="{{ item.image.url }}"{% endif %}>
       {% if item.image %}
       <img src="{{ item.image.url }}" alt="{{ item.title }}">
       {% endif %}
       <div>
         {% if item.label %}<span class="announcement-pill">{{ item.label }}</span>{% endif %}
         <h3>{{ item.title }}</h3>
-        <p>{{ item.body }}</p>
+        <p class="announcement-card__body">{{ item.body }}</p>
+        <button type="button" class="announcement-read-more">Read more</button>
       </div>
     </article>
     {% endfor %}
   </div>
 </section>
+
+<!-- Announcement modal -->
+<div class="announcement-modal" id="announcementModal" role="dialog" aria-modal="true" aria-labelledby="announcementModalTitle" hidden>
+  <div class="announcement-modal__backdrop"></div>
+  <div class="announcement-modal__box">
+    <button type="button" class="announcement-modal__close" aria-label="Close">&times;</button>
+    <img class="announcement-modal__img" id="announcementModalImg" src="" alt="" hidden>
+    <span class="announcement-pill announcement-modal__pill" id="announcementModalLabel" hidden></span>
+    <h3 class="announcement-modal__title" id="announcementModalTitle"></h3>
+    <p class="announcement-modal__body" id="announcementModalBody"></p>
+  </div>
+</div>
 {% endif %}
 
 <!-- FEATURED SERVICES -->

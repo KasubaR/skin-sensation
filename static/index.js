@@ -134,3 +134,63 @@
     testimonialsRoot.addEventListener('focusout', resumeAuto);
   }
 })();
+
+// Announcement modals
+(function () {
+  const modal = document.getElementById('announcementModal');
+  if (!modal) return;
+
+  const modalImg = document.getElementById('announcementModalImg');
+  const modalLabel = document.getElementById('announcementModalLabel');
+  const modalTitle = document.getElementById('announcementModalTitle');
+  const modalBody = document.getElementById('announcementModalBody');
+  const closeBtn = modal.querySelector('.announcement-modal__close');
+  const backdrop = modal.querySelector('.announcement-modal__backdrop');
+
+  function openModal(card) {
+    const title = card.dataset.announcementTitle || '';
+    const label = card.dataset.announcementLabel || '';
+    const body = card.dataset.announcementBody || '';
+    const image = card.dataset.announcementImage || '';
+
+    modalTitle.textContent = title;
+    modalBody.textContent = body;
+
+    if (label) {
+      modalLabel.textContent = label;
+      modalLabel.hidden = false;
+    } else {
+      modalLabel.hidden = true;
+    }
+
+    if (image) {
+      modalImg.src = image;
+      modalImg.alt = title;
+      modalImg.hidden = false;
+    } else {
+      modalImg.hidden = true;
+    }
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.announcement-read-more').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      openModal(btn.closest('[data-announcement-title]'));
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+})();
