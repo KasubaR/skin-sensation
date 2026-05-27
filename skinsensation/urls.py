@@ -19,6 +19,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+
+# Restrict /admin/ to superusers only; regular staff use /dashboard/
+admin.site.has_permission = lambda request: request.user.is_active and request.user.is_superuser
+
 handler429 = 'core.views.ratelimit_error'
 
 urlpatterns = [

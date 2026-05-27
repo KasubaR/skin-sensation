@@ -409,13 +409,16 @@ function validateStep(step) {
       phone.focus();
       return false;
     }
-    if (email && email.value.trim()) {
-      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
-      if (!ok) {
-        if (err) err.textContent = 'Please enter a valid email or leave it blank.';
-        email.focus();
-        return false;
-      }
+    if (!email || !email.value.trim()) {
+      if (err) err.textContent = 'Please enter your email address.';
+      email && email.focus();
+      return false;
+    }
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    if (!ok) {
+      if (err) err.textContent = 'Please enter a valid email address.';
+      email.focus();
+      return false;
     }
   }
   if (step === 5) {

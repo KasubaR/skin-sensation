@@ -990,6 +990,35 @@
   font-weight: 500;
 }
 
+/* Thank you message — step 6 */
+.booking-thankyou {
+  margin: 28px 0 24px;
+  padding: 24px 28px;
+  background: #faf7f4;
+  border-left: 4px solid var(--accent, #c9a96e);
+  border-radius: 4px;
+}
+
+.booking-thankyou-heading {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2rem;
+  font-weight: normal;
+  color: var(--accent, #c9a96e);
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+
+.booking-thankyou p:not(.booking-thankyou-heading) {
+  margin: 0 0 10px;
+  color: #4a4a4a;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.booking-thankyou p:last-child {
+  margin-bottom: 0;
+}
+
 /* Backend dev note */
 .booking-backend-note {
   margin-top: 20px;

@@ -172,7 +172,7 @@
         <div class="booking-step" data-booking-step="4" hidden>
           <div class="booking-step-header">
             <h2>Your details</h2>
-            <p class="booking-step-intro">We use this to confirm your booking. Email is optional but recommended for your receipt.</p>
+            <p class="booking-step-intro">We use this to send your booking confirmation and receipt.</p>
           </div>
           <div class="booking-step-body">
             <div class="booking-fields-grid">
@@ -186,8 +186,9 @@
               </div>
             </div>
             <div class="booking-field-row">
-              <label for="bookingEmail">Email <span class="optional">(optional)</span></label>
-              <input type="email" id="bookingEmail" name="email" autocomplete="email">
+              <label for="bookingEmail">Email</label>
+              <input type="email" id="bookingEmail" name="email" autocomplete="email" required
+                value="{{ user_email }}"{% if user_is_authenticated %} readonly{% endif %}>
             </div>
             <div class="booking-field-row">
               <label for="bookingAllergies">Allergies or preferences <span class="optional">(optional)</span></label>
@@ -284,6 +285,11 @@
                 <dd id="confirmPaymentStatus">Pending</dd>
               </div>
             </dl>
+          </div>
+          <div class="booking-thankyou">
+            <p class="booking-thankyou-heading">Thank you</p>
+            <p>At Skin Sensation Beauty Spa, we truly value your trust and support. Every visit means more than just a service — it's an opportunity to care for your well-being, enhance your confidence, and help you feel your best.</p>
+            <p>We are deeply grateful for choosing us as your place of relaxation and beauty. Your loyalty inspires us to continue providing exceptional service, personalized care, and unforgettable experiences.</p>
           </div>
           <div class="booking-nav-row">
             <button type="button" class="btn-booking-secondary" data-booking-restart>Book another</button>

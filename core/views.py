@@ -174,12 +174,18 @@ def booking(request):
         .exclude(slug__in=EXCLUDED_SERVICE_SLUGS)
         .order_by('sort_order', 'name')
     )
+    user_email = ''
+    if request.user.is_authenticated:
+        user_email = request.user.email or ''
+
     return render(
         request,
         'booking.html',
         {
             'treatments': catalog_data,
             'categories': categories,
+            'user_email': user_email,
+            'user_is_authenticated': request.user.is_authenticated,
         },
     )
 

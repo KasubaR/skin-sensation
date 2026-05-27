@@ -1,8 +1,11 @@
 import logging
 
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from notifications.context import (
     appointment_email_context,
@@ -194,10 +197,72 @@ def send_appointment_rescheduled(appointment) -> bool:
     )
 
 
+def send_guest_claim_account(appointment) -> bool:
+    """Send a 'set your password' email to a guest who just booked."""
+    if not getattr(settings, 'NOTIFICATION_EMAIL_ENABLED', True):
+        return False
+
+    customer = appointment.customer
+    recipient = (customer.email or '').strip()
+    if not recipient:
+        return False
+
+    # Only send to accounts with no usable password (i.e. guests)
+    if customer.has_usable_password():
+        return False
+
+    try:
+        from django.contrib.sites.models import Site
+        uid = urlsafe_base64_encode(force_bytes(customer.pk))
+        token = default_token_generator.make_token(customer)
+        site = Site.objects.get_current()
+        protocol = settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+        claim_url = f'{protocol}://{site.domain}/accounts/password/reset/confirm/{uid}/{token}/'
+
+        customer_name = (
+            customer.get_full_name()
+            or getattr(getattr(customer, 'customer_profile', None), 'full_name', '')
+            or customer.email
+        )
+        context = {
+            'customer_name': customer_name,
+            'booking_reference': appointment.booking_reference,
+            'claim_url': claim_url,
+            'from_email': settings.DEFAULT_FROM_EMAIL,
+        }
+        subject = render_to_string(
+            'notifications/email/guest_claim_subject.txt', context
+        ).strip()
+        body_text = render_to_string(
+            'notifications/email/guest_claim_body.txt', context
+        )
+        body_html = render_to_string(
+            'notifications/email/guest_claim_body.html', context
+        )
+
+        from django.core.mail import EmailMultiAlternatives
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[recipient],
+        )
+        msg.attach_alternative(body_html, 'text/html')
+        msg.send(fail_silently=False)
+        return True
+    except Exception:
+        logger.exception(
+            'Failed to send guest claim email for appointment %s',
+            appointment.booking_reference,
+        )
+        return False
+
+
 def notify_booking_created(appointment):
     """Send customer confirmation and staff alert after a new booking."""
     send_booking_received(appointment)
     send_staff_new_booking(appointment)
+    send_guest_claim_account(appointment)
 
 
 def notify_appointment_confirmed(appointment):

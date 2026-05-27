@@ -1,6 +1,27 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import CustomerNote, CustomerProfile, Staff
+
+User = get_user_model()
+
+
+class StaffInline(admin.StackedInline):
+    model = Staff
+    can_delete = False
+    verbose_name = 'Staff profile'
+    verbose_name_plural = 'Staff profile'
+    filter_horizontal = ('treatments',)
+    fields = ('display_name', 'specialization', 'bio', 'image', 'is_available', 'treatments')
+
+
+class UserAdmin(BaseUserAdmin):
+    inlines = (StaffInline,)
+
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Staff)

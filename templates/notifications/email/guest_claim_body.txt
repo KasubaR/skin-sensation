@@ -1,0 +1,12 @@
+Hi {{ customer_name }},
+
+Your booking (ref: {{ booking_reference }}) has been received — thank you!
+
+Want to view and manage your appointments online? Set a password to create your account:
+
+{{ claim_url }}
+
+This link expires in 3 days. If you did not make this booking, you can ignore this email.
+
+Skin Sensation Spa
+{{ from_email }}

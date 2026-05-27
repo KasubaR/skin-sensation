@@ -256,6 +256,9 @@ def create_appointment(request):
     if not service_ids:
         return JsonResponse({'error': 'At least one service is required.'}, status=400)
 
+    if not request.user.is_authenticated and not email:
+        return JsonResponse({'error': 'Please enter your email address.'}, status=400)
+
     if appointment_date < timezone.localdate():
         return JsonResponse({'error': 'Appointment date must be today or in the future.'}, status=400)
 
