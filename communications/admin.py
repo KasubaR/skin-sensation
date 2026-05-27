@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from communications.models import BusinessInformation, ContactMessage
+from communications.models import Announcement, BusinessInformation, ContactMessage
+
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'label', 'is_active', 'starts_at', 'ends_at', 'sort_order')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'body', 'label')
 
 
 @admin.register(BusinessInformation)

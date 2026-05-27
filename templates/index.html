@@ -18,32 +18,28 @@
 </section>
 
 <!-- ANNOUNCEMENTS SECTION -->
+{% if announcements %}
 <section class="announcements-section">
   <div class="announcements-header">
     <h2>Announcements</h2>
     <p class="announcements-sub">Latest updates for our clients</p>
   </div>
   <div class="announcements-grid">
+    {% for item in announcements %}
     <article class="announcement-card">
-      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=500&q=80" alt="Spa treatment room setup">
+      {% if item.image %}
+      <img src="{{ item.image.url }}" alt="{{ item.title }}">
+      {% endif %}
       <div>
-        <span class="announcement-pill">Service Notice</span>
-        <h3>Holiday Break</h3>
-        <p>Skin Sensation will close from 31 December and reopen on 6 January.</p>
-        <p>Book early to secure your preferred treatment slot.</p>
+        {% if item.label %}<span class="announcement-pill">{{ item.label }}</span>{% endif %}
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.body }}</p>
       </div>
     </article>
-    <article class="announcement-card">
-      <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=500&q=80" alt="Skincare products on shelf">
-      <div>
-        <span class="announcement-pill">Price Update</span>
-        <h3>2026 Price Review</h3>
-        <p>Our updated treatment prices take effect from 1 February 2026.</p>
-        <p>Thank you for helping us maintain premium products and service quality.</p>
-      </div>
-    </article>
+    {% endfor %}
   </div>
 </section>
+{% endif %}
 
 <!-- FEATURED SERVICES -->
 <section class="featured-services">

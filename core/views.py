@@ -15,6 +15,7 @@ from services.selectors import (
 )
 from gallery.selectors import active_gallery_images, gallery_categories
 from testimonials.services import get_featured_testimonials
+from communications.models import Announcement
 
 CATALOG_PAGE_SIZE = 12
 
@@ -53,6 +54,9 @@ def _paginate_treatments(queryset, page_param):
 
 
 def home(request):
+    from django.utils import timezone
+    today = timezone.localdate()
+
     featured_services = (
         Service.objects.filter(is_active=True)
         .annotate(
@@ -60,6 +64,15 @@ def home(request):
         )
         .order_by('sort_order', 'name')[:4]
     )
+
+    announcements = Announcement.objects.filter(
+        is_active=True,
+    ).filter(
+        Q(starts_at__isnull=True) | Q(starts_at__lte=today),
+    ).filter(
+        Q(ends_at__isnull=True) | Q(ends_at__gte=today),
+    ).order_by('sort_order', '-created_at')
+
     return render(
         request,
         'index.html',
@@ -67,6 +80,7 @@ def home(request):
             'show_featured_products': False,
             'featured_services': featured_services,
             'featured_testimonials': get_featured_testimonials(),
+            'announcements': announcements,
         },
     )
 

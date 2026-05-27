@@ -1,6 +1,7 @@
 import re
 from urllib.parse import quote
 
+from django.conf import settings
 from django.db import models
 
 SUBJECT_CHOICES = [
@@ -119,6 +120,42 @@ class BusinessInformation(models.Model):
             + quote(self.address.strip())
             + '&output=embed'
         )
+
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=200)
+    label = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Pill text shown on the card, e.g. 'Service Notice' or 'Promotion'.",
+    )
+    body = models.TextField()
+    image = models.ImageField(upload_to='announcements/', blank=True)
+    is_active = models.BooleanField(default=True)
+    starts_at = models.DateField(
+        null=True, blank=True,
+        help_text='First date to show this card. Leave blank to show immediately.',
+    )
+    ends_at = models.DateField(
+        null=True, blank=True,
+        help_text='Last date to show this card. Leave blank to show indefinitely.',
+    )
+    sort_order = models.PositiveIntegerField(default=0)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='announcements',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['sort_order', '-created_at']
+
+    def __str__(self):
+        return self.title
 
 
 class ContactMessage(models.Model):

@@ -21,6 +21,9 @@ class StaffActivityLog(models.Model):
     GALLERY_CREATED = 'gallery_created', 'Gallery image created'
     GALLERY_UPDATED = 'gallery_updated', 'Gallery image updated'
     GALLERY_DELETED = 'gallery_deleted', 'Gallery image deleted'
+    ANNOUNCEMENT_CREATED = 'announcement_created', 'Announcement created'
+    ANNOUNCEMENT_UPDATED = 'announcement_updated', 'Announcement updated'
+    ANNOUNCEMENT_DELETED = 'announcement_deleted', 'Announcement deleted'
 
   user = models.ForeignKey(
     settings.AUTH_USER_MODEL,

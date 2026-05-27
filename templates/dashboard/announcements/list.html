@@ -1,0 +1,42 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}Announcements · Dashboard · Skin Sensation{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <h1 class="dash-title">Announcements</h1>
+  <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:announcement_create' %}">Add announcement</a>
+</header>
+{% if announcements %}
+<ul class="dash-list">
+  {% for item in announcements %}
+  <li class="dash-card">
+    <div class="dash-card__main">
+      {% if item.image %}
+      <img class="dash-gallery-thumb" src="{{ item.image.url }}" alt="" width="80" height="60" style="object-fit:cover;border-radius:4px;">
+      {% endif %}
+      <div>
+        <p class="dash-card__title">
+          <a href="{% url 'dashboard:announcement_edit' item.pk %}">{{ item.title }}</a>
+          {% if item.label %}<span class="dash-badge" style="margin-left:8px;font-size:11px;">{{ item.label }}</span>{% endif %}
+        </p>
+        <p class="dash-card__meta">
+          Sort {{ item.sort_order }}
+          {% if item.starts_at %} · From {{ item.starts_at }}{% endif %}
+          {% if item.ends_at %} · Until {{ item.ends_at }}{% endif %}
+        </p>
+      </div>
+    </div>
+    <div class="dash-card__aside">
+      {% if item.is_active %}
+      <span class="dash-badge dash-badge--confirmed">Active</span>
+      {% else %}
+      <span class="dash-badge dash-badge--cancelled">Inactive</span>
+      {% endif %}
+      <a class="dash-btn dash-btn--secondary dash-btn--sm" href="{% url 'dashboard:announcement_edit' item.pk %}">Edit</a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="dash-empty">No announcements yet. <a href="{% url 'dashboard:announcement_create' %}">Add the first one.</a></p>
+{% endif %}
+{% endblock %}

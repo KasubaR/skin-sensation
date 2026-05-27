@@ -1,0 +1,30 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% block title %}{% if is_create %}Add announcement{% else %}{{ announcement.title }}{% endif %} · Dashboard{% endblock %}
+{% block dashboard_content %}
+<header class="dash-header">
+  <p class="dash-eyebrow"><a href="{% url 'dashboard:announcement_list' %}">Announcements</a></p>
+  <h1 class="dash-title">{% if is_create %}Add announcement{% else %}Edit announcement{% endif %}</h1>
+</header>
+<form method="post" enctype="multipart/form-data" class="dash-form dash-panel">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="dash-field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}<p class="dash-field__help">{{ field.help_text }}</p>{% endif %}
+    {% if field.errors %}<p class="dash-field__error">{{ field.errors.0 }}</p>{% endif %}
+  </div>
+  {% endfor %}
+  {% if not is_create and announcement.image %}
+  <p class="dash-field__help">Current image:</p>
+  <img class="dash-proof-img" src="{{ announcement.image.url }}" alt="{{ announcement.title }}" style="max-width:320px;border-radius:4px;">
+  {% endif %}
+  <button type="submit" class="dash-btn dash-btn--primary">Save</button>
+</form>
+{% if not is_create %}
+<form method="post" action="{% url 'dashboard:announcement_delete' announcement.pk %}" class="dash-actions">
+  {% csrf_token %}
+  <button type="submit" class="dash-btn dash-btn--danger" data-confirm="Delete this announcement?">Delete</button>
+</form>
+{% endif %}
+{% endblock %}

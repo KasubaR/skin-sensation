@@ -2,7 +2,7 @@ from django import forms
 from django.utils.text import slugify
 
 from accounts.models import CustomerNote
-from communications.models import BusinessInformation, ContactMessage
+from communications.models import Announcement, BusinessInformation, ContactMessage
 from bookings.models import AppointmentPaymentStatus, AppointmentStatus
 from payments.models import Payment, PaymentMethod
 from gallery.models import GalleryImage
@@ -288,3 +288,22 @@ class GalleryImageForm(forms.ModelForm):
     elif not (self.instance and self.instance.pk and self.instance.image):
       raise forms.ValidationError('An image is required.')
     return image
+
+
+
+class AnnouncementForm(forms.ModelForm):
+  class Meta:
+    model = Announcement
+    fields = ('title', 'label', 'body', 'image', 'is_active', 'starts_at', 'ends_at', 'sort_order')
+    widgets = {
+      'starts_at': forms.DateInput(attrs={'type': 'date'}),
+      'ends_at': forms.DateInput(attrs={'type': 'date'}),
+    }
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    for name in self.fields:
+      self.fields[name].widget.attrs.setdefault('class', 'dash-input')
+    if self.instance and self.instance.pk:
+      self.fields['image'].required = False
+      self.fields['image'].help_text = 'Leave blank to keep the current image.'
